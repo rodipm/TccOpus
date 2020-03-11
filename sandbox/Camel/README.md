@@ -36,6 +36,7 @@ context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionF
 <dependency>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-all</artifactId>
+    <version>5.12.2</version> <!-- utiliza essa versao para evitar erros de configuração dos logs-->
 </dependency>
 ```
 

@@ -1,4 +1,4 @@
-package CamelInAction.FirstChapter;
+package CamelInAction.FtpToJms;
 
 import javax.jms.ConnectionFactory;
 
