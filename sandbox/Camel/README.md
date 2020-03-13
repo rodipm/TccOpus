@@ -4,8 +4,15 @@
 
 Seguindo o livro Camel In Action (Claus Ibsen) os projetos e conceitos são feitos e armazenados neste diretório.
 
+## Executar via Maven
 
-## Conexão FTP
+Deve ter as configurações corretas no pom.xml para o LaunchApp
+
+> mvn exec:java
+
+## Componentes
+
+### Conexão FTP
 > ftp://site.com/path?username=name&password=pass
 ```xml
 <!-- Camel-FTP-->
@@ -16,7 +23,7 @@ Seguindo o livro Camel In Action (Claus Ibsen) os projetos e conceitos são feit
 ```
 
 
-## Active MQ
+### Active MQ
 > jms:queue:queueName
 ```java
 import javax.jms.ConnectionFactory;
@@ -40,7 +47,7 @@ context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionF
 </dependency>
 ```
 
-### Obs
+#### Obs
 
 Instalado o ActiveMQ na maquina em C:\src\ActiveMQ\apache-activemq-5.15.11, para roda-lo basta navegar para esta pasta e executar `bin\activemq start` : 
 
@@ -49,3 +56,58 @@ Instalado o ActiveMQ na maquina em C:\src\ActiveMQ\apache-activemq-5.15.11, para
 + Passwort: admin
 
 Para conectar via ActiveMQConnectionFactory para "tcp://localhost:61616"
+
+
+## EIP
+
+### Content-Based Router
+
+Seleciona a rota a ser seguida baseado nos conteúdos da mensagem. Formado na DSL java pelos comandos
++ choice()
++ when()
++ stop()
++ end()
+
+```
+from("...")
+		.choice()
+            .when(predicado)
+                .to("...")
+			.when(predicado)
+				.to("...")
+            .otherwise()
+                .to("...").stop() // para aqui caso encontre
+        .end() // finaliza o bloco .choice()
+        .to(....);
+```
+
+Exemplos predicados:
++ header("CamelFileName").endWith(".txt")
++ header("CamelFileName").regex("...")
+
+### Message Filter
+
+Aplica filtros às mensagens para selecionar apenas as que sejam interessantes para a aplicação
++ filter()
+
+Utiliza xpath, simple e etc, para verificações em arquivos XML.
+
+```
+from("...")
+.filter(condition)
+.to("...")
+```
+
+### Multicast
+
+Utilizado para distribuir uma mensagem para mais de um endpoint
++ multicast()
++ parallelProcessing() // Habilida mulitcasting paralelo
++ stopOnException()
+
+```
+from("...")
+.multicast()
+.stopOnException()
+.to("...", "...")
+```
