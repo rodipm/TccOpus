@@ -29,7 +29,8 @@ class _HomeViewState extends State<HomeView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            movableItems.add(MoveableStackItem());
+            movableItems.add(SampleEIP());
+            // movableItems.add(MoveableStackItem());
           });
         },
       ),
@@ -41,6 +42,8 @@ class _HomeViewState extends State<HomeView> {
 }
 
 class MoveableStackItem extends StatefulWidget {
+  final Widget childContents;
+  MoveableStackItem(this.childContents);
   @override
   _MoveableStackItemState createState() => _MoveableStackItemState();
 }
@@ -49,6 +52,9 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
   double xPosition = 0;
   double yPosition = 0;
   Color color;
+
+  _MoveableStackItemState();
+
   @override
   void initState() {
     color = Colors.blue;
@@ -68,14 +74,28 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
             yPosition += tapInfo.delta.dy;
           });
         },
-        child: Container(
-          width: 150,
-          height: 150,
-          color: color,
-        ),
+        child: widget.childContents,
       ),
     );
   }
+}
+
+class SampleEIP extends MoveableStackItem {
+  SampleEIP()
+      : super(Container(
+            width: 100,
+            height: 100,
+            color: Colors.red,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  width: 10,
+                  height: 10,
+                  color: Colors.blue,
+                )
+              ],
+            )));
 }
 
 class Lines extends StatefulWidget {
