@@ -1,9 +1,12 @@
+import 'dart:developer';
+import 'package:SimpleWebtest/EipWidgets/sample_eip.dart';
+import 'package:SimpleWebtest/Lines/lines.dart';
+import 'package:SimpleWebtest/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -11,144 +14,59 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeView(),
+      home: MainCanvas(),
     );
   }
 }
 
-class HomeView extends StatefulWidget {
+class MainCanvas extends StatefulWidget {
   @override
-  _HomeViewState createState() => _HomeViewState();
+  _MainCanvasState createState() => _MainCanvasState();
 }
 
-class _HomeViewState extends State<HomeView> {
-  List<Widget> movableItems = [];
+class _MainCanvasState extends State<MainCanvas> {
+  Map<int, List<int>> connectedItems = {};
+  List<int> idsToConnect = List();
+  List<Map<String, Offset>> connectionLines = [];
+  List<Widget> stackItems = new List();
+  Map<int, Map<String, double>> itemsPositions = {};
+
+  void updateItemPosition(int id, double xPosition, double yPosition) {
+    this.itemsPositions.update(id, (_) => {"xPosition": xPosition, "yPosition": yPosition});
+    print(inspect(this.itemsPositions));
+  }
+
+  void addIdToConnect(int id) {
+    print("Adding ID: $id to idsToConnect");
+    setState(() {
+      idsToConnect.add(id);
+      if (idsToConnect.length >= 2) {
+        Offset _start = Offset(this.itemsPositions[idsToConnect[0]]["xPosition"], this.itemsPositions[idsToConnect[0]]["yPosition"]);
+        Offset _end = Offset(this.itemsPositions[idsToConnect[1]]["xPosition"], this.itemsPositions[idsToConnect[1]]["yPosition"]);
+
+        connectionLines.add({"start": _start, "end": _end});
+        print("Adicionada connection line");
+        idsToConnect.clear();
+      }
+    });
+    print(inspect(this.idsToConnect));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            movableItems.add(SampleEIP());
-            // movableItems.add(MoveableStackItem());
+            stackItems.add(SampleEIP(addIdToConnect, updateItemPosition));
+            itemsPositions.addAll({MoveableStackItem.idCounter: {"xPosition": 0, "yPosition": 0}});
+            print(inspect(this.itemsPositions));
           });
         },
       ),
       body: Stack(
-        children: [Lines(), ...movableItems],
+        children: [Lines(connectionLines), ...stackItems],
       ),
     );
-  }
-}
-
-class MoveableStackItem extends StatefulWidget {
-  final Widget childContents;
-  MoveableStackItem(this.childContents);
-  @override
-  _MoveableStackItemState createState() => _MoveableStackItemState();
-}
-
-class _MoveableStackItemState extends State<MoveableStackItem> {
-  double xPosition = 0;
-  double yPosition = 0;
-  Color color;
-
-  _MoveableStackItemState();
-
-  @override
-  void initState() {
-    color = Colors.blue;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: yPosition,
-      left: xPosition,
-      child: GestureDetector(
-        onTap: () => print("b"),
-        onPanUpdate: (tapInfo) {
-          setState(() {
-            xPosition += tapInfo.delta.dx;
-            yPosition += tapInfo.delta.dy;
-          });
-        },
-        child: widget.childContents,
-      ),
-    );
-  }
-}
-
-class SampleEIP extends MoveableStackItem {
-  SampleEIP()
-      : super(Container(
-            width: 100,
-            height: 100,
-            color: Colors.red,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  width: 10,
-                  height: 10,
-                  color: Colors.blue,
-                )
-              ],
-            )));
-}
-
-class Lines extends StatefulWidget {
-  const Lines({Key key}) : super(key: key);
-
-  @override
-  createState() => _LinesState();
-}
-
-class _LinesState extends State<Lines> {
-  Offset start;
-  Offset end;
-
-  @override
-  build(_) => GestureDetector(
-        onTap: () => print('t'),
-        onPanStart: (details) {
-          print(details.localPosition);
-          setState(() {
-            start = details.localPosition;
-            end = null;
-          });
-        },
-        onPanUpdate: (details) {
-          setState(() {
-            end = details.localPosition;
-          });
-        },
-        child: CustomPaint(
-          size: Size.infinite,
-          painter: LinesPainter(start, end),
-        ),
-      );
-}
-
-class LinesPainter extends CustomPainter {
-  final Offset start, end;
-
-  LinesPainter(this.start, this.end);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (start == null || end == null) return;
-    canvas.drawLine(
-        start,
-        end,
-        Paint()
-          ..strokeWidth = 4
-          ..color = Colors.redAccent);
-  }
-
-  @override
-  bool shouldRepaint(LinesPainter oldDelegate) {
-    return oldDelegate.start != start || oldDelegate.end != end;
   }
 }
