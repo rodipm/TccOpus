@@ -1,5 +1,7 @@
 import 'dart:developer';
-import 'package:SimpleWebtest/EipWidgets/sample_eip.dart';
+
+import 'package:SimpleWebtest/EditItemPane/edit_item_pane.dart';
+import 'package:SimpleWebtest/LeftSidePane/left_side_pane.dart';
 import 'package:SimpleWebtest/Lines/lines.dart';
 import 'package:SimpleWebtest/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
@@ -10,62 +12,203 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MainCanvas(),
-    );
+        title: 'Integration Manager',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MainCanvas());
   }
 }
 
 class MainCanvas extends StatefulWidget {
+  MainCanvas();
   @override
   _MainCanvasState createState() => _MainCanvasState();
 }
 
 class _MainCanvasState extends State<MainCanvas> {
-  Map<int, List<int>> connectedItems = {};
-  List<int> idsToConnect = List();
-  List<Map<String, Offset>> connectionLines = [];
-  List<Widget> stackItems = new List();
-  Map<int, Map<String, double>> itemsPositions = {};
+  // All items in canvas
+  Map<int, MoveableStackItem> items = {};
 
-  void updateItemPosition(int id, double xPosition, double yPosition) {
-    this.itemsPositions.update(id, (_) => {"xPosition": xPosition, "yPosition": yPosition});
-    print(inspect(this.itemsPositions));
+  // Holds items positions and connections
+  Map<int, Map<String, dynamic>> itemsPositions = {};
+
+  // Holds items id's while connecting them
+  List<int> idsToConnect = List();
+
+  // Current item being edited
+  MoveableStackItem editingItem;
+  // Right edit item pane with item details
+  Widget editingItemPaneWidget;
+
+  // Main widget sizes
+  double mainCanvasSize;
+  double leftSidePaneSize;
+  double editPaneSize;
+
+  // Inserts a new EIP Item into the main drag & drop area
+  void insertNewEipItem(dynamic item, Offset position) {
+    setState(() {
+      // Corrects given position's x coordinate based on left side pane size
+      Offset correctedPosition =
+          Offset(position.dx - leftSidePaneSize, position.dy);
+
+      // Add new item to items list
+      MoveableStackItem _newItem = MoveableStackItem(
+          item.type,
+          addIdToConnect,
+          updateItemPosition,
+          selectEditItem,
+          item.childContent,
+          item.childDetails,
+          correctedPosition);
+      items.addAll({_newItem.id: _newItem});
+
+      // Add new item position and connections (none)
+      itemsPositions.addAll(
+        {
+          MoveableStackItem.idCounter: {
+            "xPosition": correctedPosition.dx,
+            "yPosition": correctedPosition.dy,
+            "width": 100,
+            "height": 100,
+            "connectsTo": new Set()
+          }
+        },
+      );
+    });
   }
 
+  // Update current item position on screen
+  void updateItemPosition(int id, double xPosition, double yPosition) {
+    setState(() {
+      this.itemsPositions.update(
+            id,
+            (item) => {
+              "xPosition": xPosition,
+              "yPosition": yPosition,
+              "width": item["width"],
+              "height": item["height"],
+              "connectsTo": item["connectsTo"]
+            },
+          );
+    });
+  }
+
+  // Update current item details (EIP configs)
+  void updateItemDetails(int id, Map<String, String> _newChildDetails) {
+    setState(() {
+      MoveableStackItem oldItem = items[id];
+      items[id] = MoveableStackItem.update(
+        oldItem: oldItem,
+        newChildDetails: _newChildDetails,
+      );
+      editingItem = null;
+      editingItemPaneWidget = null;
+    });
+  }
+
+  // Selects an item to be displayed on righ side pane
+  void selectEditItem(int id) {
+    setState(() {
+      editingItem = items[id];
+      this.editingItemPaneWidget =
+          EditItemPane(this.editingItem, this.updateItemDetails);
+    });
+  }
+
+  // Toggle item's selection border
+  void toggleItemSelectedBorder(int id) {
+    MoveableStackItem oldItem = items[id];
+    setState(() {
+      items[id] = MoveableStackItem.update(
+        oldItem: oldItem,
+        isSelected: !oldItem.selected,
+      );
+    });
+  }
+
+  // Add current selected item id to idsToconnect list
+  // When 2 items are selected the connection is made
+  // and idsToConnect is cleared
   void addIdToConnect(int id) {
-    print("Adding ID: $id to idsToConnect");
     setState(() {
       idsToConnect.add(id);
-      if (idsToConnect.length >= 2) {
-        Offset _start = Offset(this.itemsPositions[idsToConnect[0]]["xPosition"], this.itemsPositions[idsToConnect[0]]["yPosition"]);
-        Offset _end = Offset(this.itemsPositions[idsToConnect[1]]["xPosition"], this.itemsPositions[idsToConnect[1]]["yPosition"]);
+      // Toggle selection border on
+      toggleItemSelectedBorder(id);
 
-        connectionLines.add({"start": _start, "end": _end});
-        print("Adicionada connection line");
+      if (idsToConnect.length >= 2) {
+        // Toggle selection borders off
+        toggleItemSelectedBorder(idsToConnect[0]);
+        toggleItemSelectedBorder(idsToConnect[1]);
+
+        // Add connection from the first selected item to the second
+        itemsPositions[idsToConnect[0]]["connectsTo"].add(idsToConnect[1]);
+
+        // Clear idsToConnect
         idsToConnect.clear();
       }
     });
-    print(inspect(this.idsToConnect));
+  }
+
+  void sendDiagram() {
+    Map<int, Map<String, dynamic>> jsonItems = {};
+
+    items.forEach((key, value) {
+      jsonItems.addAll({key: value.toJSON()});
+    });
+
+    print({
+      "items": jsonItems,
+      "positions": this.itemsPositions,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            stackItems.add(SampleEIP(addIdToConnect, updateItemPosition));
-            itemsPositions.addAll({MoveableStackItem.idCounter: {"xPosition": 0, "yPosition": 0}});
-            print(inspect(this.itemsPositions));
-          });
-        },
+    // Left pane should take 15% of screen
+    this.leftSidePaneSize = MediaQuery.of(context).size.width * 0.15;
+
+    // When there are no items selected, don't show edit item pane
+    if (this.editingItem == null) {
+      this.mainCanvasSize = MediaQuery.of(context).size.width * 0.85;
+      this.editPaneSize = 0;
+    } else {
+      this.mainCanvasSize = MediaQuery.of(context).size.width * 0.70;
+      this.editPaneSize = MediaQuery.of(context).size.width * 0.15;
+    }
+
+    // Widgets to be displayed on main screen
+    // starts with left side pane and main canvas
+    List<Widget> scaffoldRowChildren = [
+      Container(
+        width: this.leftSidePaneSize,
+        color: Colors.blueGrey,
+        child: LeftSidePane(this.insertNewEipItem, this.sendDiagram),
       ),
-      body: Stack(
-        children: [Lines(connectionLines), ...stackItems],
+      Container(
+        // flex: 85,
+        width: this.mainCanvasSize,
+        child: Stack(
+          children: [Lines(itemsPositions), ...items.values.toList()],
+        ),
+      ),
+    ];
+
+    // If an item is being edited, add the right side pane
+    if (this.editingItem != null)
+      scaffoldRowChildren.add(
+        Container(
+          width: this.editPaneSize,
+          child: this.editingItemPaneWidget,
+        ),
+      );
+
+    return Scaffold(
+      body: Row(
+        // direction: Axis.horizontal,
+        children: scaffoldRowChildren,
       ),
     );
   }

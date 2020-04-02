@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
 
-class SampleEIP {
-  final String type = "SampleEIP";
+class MessageEndpoint {
+  final String type = "MessageEndpoint";
 
   final double width;
   final double height;
 
   Widget childContent;
   Map<String, String> childDetails = {
-    "fileName": null,
+    "uri": null,
   };
 
   // final Offset position;
-  SampleEIP(this.width, this.height) {
+  MessageEndpoint(this.width, this.height) {
     childContent = Container(
       width: width,
       height: height,
-      color: Colors.red,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Container(
-            width: 10,
-            height: 10,
-            color: Colors.blue,
-          )
-        ],
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/MessageEndpoint.png'),
+          fit: BoxFit.fill,
+        ),
       ),
     );
   }
