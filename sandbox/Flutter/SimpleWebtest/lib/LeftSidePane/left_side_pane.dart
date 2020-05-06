@@ -1,7 +1,5 @@
-import 'package:SimpleWebtest/EipWidgets/another_eip.dart';
-import 'package:SimpleWebtest/EipWidgets/message_endpoint.dart';
-import 'package:SimpleWebtest/EipWidgets/polling_consumer.dart';
-import 'package:SimpleWebtest/EipWidgets/sample_eip.dart';
+import 'package:EIPEditor/EipWidgets/message_endpoint.dart';
+import 'package:EIPEditor/EipWidgets/polling_consumer.dart';
 import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {

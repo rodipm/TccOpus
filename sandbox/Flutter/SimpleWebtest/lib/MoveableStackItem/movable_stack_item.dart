@@ -34,8 +34,8 @@ class MoveableStackItem extends StatefulWidget {
 
   Map<String, dynamic> toJSON() {
     return {
-      "id": this.id,
-      "type": this.type,
+      "id": this.id.toString(),
+      "type": this.type.toString(),
       ...this.childDetails,
     };
   }
