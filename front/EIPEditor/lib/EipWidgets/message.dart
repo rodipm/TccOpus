@@ -7,8 +7,9 @@ class Message {
   final double height;
 
   Widget childContent;
-  Map<String, String> childDetails = {
-    "uri": null,
+  Map<String, dynamic> childDetails = {
+    "protocol": [["direct", "http", "ftp"], null],
+    "url": "",
   };
 
   // final Offset position;

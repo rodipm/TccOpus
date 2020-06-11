@@ -1,0 +1,22 @@
+{
+    "load": {
+        "vscode": [
+            "code ."
+        ]
+    },
+    "start": {
+        "vscode": [
+            "<<ctrl+shift+'>>cd front/EIPEditor",
+            "flutter run -d chrome",
+            "<<ctrl+shift+'>>cd back",
+            "nodemon app.py"
+        ]
+    },
+    "scripts": {
+        "git": [
+            "git add .",
+            "git commit -m \"[$(date +\"%D %T\")]Auto Commit\n $(git -c color.status=false status)\"",
+            "git push"
+        ]
+    }
+}

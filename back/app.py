@@ -24,6 +24,7 @@ def send_diagram():
         items_info[itemKey] = items[itemKey]
         items_info[itemKey]["connectsTo"] = positions[itemKey]['connectsTo']
 
+    print("items info", items_info)
     print(create_routes(items_info))
 
     return 'OK', 200

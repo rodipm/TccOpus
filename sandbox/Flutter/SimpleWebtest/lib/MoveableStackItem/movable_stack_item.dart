@@ -5,7 +5,7 @@ class MoveableStackItem extends StatefulWidget {
 
   final String type;
   final Widget childContents;
-  final Map<String, String> childDetails;
+  final Map<String, dynamic> childDetails;
 
   final Function clickHandler;
   final Function updatePositionHandler;
@@ -21,7 +21,7 @@ class MoveableStackItem extends StatefulWidget {
       : id = MoveableStackItem.idCounter,
         selected = false;
 
-  MoveableStackItem.update({MoveableStackItem oldItem, bool isSelected, Map<String, String> newChildDetails})
+  MoveableStackItem.update({MoveableStackItem oldItem, bool isSelected, Map<String, dynamic> newChildDetails})
       : type = oldItem.type,
         childContents = oldItem.childContents,
         clickHandler = oldItem.clickHandler,

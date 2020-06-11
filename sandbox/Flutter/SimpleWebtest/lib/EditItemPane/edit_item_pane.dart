@@ -15,8 +15,8 @@ class _EditItemPaneState extends State<EditItemPane> {
   List<Widget> editItems = [];
   Map<String, TextEditingController> editItemsControllers = {};
 
-  Map<String, String> generateNewItemDetails() {
-    Map<String, String> newItemDetails = {};
+  Map<String, dynamic> generateNewItemDetails() {
+    Map<String, dynamic> newItemDetails = {};
     print(editItemsControllers);
     for (String editItem in widget.selectedItem.childDetails.keys) {
       newItemDetails.addAll({editItem: editItemsControllers[editItem].text});

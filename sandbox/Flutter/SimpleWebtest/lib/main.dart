@@ -97,7 +97,7 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   // Update current item details (EIP configs)
-  void updateItemDetails(int id, Map<String, String> _newChildDetails) {
+  void updateItemDetails(int id, Map<String, dynamic> _newChildDetails) {
     setState(() {
       MoveableStackItem oldItem = items[id];
       items[id] = MoveableStackItem.update(

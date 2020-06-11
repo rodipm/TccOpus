@@ -7,8 +7,8 @@ class ContentBasedRouter {
   final double height;
 
   Widget childContent;
-  Map<String, String> childDetails = {
-    "uri": null,
+  Map<String, dynamic> childDetails = {
+    "choices": null,
   };
 
   // final Offset position;

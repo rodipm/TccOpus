@@ -7,7 +7,7 @@ class MessageEndpoint {
   final double height;
 
   Widget childContent;
-  Map<String, String> childDetails = {
+  Map<String, dynamic> childDetails = {
     "uri": null,
   };
 
