@@ -43,7 +43,11 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
 
             choices = []            
             for [child_node_number, choice] in current_node['choices']:
-                choices.append(f".when(\"{choice}\")" + generate_code(items_info,
+                if choice:
+                    choices.append(f".when({choice})" + generate_code(items_info,
+                                                                  child_node_number, generated_code, new_visited_nodes))
+                else:
+                    choices.append(f".otherwise()" + generate_code(items_info,
                                                                   child_node_number, generated_code, new_visited_nodes))
             
             return generated_code + ".choice()" + "".join(choices) + ".end()"
