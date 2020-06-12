@@ -38,19 +38,25 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
 
             for child_node_number in current_node['connectsTo']:
                 return new_generated_code + generate_code(items_info, child_node_number, generated_code, new_visited_nodes)
+        
+        if current_node['type'] == 'MessageTranslator':
+            new_generated_code = f".process(\"{current_node['process']}\")"
+
+            for child_node_number in current_node['connectsTo']:
+                return new_generated_code + generate_code(items_info, child_node_number, generated_code, new_visited_nodes)
 
         if current_node['type'] == "ContentBasedRouter":
 
             choices = []            
             for [child_node_number, choice] in current_node['choices']:
                 if choice:
-                    choices.append(f".when({choice})" + generate_code(items_info,
+                    choices.append(f"\n\t.when({choice})\n\t\t" + generate_code(items_info,
                                                                   child_node_number, generated_code, new_visited_nodes))
                 else:
-                    choices.append(f".otherwise()" + generate_code(items_info,
+                    choices.append(f"\n\t.otherwise()\n\t\t" + generate_code(items_info,
                                                                   child_node_number, generated_code, new_visited_nodes))
             
-            return generated_code + ".choice()" + "".join(choices) + ".end()"
+            return generated_code + "\n.choice()" + "".join(choices) + "\n.end()"
 
         if current_node['type'] == 'MessageFilter':
 

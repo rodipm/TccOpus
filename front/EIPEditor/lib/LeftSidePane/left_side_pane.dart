@@ -2,7 +2,7 @@ import 'package:EIPEditor/EipWidgets/message_filter.dart';
 import 'package:EIPEditor/EipWidgets/message.dart';
 import 'package:EIPEditor/EipWidgets/content_based_router.dart';
 import 'package:EIPEditor/EipWidgets/message_endpoint.dart';
-import 'package:EIPEditor/EipWidgets/polling_consumer.dart';
+import 'package:EIPEditor/EipWidgets/message_translator.dart';
 import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {
@@ -21,6 +21,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
     Map<String, dynamic> eipItems = {
       "MessagingSystem": [
         Message(100, 100).icon(widget.insertNewEipItem),
+        MessageTranslator(100, 100).icon(widget.insertNewEipItem),
         MessageEndpoint(100, 100).icon(widget.insertNewEipItem),
       ],
       "MessageRouting": [
@@ -79,7 +80,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
               Center(
                 child: Container(
                   width: 200,
-                  height: 100,
+                  height: 200,
                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
                     itemCount: eipItems["MessagingSystem"].length,

@@ -27,6 +27,9 @@ class _EditItemPaneState extends State<EditItemPane> {
   // MessageFilter
   Map<String, dynamic> messageFilterControllers = {};
 
+  // MessageTranslator
+  Map<String, dynamic> messageTranslatorControllers = {};
+
   Map<String, dynamic> generateNewItemDetails() {
     Map<String, dynamic> newItemDetails = {};
 
@@ -49,6 +52,12 @@ class _EditItemPaneState extends State<EditItemPane> {
             protocolOptions
           ]
         });
+      }
+
+      // MessageTranslator
+      else if (widget.selectedItem.type == "MessageTranslator") {
+        newItemDetails
+            .addAll({editItem: messageTranslatorControllers[editItem].text});
       }
 
       // ContentBasedRouter
@@ -153,6 +162,24 @@ class _EditItemPaneState extends State<EditItemPane> {
         }
       }
 
+      // MessageTranslator
+      else if (widget.selectedItem.type == "MessageTranslator") {
+        messageTranslatorControllers
+            .addAll({editItem: TextEditingController()});
+
+        messageTranslatorControllers[editItem].text =
+            widget.selectedItem.childDetails[editItem];
+
+        editItems.add(
+          TextFormField(
+            autofocus: true,
+            maxLines: 10,
+            // keyboardType: TextInputType.multiline,
+            controller: messageTranslatorControllers[editItem],
+          ),
+        );
+      }
+
       // ContentBasedRouter
       else if (widget.selectedItem.type == "ContentBasedRouter") {
         if (widget.selectedItem.childDetails[editItem] == null) {
@@ -216,7 +243,9 @@ class _EditItemPaneState extends State<EditItemPane> {
           int connectsToID;
           String textValue = "";
           if (widget.selectedItem.childDetails[editItem] == null) {
-            connectsToID = widget.itemsPositions[widget.selectedItemID]["connectsTo"].toList()[0];
+            connectsToID = widget.itemsPositions[widget.selectedItemID]
+                    ["connectsTo"]
+                .toList()[0];
             textValue = "";
           } else {
             connectsToID = widget.selectedItem.childDetails[editItem][0][0];

@@ -102,6 +102,7 @@ class _MainCanvasState extends State<MainCanvas> {
   void updateItemDetails(int id, Map<String, dynamic> _newChildDetails) {
     setState(() {
       MoveableStackItem oldItem = items[id];
+      print(oldItem.childDetails);
       items[id] = MoveableStackItem.update(
         oldItem: oldItem,
         newChildDetails: _newChildDetails,
@@ -213,7 +214,7 @@ class _MainCanvasState extends State<MainCanvas> {
             title: Text("Código Gerado"),
             content: TextField(
               autofocus: true,
-              maxLines: 8,
+              maxLines: 30,
               controller: codigoGeradoTextController,
               
             ),
