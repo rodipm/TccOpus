@@ -18,23 +18,28 @@ class _LeftSidePaneState extends State<LeftSidePane> {
   bool eipItemsMenuOpen = true;
   @override
   Widget build(BuildContext context) {
-    List<Widget> eipItems = [
-      Message(100, 100).icon(widget.insertNewEipItem),
-      PollingConsumer(100, 100).icon(widget.insertNewEipItem),
-      MessageEndpoint(100, 100).icon(widget.insertNewEipItem),
-      ContentBasedRouter(100, 100).icon(widget.insertNewEipItem),
-      MessageFilter(100, 100).icon(widget.insertNewEipItem),
-    ];
+    Map<String, dynamic> eipItems = {
+      "MessagingSystem": [
+        Message(100, 100).icon(widget.insertNewEipItem),
+        MessageEndpoint(100, 100).icon(widget.insertNewEipItem),
+      ],
+      "MessageRouting": [
+        ContentBasedRouter(100, 100).icon(widget.insertNewEipItem),
+        MessageFilter(100, 100).icon(widget.insertNewEipItem)
+      ]
+    };
     return Column(
       children: <Widget>[
         Container(
-          color: Colors.black.withAlpha(50),
+          color: Colors.black.withAlpha(90),
           child: Container(
             height: 50,
             width: double.infinity,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 IconButton(
+                  tooltip: "Gerar Código",
                   icon: Icon(
                     Icons.done,
                   ),
@@ -49,82 +54,77 @@ class _LeftSidePaneState extends State<LeftSidePane> {
     );
   }
 
-  Widget _eipItemsMenu(List<Widget> eipItems) {
-    if (eipItemsMenuOpen)
-      return Expanded(
-        child: GestureDetector(
-          onTap: () {
-            print("Tap");
-            setState(() {
-              this.eipItemsMenuOpen = false;
-            });
-          },
-          child: Container(
-            color: Colors.blueGrey,
-            child: Container(
-              height: 400,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    color: Colors.black.withAlpha(50),
-                    child: Container(
-                      height: 50,
-                      width: double.infinity,
-                      child: Center(
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(Icons.expand_less),
-                              Text("EIP Items"),
-                            ]),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      width: 200,
-                      height: 400,
-                      margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: GridView.builder(
-                        itemCount: eipItems.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, crossAxisSpacing: 30),
-                        itemBuilder: (context, index) {
-                          return eipItems[index];
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    else
-      return GestureDetector(
-        onTap: () {
-          print("Tap");
-          setState(() {
-            this.eipItemsMenuOpen = true;
-          });
-        },
+  Widget _eipItemsMenu(Map<String, dynamic> eipItems) {
+    return Expanded(
+      child: Container(
+        color: Colors.blueGrey,
         child: Container(
-          color: Colors.black.withAlpha(50),
-          child: Container(
-            height: 50,
-            width: double.infinity,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Icon(Icons.expand_more),
-                  Text("EIP Items"),
-                ],
+          // height: 400,
+          child: Column(
+            children: <Widget>[
+              Container(
+                color: Colors.black.withAlpha(50),
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text("Messaging System"),
+                        ]),
+                  ),
+                ),
               ),
-            ),
+              Center(
+                child: Container(
+                  width: 200,
+                  height: 100,
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: GridView.builder(
+                    itemCount: eipItems["MessagingSystem"].length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, crossAxisSpacing: 30),
+                    itemBuilder: (context, index) {
+                      return eipItems["MessagingSystem"][index];
+                    },
+                  ),
+                ),
+              ),
+              Container(
+                color: Colors.black.withAlpha(50),
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(Icons.expand_less),
+                          Text("Message Routing"),
+                        ]),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 200,
+                  height: 100,
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: GridView.builder(
+                    itemCount: eipItems["MessageRouting"].length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, crossAxisSpacing: 30),
+                    itemBuilder: (context, index) {
+                      return eipItems["MessageRouting"][index];
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 }

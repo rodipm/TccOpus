@@ -8,8 +8,15 @@ class MessageEndpoint {
 
   Widget childContent;
   Map<String, dynamic> childDetails = {
-    "protocol": [["direct", "http", "ftp"], null],
-    "url": "",
+    "protocol": [
+      {
+        "direct": ["name"],
+        "http": ["hostname", "port"],
+        "ftp": ["host", "port", "filename"]
+      },
+      null,
+      []
+    ]
   };
 
   // final Offset position;

@@ -23,7 +23,18 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
         print("generated_code", generated_code)
 
         if current_node['type'] == 'PollingConsumer' or current_node['type'] == "Message":
-            new_generated_code = f"from(\"{current_node['protocol'][1]}:{current_node['url']}\")"
+            uri = ""
+            protocol_name = current_node['protocol'][1]
+            protocol_opts = current_node['protocol'][2]
+
+            if protocol_name == "direct":
+                uri = f"direct:{protocol_opts[0]}"
+            elif protocol_name == "http":
+                uri = f"http://{protocol_opts[0]}:{protocol_opts[1]}"
+            elif protocol_name == "ftp":
+                uri = f"ftp://{protocol_opts[0]}:{protocol_opts[1]}/{protocol_opts[2]}"
+
+            new_generated_code = f"from(\"{uri}\")"
 
             for child_node_number in current_node['connectsTo']:
                 return new_generated_code + generate_code(items_info, child_node_number, generated_code, new_visited_nodes)
@@ -44,7 +55,18 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
                 return generated_code + new_generated_code + generate_code(items_info, child_node_number, generated_code, new_visited_nodes)
 
         if current_node['type'] == "MessageEndpoint":
-            new_generated_code = f".to(\"{current_node['protocol'][1]}:{current_node['url']}\")"
+            uri = ""
+            protocol_name = current_node['protocol'][1]
+            protocol_opts = current_node['protocol'][2]
+
+            if protocol_name == "direct":
+                uri = f"direct:{protocol_opts[0]}"
+            elif protocol_name == "http":
+                uri = f"http://{protocol_opts[0]}:{protocol_opts[1]}"
+            elif protocol_name == "ftp":
+                uri = f"ftp://{protocol_opts[0]}:{protocol_opts[1]}/{protocol_opts[2]}"
+
+            new_generated_code = f".to(\"{uri}\")"
 
             return generated_code + new_generated_code
 

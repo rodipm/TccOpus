@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:EIPEditor/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
 
@@ -17,29 +15,38 @@ class EditItemPane extends StatefulWidget {
 
 class _EditItemPaneState extends State<EditItemPane> {
   List<Widget> editItems = [];
-  Map<String, TextEditingController> editItemsControllers = {};
+  Map<String, TextEditingController> inputTextoControllers = {};
+  Map<String, dynamic> dropDownOptionsControllers = {};
   Map<String, dynamic> inputAutomaticoControllers = {};
   Map<String, dynamic> editItemsValues = {};
-  String testeEscolha = "direct";
 
   Map<String, dynamic> generateNewItemDetails() {
     Map<String, dynamic> newItemDetails = {};
-    print(editItemsControllers);
 
     for (String editItem in widget.selectedItem.childDetails.keys) {
       // Input de texto -> String
       if (widget.selectedItem.childDetails[editItem] is String)
-        newItemDetails.addAll({editItem: editItemsControllers[editItem].text});
+        newItemDetails.addAll({editItem: inputTextoControllers[editItem].text});
 
       // DropDown button -> List(List(String(),...), String())
       else if (widget.selectedItem.childDetails[editItem] is List &&
-          widget.selectedItem.childDetails[editItem].length == 2 &&
+          widget.selectedItem.childDetails[editItem].length == 3 &&
           (widget.selectedItem.childDetails[editItem][1] is String ||
               widget.selectedItem.childDetails[editItem][1] == null)) {
+        var protocolOptions = List();
+
+        if (editItemsValues[editItem] != null) {
+          for (var protocolOption in widget.selectedItem.childDetails[editItem]
+              [0][editItemsValues[editItem]]) {
+            protocolOptions
+                .add(dropDownOptionsControllers[protocolOption].text);
+          }
+        }
         newItemDetails.addAll({
           editItem: [
             widget.selectedItem.childDetails[editItem][0],
-            editItemsValues[editItem]
+            editItemsValues[editItem],
+            protocolOptions
           ]
         });
       }
@@ -48,17 +55,13 @@ class _EditItemPaneState extends State<EditItemPane> {
       else if (widget.selectedItem.childDetails[editItem] == null ||
           (widget.selectedItem.childDetails[editItem] is List &&
               widget.selectedItem.childDetails[editItem][0] is List)) {
-        print("GENERATE NEW ITEMS DETAILS");
-
         newItemDetails.addAll({editItem: []});
         for (var choiceTargetID in inputAutomaticoControllers[editItem].keys) {
-          print(inputAutomaticoControllers[editItem][choiceTargetID].text);
           newItemDetails[editItem].add([
             choiceTargetID,
             inputAutomaticoControllers[editItem][choiceTargetID].text
           ]);
         }
-        print(newItemDetails);
       }
     }
     return newItemDetails;
@@ -67,32 +70,30 @@ class _EditItemPaneState extends State<EditItemPane> {
   @override
   Widget build(BuildContext context) {
     this.editItems = [];
-    // this.editItemsControllers = {};
+    // this.inputTextoControllers = {};
 
     // Input de texto -> String
     for (String editItem in widget.selectedItem.childDetails.keys) {
       // Input de texto -> ""
       if (widget.selectedItem.childDetails[editItem] is String) {
-        editItemsControllers.addAll({editItem: TextEditingController()});
+        inputTextoControllers.addAll({editItem: TextEditingController()});
 
-        editItemsControllers[editItem].text =
+        inputTextoControllers[editItem].text =
             widget.selectedItem.childDetails[editItem];
-        print(widget.selectedItem.childDetails);
         editItems.add(
           TextFormField(
             decoration: InputDecoration(labelText: editItem),
-            controller: editItemsControllers[editItem],
+            controller: inputTextoControllers[editItem],
           ),
         );
       }
 
       // DropDown button -> List(List(String(),...), String())
       else if (widget.selectedItem.childDetails[editItem] is List &&
-          widget.selectedItem.childDetails[editItem].length == 2 &&
+          widget.selectedItem.childDetails[editItem].length == 3 &&
           (widget.selectedItem.childDetails[editItem][1] is String ||
               widget.selectedItem.childDetails[editItem][1] == null)) {
         String _chosenValue;
-        print("EXECUTADO!");
 
         if (widget.selectedItem.childDetails[editItem][1] != null)
           _chosenValue = widget.selectedItem.childDetails[editItem][1];
@@ -100,40 +101,71 @@ class _EditItemPaneState extends State<EditItemPane> {
           _chosenValue = editItemsValues[editItem];
         else
           _chosenValue = widget.selectedItem.childDetails[editItem][0][0];
-        print(_chosenValue);
         editItemsValues.addAll({editItem: _chosenValue});
         editItems.add(
-          DropdownButton<String>(
-            value: editItemsValues[editItem],
-            icon: Icon(Icons.arrow_downward),
-            iconSize: 24,
-            elevation: 16,
-            onChanged: (String newValue) {
-              setState(() {
-                print("old");
-                print(editItemsValues);
-                editItemsValues[editItem] = newValue;
-                print(editItemsValues);
-              });
-            },
-            items: widget.selectedItem.childDetails[editItem][0]
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text(
+                editItem,
+                textAlign: TextAlign.left,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              DropdownButton<String>(
+                value: editItemsValues[editItem],
+                icon: Icon(Icons.arrow_downward),
+                iconSize: 24,
+                elevation: 16,
+                onChanged: (String newValue) {
+                  setState(() {
+                    editItemsValues[editItem] = newValue;
+                  });
+                },
+                items: widget.selectedItem.childDetails[editItem][0].keys
+                    .toList()
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              )
+            ],
           ),
-        ); // editItem.add
+        );
+
+        if (_chosenValue != null) {
+          int protocolOptionIndex = 0;
+          for (var protocolOption in widget.selectedItem.childDetails[editItem]
+              [0][_chosenValue]) {
+            dropDownOptionsControllers
+                .addAll({protocolOption: TextEditingController()});
+
+            String controllerTextValue = "";
+            if (protocolOptionIndex <
+                widget.selectedItem.childDetails[editItem][2].length) {
+              controllerTextValue = widget.selectedItem.childDetails[editItem]
+                  [2][protocolOptionIndex];
+              protocolOptionIndex++;
+            }
+
+            dropDownOptionsControllers[protocolOption].text =
+                controllerTextValue;
+
+            editItems.add(
+              TextFormField(
+                decoration: InputDecoration(labelText: protocolOption),
+                controller: dropDownOptionsControllers[protocolOption],
+              ),
+            );
+          }
+        }
       }
 
       // Lista de input de texto automatico -> Lista
       else if (widget.selectedItem.childDetails[editItem] == null ||
           (widget.selectedItem.childDetails[editItem] is List &&
               widget.selectedItem.childDetails[editItem][0] is List)) {
-        print("LISTA INPUT AUTOMATICO");
-        print(widget.selectedItem.childDetails[editItem]);
-
         if (widget.selectedItem.childDetails[editItem] == null) {
           inputAutomaticoControllers.addAll({editItem: {}});
           for (int i in widget.itemsPositions[widget.selectedItemID]
@@ -151,12 +183,8 @@ class _EditItemPaneState extends State<EditItemPane> {
             );
           }
         } else {
-          print("LISTA INPUT ||| ELSE |||");
-          print(widget.selectedItem.childDetails[editItem]);
-          print(inputAutomaticoControllers);
           inputAutomaticoControllers.addAll({editItem: {}});
           for (var i in widget.selectedItem.childDetails[editItem]) {
-            print(i);
             inputAutomaticoControllers[editItem]
                 .addAll({i[0]: TextEditingController()});
             inputAutomaticoControllers[editItem][i[0]].text = i[1];
@@ -177,8 +205,7 @@ class _EditItemPaneState extends State<EditItemPane> {
                 .contains(i)) {
               inputAutomaticoControllers[editItem]
                   .addAll({i: TextEditingController()});
-              inputAutomaticoControllers[editItem][i].text =
-                  "";
+              inputAutomaticoControllers[editItem][i].text = "";
 
               editItems.add(
                 TextFormField(
@@ -190,8 +217,6 @@ class _EditItemPaneState extends State<EditItemPane> {
           }
         }
       }
-
-      print(inspect(editItemsControllers));
     }
 
     return Container(
