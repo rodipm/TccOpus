@@ -15,31 +15,31 @@ class EditItemPane extends StatefulWidget {
 
 class _EditItemPaneState extends State<EditItemPane> {
   List<Widget> editItems = [];
-  Map<String, TextEditingController> inputTextoControllers = {};
-  Map<String, dynamic> dropDownOptionsControllers = {};
-  Map<String, dynamic> inputAutomaticoControllers = {};
+
+  // Estruturas de dados especificas para diferentes tipos de elementos
+  // Message e MessageEndpoint
+  Map<String, dynamic> messageControllers = {};
   Map<String, dynamic> editItemsValues = {};
+
+  // ContentBasedRouter
+  Map<String, dynamic> contentBasedRouterControllers = {};
+
+  // MessageFilter
+  Map<String, dynamic> messageFilterControllers = {};
 
   Map<String, dynamic> generateNewItemDetails() {
     Map<String, dynamic> newItemDetails = {};
 
     for (String editItem in widget.selectedItem.childDetails.keys) {
-      // Input de texto -> String
-      if (widget.selectedItem.childDetails[editItem] is String)
-        newItemDetails.addAll({editItem: inputTextoControllers[editItem].text});
-
-      // DropDown button -> List(List(String(),...), String())
-      else if (widget.selectedItem.childDetails[editItem] is List &&
-          widget.selectedItem.childDetails[editItem].length == 3 &&
-          (widget.selectedItem.childDetails[editItem][1] is String ||
-              widget.selectedItem.childDetails[editItem][1] == null)) {
+      // Message e MessageEndpoint
+      if (widget.selectedItem.type == "Message" ||
+          widget.selectedItem.type == "MessageEndpoint") {
         var protocolOptions = List();
 
         if (editItemsValues[editItem] != null) {
           for (var protocolOption in widget.selectedItem.childDetails[editItem]
               [0][editItemsValues[editItem]]) {
-            protocolOptions
-                .add(dropDownOptionsControllers[protocolOption].text);
+            protocolOptions.add(messageControllers[protocolOption].text);
           }
         }
         newItemDetails.addAll({
@@ -51,15 +51,25 @@ class _EditItemPaneState extends State<EditItemPane> {
         });
       }
 
-      // Lista de input de texto automatico -> Lista
-      else if (widget.selectedItem.childDetails[editItem] == null ||
-          (widget.selectedItem.childDetails[editItem] is List &&
-              widget.selectedItem.childDetails[editItem][0] is List)) {
+      // ContentBasedRouter
+      else if (widget.selectedItem.type == "ContentBasedRouter") {
         newItemDetails.addAll({editItem: []});
-        for (var choiceTargetID in inputAutomaticoControllers[editItem].keys) {
+        for (var choiceTargetID
+            in contentBasedRouterControllers[editItem].keys) {
           newItemDetails[editItem].add([
             choiceTargetID,
-            inputAutomaticoControllers[editItem][choiceTargetID].text
+            contentBasedRouterControllers[editItem][choiceTargetID].text
+          ]);
+        }
+      }
+
+      // MessageFilter
+      else if (widget.selectedItem.type == "MessageFilter") {
+        newItemDetails.addAll({editItem: []});
+        for (var choiceTargetID in messageFilterControllers[editItem].keys) {
+          newItemDetails[editItem].add([
+            choiceTargetID,
+            messageFilterControllers[editItem][choiceTargetID].text
           ]);
         }
       }
@@ -70,29 +80,11 @@ class _EditItemPaneState extends State<EditItemPane> {
   @override
   Widget build(BuildContext context) {
     this.editItems = [];
-    // this.inputTextoControllers = {};
 
-    // Input de texto -> String
     for (String editItem in widget.selectedItem.childDetails.keys) {
-      // Input de texto -> ""
-      if (widget.selectedItem.childDetails[editItem] is String) {
-        inputTextoControllers.addAll({editItem: TextEditingController()});
-
-        inputTextoControllers[editItem].text =
-            widget.selectedItem.childDetails[editItem];
-        editItems.add(
-          TextFormField(
-            decoration: InputDecoration(labelText: editItem),
-            controller: inputTextoControllers[editItem],
-          ),
-        );
-      }
-
-      // DropDown button -> List(List(String(),...), String())
-      else if (widget.selectedItem.childDetails[editItem] is List &&
-          widget.selectedItem.childDetails[editItem].length == 3 &&
-          (widget.selectedItem.childDetails[editItem][1] is String ||
-              widget.selectedItem.childDetails[editItem][1] == null)) {
+      // Message e Message Endpoint
+      if (widget.selectedItem.type == "Message" ||
+          widget.selectedItem.type == "MessageEndpoint") {
         String _chosenValue;
 
         if (widget.selectedItem.childDetails[editItem][1] != null)
@@ -138,7 +130,7 @@ class _EditItemPaneState extends State<EditItemPane> {
           int protocolOptionIndex = 0;
           for (var protocolOption in widget.selectedItem.childDetails[editItem]
               [0][_chosenValue]) {
-            dropDownOptionsControllers
+            messageControllers
                 .addAll({protocolOption: TextEditingController()});
 
             String controllerTextValue = "";
@@ -149,72 +141,100 @@ class _EditItemPaneState extends State<EditItemPane> {
               protocolOptionIndex++;
             }
 
-            dropDownOptionsControllers[protocolOption].text =
-                controllerTextValue;
+            messageControllers[protocolOption].text = controllerTextValue;
 
             editItems.add(
               TextFormField(
                 decoration: InputDecoration(labelText: protocolOption),
-                controller: dropDownOptionsControllers[protocolOption],
+                controller: messageControllers[protocolOption],
               ),
             );
           }
         }
       }
 
-      // Lista de input de texto automatico -> Lista
-      else if (widget.selectedItem.childDetails[editItem] == null ||
-          (widget.selectedItem.childDetails[editItem] is List &&
-              widget.selectedItem.childDetails[editItem][0] is List)) {
+      // ContentBasedRouter
+      else if (widget.selectedItem.type == "ContentBasedRouter") {
         if (widget.selectedItem.childDetails[editItem] == null) {
-          inputAutomaticoControllers.addAll({editItem: {}});
+          contentBasedRouterControllers.addAll({editItem: {}});
           for (int i in widget.itemsPositions[widget.selectedItemID]
               ["connectsTo"]) {
-            inputAutomaticoControllers[editItem]
+            contentBasedRouterControllers[editItem]
                 .addAll({i: TextEditingController()});
-            inputAutomaticoControllers[editItem][i].text =
+            contentBasedRouterControllers[editItem][i].text =
                 widget.selectedItem.childDetails[editItem];
 
             editItems.add(
               TextFormField(
                 decoration: InputDecoration(labelText: editItem + " [$i]"),
-                controller: inputAutomaticoControllers[editItem][i],
+                controller: contentBasedRouterControllers[editItem][i],
               ),
             );
           }
         } else {
-          inputAutomaticoControllers.addAll({editItem: {}});
+          contentBasedRouterControllers.addAll({editItem: {}});
           for (var i in widget.selectedItem.childDetails[editItem]) {
-            inputAutomaticoControllers[editItem]
+            contentBasedRouterControllers[editItem]
                 .addAll({i[0]: TextEditingController()});
-            inputAutomaticoControllers[editItem][i[0]].text = i[1];
+            contentBasedRouterControllers[editItem][i[0]].text = i[1];
 
             editItems.add(
               TextFormField(
                 decoration: InputDecoration(labelText: editItem + " [${i[0]}]"),
-                controller: inputAutomaticoControllers[editItem][i[0]],
+                controller: contentBasedRouterControllers[editItem][i[0]],
               ),
             );
           }
 
           for (int i in widget.itemsPositions[widget.selectedItemID]
               ["connectsTo"]) {
-            if (!inputAutomaticoControllers[editItem]
+            if (!contentBasedRouterControllers[editItem]
                 .keys
                 .toList()
                 .contains(i)) {
-              inputAutomaticoControllers[editItem]
+              contentBasedRouterControllers[editItem]
                   .addAll({i: TextEditingController()});
-              inputAutomaticoControllers[editItem][i].text = "";
+              contentBasedRouterControllers[editItem][i].text = "";
 
               editItems.add(
                 TextFormField(
                   decoration: InputDecoration(labelText: editItem + " [$i]"),
-                  controller: inputAutomaticoControllers[editItem][i],
+                  controller: contentBasedRouterControllers[editItem][i],
                 ),
               );
             }
           }
+        }
+      }
+
+      // MessageFilter
+      else if (widget.selectedItem.type == "MessageFilter") {
+        if (widget.itemsPositions[widget.selectedItemID]["connectsTo"].length ==
+            1) {
+          messageFilterControllers.addAll({editItem: {}});
+
+          int connectsToID;
+          String textValue = "";
+          if (widget.selectedItem.childDetails[editItem] == null) {
+            connectsToID = widget.itemsPositions[widget.selectedItemID]["connectsTo"].toList()[0];
+            textValue = "";
+          } else {
+            connectsToID = widget.selectedItem.childDetails[editItem][0][0];
+            textValue = widget.selectedItem.childDetails[editItem][0][1];
+          }
+
+          messageFilterControllers[editItem]
+              .addAll({connectsToID: TextEditingController()});
+
+          messageFilterControllers[editItem][connectsToID].text = textValue;
+
+          editItems.add(
+            TextFormField(
+              decoration:
+                  InputDecoration(labelText: editItem + " [$connectsToID]"),
+              controller: messageFilterControllers[editItem][connectsToID],
+            ),
+          );
         }
       }
     }
@@ -224,6 +244,15 @@ class _EditItemPaneState extends State<EditItemPane> {
       child: Center(
         child: Column(
           children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 15, bottom: 25),
+              child: Text(widget.selectedItem.type,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center),
+            ),
             ...editItems,
             IconButton(
               icon: Icon(Icons.save),

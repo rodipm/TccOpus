@@ -115,8 +115,8 @@ class _MainCanvasState extends State<MainCanvas> {
   void selectEditItem(int id) {
     setState(() {
       editingItem = items[id];
-      this.editingItemPaneWidget =
-          EditItemPane(this.editingItem, id, this.updateItemDetails, this.itemsPositions);
+      this.editingItemPaneWidget = EditItemPane(
+          this.editingItem, id, this.updateItemDetails, this.itemsPositions);
     });
   }
 
@@ -163,26 +163,20 @@ class _MainCanvasState extends State<MainCanvas> {
       jsonItems.addAll({key.toString(): value.toJSON()});
     });
 
-    // itemsPositions.addAll(
-    //   {
-    //     MoveableStackItem.idCounter: {
-    //       "xPosition": correctedPosition.dx,
-    //       "yPosition": correctedPosition.dy,
-    //       "width": 100,
-    //       "height": 100,
-    //       "connectsTo": new Set()
-    //     }
-    //   },
-    // );
-
     for (var itemPositionKey in this.itemsPositions.keys) {
       Map<String, dynamic> parsedPositionItems = {};
-      for (var itemPositionItemKey in this.itemsPositions[itemPositionKey].keys) {
+      for (var itemPositionItemKey
+          in this.itemsPositions[itemPositionKey].keys) {
         if (itemPositionItemKey != "connectsTo")
-          parsedPositionItems.addAll({itemPositionItemKey: this.itemsPositions[itemPositionKey][itemPositionItemKey].toString()});
+          parsedPositionItems.addAll({
+            itemPositionItemKey: this
+                .itemsPositions[itemPositionKey][itemPositionItemKey]
+                .toString()
+          });
         else {
           var parsedConnectsTo = new List();
-          for (var connectsToItem in this.itemsPositions[itemPositionKey][itemPositionItemKey]) {
+          for (var connectsToItem in this.itemsPositions[itemPositionKey]
+              [itemPositionItemKey]) {
             parsedConnectsTo.add(connectsToItem.toString());
           }
           parsedPositionItems.addAll({itemPositionItemKey: parsedConnectsTo});
@@ -205,7 +199,36 @@ class _MainCanvasState extends State<MainCanvas> {
       var response = await http.post(url,
           body: json.encode(diagramPayload),
           headers: {'Content-type': 'application/json'});
-      print(response.statusCode);
+
+      print(json.decode(response.body));
+
+      TextEditingController codigoGeradoTextController = TextEditingController();
+      codigoGeradoTextController.text = json.decode(response.body)["routes"].join("\n") + "\n";
+  
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // retorna um objeto do tipo Dialog
+          return AlertDialog(
+            title: Text("Código Gerado"),
+            content: TextField(
+              autofocus: true,
+              maxLines: 8,
+              controller: codigoGeradoTextController,
+              
+            ),
+            actions: <Widget>[
+              // define os botões na base do dialogo
+              FlatButton(
+                child: Text("Fechar"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     } catch (e) {
       print(e);
     }

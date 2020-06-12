@@ -49,10 +49,12 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
             return generated_code + ".choice()" + "".join(choices) + ".end()"
 
         if current_node['type'] == 'MessageFilter':
-            new_generated_code = ".filter()"
 
-            for child_node_number in current_node['connectsTo']:
-                return generated_code + new_generated_code + generate_code(items_info, child_node_number, generated_code, new_visited_nodes)
+            [child_node_number, choice] = current_node['choices'][0]
+
+            new_generated_code = f".filter({choice})"
+
+            return generated_code + new_generated_code + generate_code(items_info, child_node_number, generated_code, new_visited_nodes)
 
         if current_node['type'] == "MessageEndpoint":
             uri = ""

@@ -25,9 +25,11 @@ def send_diagram():
         items_info[itemKey]["connectsTo"] = positions[itemKey]['connectsTo']
 
     print("items info", items_info)
-    print(create_routes(items_info))
+    
+    routes = create_routes(items_info)
+    print(routes)
 
-    return 'OK', 200
+    return {"routes": routes}, 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
