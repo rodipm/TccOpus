@@ -21,13 +21,16 @@ class MessageEndpoint {
 
   // final Offset position;
   MessageEndpoint(this.width, this.height) {
-    childContent = Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/MessageEndpoint.png'),
-          fit: BoxFit.fill,
+    childContent = Tooltip(
+      message: "Message Endpoint",
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/MessageEndpoint.png'),
+            fit: BoxFit.fill,
+          ),
         ),
       ),
     );

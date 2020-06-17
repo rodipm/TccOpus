@@ -1,3 +1,4 @@
+import 'package:EIPEditor/Commom/PredicateEditor.dart';
 import 'package:EIPEditor/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
 
@@ -211,7 +212,9 @@ class _EditItemPaneState extends State<EditItemPane> {
                 controller: contentBasedRouterControllers[editItem][i[0]],
               ),
             );
+            
           }
+         
 
           for (int i in widget.itemsPositions[widget.selectedItemID]
               ["connectsTo"]) {
@@ -232,6 +235,8 @@ class _EditItemPaneState extends State<EditItemPane> {
             }
           }
         }
+        editItems.add(PredicateEditor());
+
       }
 
       // MessageFilter

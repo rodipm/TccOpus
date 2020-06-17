@@ -8,18 +8,29 @@ class Message {
 
   Widget childContent;
   Map<String, dynamic> childDetails = {
-    "protocol": [{"direct": ["name"], "http": ["hostname", "port"], "ftp": ["host", "port", "filename"]}, null, []]
+    "protocol": [
+      {
+        "direct": ["name"],
+        "http": ["hostname", "port"],
+        "ftp": ["host", "port", "filename"]
+      },
+      null,
+      []
+    ]
   };
 
   // final Offset position;
   Message(this.width, this.height) {
-    childContent = Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/Message.png'),
-          fit: BoxFit.fill,
+    childContent = Tooltip(
+      message: "Message",
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/Message.png'),
+            fit: BoxFit.fill,
+          ),
         ),
       ),
     );

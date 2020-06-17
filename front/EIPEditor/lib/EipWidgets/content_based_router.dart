@@ -13,13 +13,16 @@ class ContentBasedRouter {
 
   // final Offset position;
   ContentBasedRouter(this.width, this.height) {
-    childContent = Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/ContentBasedRouter.png'),
-          fit: BoxFit.fill,
+    childContent = Tooltip(
+      message: "Content Based Router",
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/ContentBasedRouter.png'),
+            fit: BoxFit.fill,
+          ),
         ),
       ),
     );
