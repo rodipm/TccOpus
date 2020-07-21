@@ -4,6 +4,7 @@ from flask_cors import CORS
 from copy import deepcopy
 import json
 from .code_generator import create_routes
+from .parser import parse
 
 app = Flask(__name__)
 CORS(app)
@@ -25,10 +26,15 @@ def send_diagram():
         items_info[itemKey]["connectsTo"] = positions[itemKey]['connectsTo']
 
     print("items info", items_info)
-    
-    routes = create_routes(items_info)
-    print(routes)
 
+    # Parse
+    if (parse(items_info)):
+        print("Parser OK")
+        # Generate Code
+        routes = create_routes(items_info)
+        print(routes)
+    else:
+        routes = {}
     return {"routes": routes}, 200
 
 if __name__ == '__main__':
