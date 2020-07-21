@@ -1,12 +1,12 @@
+import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:http/http.dart' as http;
 import 'package:EIPEditor/EditItemPane/edit_item_pane.dart';
 import 'package:EIPEditor/LeftSidePane/left_side_pane.dart';
 import 'package:EIPEditor/Lines/lines.dart';
 import 'package:EIPEditor/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
+import 'dart:html' as html;
 
 void main() => runApp(MyApp());
 
@@ -196,40 +196,44 @@ class _MainCanvasState extends State<MainCanvas> {
     print("Sending request...");
     final url = "http://localhost:5000/send_diagram";
     try {
+
+      // var download = await Dio().get("http://localhost:5000/download_project");
+
       // var response = await http.post(url, body: diagramPayload);
       var response = await http.post(url,
           body: json.encode(diagramPayload),
           headers: {'Content-type': 'application/json'});
+      var fileName = json.decode(response.body)["fileName"];
+      print(fileName);
+      html.window.open("http://localhost:5000/download_project?fileName=${fileName}", "");
 
-      print(json.decode(response.body));
-
-      TextEditingController codigoGeradoTextController = TextEditingController();
-      codigoGeradoTextController.text = json.decode(response.body)["routes"].join("\n") + "\n";
+      // TextEditingController codigoGeradoTextController = TextEditingController();
+      // codigoGeradoTextController.text = json.decode(response.body)["routes"].join("\n") + "\n";
   
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // retorna um objeto do tipo Dialog
-          return AlertDialog(
-            title: Text("Código Gerado"),
-            content: TextField(
-              autofocus: true,
-              maxLines: 30,
-              controller: codigoGeradoTextController,
+      // showDialog(
+      //   context: context,
+      //   builder: (BuildContext context) {
+      //     // retorna um objeto do tipo Dialog
+      //     return AlertDialog(
+      //       title: Text("Código Gerado"),
+      //       content: TextField(
+      //         autofocus: true,
+      //         maxLines: 30,
+      //         controller: codigoGeradoTextController,
               
-            ),
-            actions: <Widget>[
-              // define os botões na base do dialogo
-              FlatButton(
-                child: Text("Fechar"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      //       ),
+      //       actions: <Widget>[
+      //         // define os botões na base do dialogo
+      //         FlatButton(
+      //           child: Text("Fechar"),
+      //           onPressed: () {
+      //             Navigator.of(context).pop();
+      //           },
+      //         ),
+      //       ],
+      //     );
+      //   },
+      // );
     } catch (e) {
       print(e);
     }

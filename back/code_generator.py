@@ -27,8 +27,8 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
             protocol_name = current_node['protocol'][1]
             protocol_opts = current_node['protocol'][2]
 
-            if protocol_name == "direct":
-                uri = f"direct:{protocol_opts[0]}"
+            if protocol_name == "file":
+                uri = f"file:{protocol_opts[0]}"
             elif protocol_name == "http":
                 uri = f"http://{protocol_opts[0]}:{protocol_opts[1]}"
             elif protocol_name == "ftp":
@@ -71,8 +71,8 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
             protocol_name = current_node['protocol'][1]
             protocol_opts = current_node['protocol'][2]
 
-            if protocol_name == "direct":
-                uri = f"direct:{protocol_opts[0]}"
+            if protocol_name == "file":
+                uri = f"file:{protocol_opts[0]}"
             elif protocol_name == "http":
                 uri = f"http://{protocol_opts[0]}:{protocol_opts[1]}"
             elif protocol_name == "ftp":

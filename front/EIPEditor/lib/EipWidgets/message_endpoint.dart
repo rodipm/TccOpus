@@ -10,7 +10,7 @@ class MessageEndpoint {
   Map<String, dynamic> childDetails = {
     "protocol": [
       {
-        "direct": ["name"],
+        "file": ["dir"],
         "http": ["hostname", "port"],
         "ftp": ["host", "port", "filename"]
       },
