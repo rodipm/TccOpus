@@ -32,15 +32,13 @@ def send_diagram():
     if (parse(items_info)):
         print("Parser OK")
         # Generate Code
-        routes = create_routes(items_info)
-        print(routes)
+        routes, dependencies = create_routes(items_info)
+        print(routes, dependencies)
     else:
         routes = {}
 
-    zip_project = create_project("com.opus", "projetoAutomatico", routes)
-    return json.dumps({"fileName": zip_project}), 200
-    # return send_file(zip_project, attachment_filename='capsule.zip', as_attachment=True), 200
-
+    zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
+    return json.dumps({"routes": routes, "fileName": zip_project}), 200
     # return json.dumps({"routes": routes}), 200
 
 @app.route('/download_project', methods=['GET'])

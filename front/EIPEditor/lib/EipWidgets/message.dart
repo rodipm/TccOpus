@@ -8,7 +8,7 @@ class Message {
 
   Widget childContent;
   Map<String, dynamic> childDetails = {
-    "protocol": [{"file": ["dir"], "http": ["hostname", "port"], "ftp": ["host", "port", "filename"]}, null, []]
+    "protocol": [{"file": ["dir"], "http": ["hostname", "query parameters"], "ftp": ["host", "port", "filename"]}, null, []]
   };
 
   // final Offset position;

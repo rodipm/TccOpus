@@ -4,8 +4,30 @@ import zipfile
 from io import BytesIO
 import uuid
 
-def prepare_files(artifact_id, group_id, routes):
-    pom_file = r"""<?xml version="1.0" encoding="UTF-8"?>
+dependencies_list = {
+    "http": """ <dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-http</artifactId>
+    </dependency>
+""",
+}
+
+def prepare_files(artifact_id, group_id, routes, dependencies):
+
+    prepared_routes = ""
+    for route in routes:
+        prepared_routes += route + ";\n"
+
+    user_deps = []
+    for dep in dependencies:
+        if dep in dependencies_list.keys():
+            user_deps.append(dependencies_list[dep])
+    
+    user_deps = "\n".join(user_deps)
+
+    print("USER DEPS", user_deps)
+
+    pom_file = """<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -62,6 +84,9 @@ def prepare_files(artifact_id, group_id, routes):
     <artifactId>camel-test</artifactId>
     <scope>test</scope>
     </dependency>
+
+    %s
+
 </dependencies>
 
 <build>
@@ -101,8 +126,9 @@ def prepare_files(artifact_id, group_id, routes):
 </build>
 
 </project>
-    """
+    """%(user_deps)
 
+    print(pom_file)
     log_properties_file = """
 appender.out.type = Console
 appender.out.name = out
@@ -115,6 +141,9 @@ rootLogger.appenderRef.out.ref = out
     sample_route_file = """package %s.routes;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 
 public class SampleRoute extends RouteBuilder {
 
@@ -124,7 +153,7 @@ public class SampleRoute extends RouteBuilder {
     }
     
 }
-    """ % (artifact_id, ";\n".join(routes))
+    """ % (artifact_id, prepared_routes)
 
     launch_app_file = """package %s;
 
@@ -144,9 +173,9 @@ public class LaunchApp {
     return (pom_file, log_properties_file, sample_route_file, launch_app_file)
 
 
-def create_project(artifact_id, group_id, routes):
+def create_project(artifact_id, group_id, routes, dependencies):
     (pom_file, log_properties_file, sample_route_file, launch_app_file) = prepare_files(
-        artifact_id, group_id, routes)
+        artifact_id, group_id, routes, dependencies)
 
     artifact_id_sep_path = artifact_id.split(".")
 

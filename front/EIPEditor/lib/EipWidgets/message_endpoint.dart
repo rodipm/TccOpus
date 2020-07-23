@@ -11,7 +11,7 @@ class MessageEndpoint {
     "protocol": [
       {
         "file": ["dir"],
-        "http": ["hostname", "port"],
+        "http": ["hostname", "query parameters"],
         "ftp": ["host", "port", "filename"]
       },
       null,
