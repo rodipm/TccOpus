@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:EIPEditor/MoveableStackItem/movable_stack_item.dart';
+import 'package:front/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
 
 class EditItemPane extends StatefulWidget {

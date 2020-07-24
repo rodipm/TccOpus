@@ -1,1 +1,3 @@
-Livros 
+.*
+back/projetos_gerados
+__pycache__

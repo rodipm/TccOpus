@@ -3,9 +3,9 @@ from flask_cors import CORS
 from copy import deepcopy
 import json
 import os
-from .code_generator import create_routes
-from .parser import parse
-from .project_generator import create_project
+from code_generation.code_generator import create_routes
+from code_generation.parser import parse
+from code_generation.project_generator import create_project
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +21,9 @@ def send_diagram():
 
     items = request.json['items']
     positions = request.json['positions']
+
+    print("ITEMS", items)
+    print("POSITIONS", positions)
 
     for itemKey in items:
         items_info[itemKey] = items[itemKey]
@@ -39,7 +42,6 @@ def send_diagram():
 
     zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
     return json.dumps({"routes": routes, "fileName": zip_project}), 200
-    # return json.dumps({"routes": routes}), 200
 
 @app.route('/download_project', methods=['GET'])
 def download_project():

@@ -1,5 +1,5 @@
-import 'package:EIPEditor/EipWidgets/message_endpoint.dart';
-import 'package:EIPEditor/EipWidgets/polling_consumer.dart';
+import 'package:front/EipWidgets/message_endpoint.dart';
+import 'package:front/EipWidgets/polling_consumer.dart';
 import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {

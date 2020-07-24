@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:EIPEditor/EditItemPane/edit_item_pane.dart';
-import 'package:EIPEditor/LeftSidePane/left_side_pane.dart';
-import 'package:EIPEditor/Lines/lines.dart';
-import 'package:EIPEditor/MoveableStackItem/movable_stack_item.dart';
+import 'package:front/EditItemPane/edit_item_pane.dart';
+import 'package:front/LeftSidePane/left_side_pane.dart';
+import 'package:front/Lines/lines.dart';
+import 'package:front/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
