@@ -8,9 +8,6 @@
 ### Textos sobre Camel
 [Camel/README.md](sandbox/Camel/README.md)
 
-### Driver Google
-[Driver](https://drive.google.com/drive/folders/1BW5PAIGKZ8l2pLqXlz17CPggVUg2r5Z9)
-
 # Documentação Preliminar
 
 ## Estruturação do Projeto
