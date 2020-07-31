@@ -99,6 +99,10 @@ Arquivo principal do servidor, responsável pela implementação dos endpoints d
 
 Este diretório contém o código responsável pala função de geração de código por completo, isto é: Parse da entrada - `parser.py`, geração do código das rotas - `code_generator.py` e geração dos projetos Apache Camel - `project_generator.py`.
 
++ **/eip_components**:
+
+Contém as classes representantes dos elementos eip contendo as funcionalidades necessárias para o parse e geração de código
+
 + **parser.py**:
 
 Responsável pela verificação da estrutura do diagrama criado pelo usuário.
@@ -118,3 +122,41 @@ Consome os códigos das rotas e dependências geradas pelo `code_generator` para
 ### /projetos_gerados
 
 Diretório contendo os arquivos .zip dos projetos gerados pelo sistema. Estes arquivos servem o propósito para serem disponibilizados para download, e devem ser removidos posteriormente (TODO).
+
+
+# Componentes Eip
+
+Este projeto atua com um editor de diagramas de fluxo de integração implementando elementos EIP contemplados pelo Apache Camel. Para o desenvolvimento e integração de um componente EIP ao projeto, deve-se seguir algumas convenções.
+
+Cada elemento deve possuir uma pasta com seu nome no formato 'Camel Case' dentro do diretório `ComponentesEip` na raíz do projeto, na qual serão definidas as suas funcionalidades e configurações.
+
+Um componente EIP é representado neste projeto da seguinte forma:
+    + Definição das configurações
+    + Definição da forma de apresentação do menu de configuração
+    + Definição de aparência
+    + Definição de parse
+    + Ícone
+
+Essas definições são consumidas pelo back e front-end para processar o componente EIP de forma correta.
+
+## Estruturação de um Componente EIP
+
+A forma de adicionar um elemento EIP a este projeto se baseia na criação de seu diretório contendo 3 arquivos. Para fins de exemplificação imagina-se um cenário no qual deseja-se adicionar o componente 'Content Based Router'.
+
+Cria-se um diretório dentro de `ComponentesEip` com o nome 'ContentBasedRouter'. Dentro deste diretório deve-se criar os seguintes arquivos:
+
++ `content_based_router.py`
+
+Arquivo python contendo uma classe chamada 'ContentBasedRouter' que extende e implementa a classe abstrada 'EipComponent'. Esta classe deve implementar o método parse utilizado pelo gerador de código.
+
++ `content_based_router.dart`
+
+Arquivo .dart contendo a definição do componente, incluindo sua aparência e possíveis configurações. Estas configurações são consumidas no arquivo python responsável pelo parse do componente.
+
++ `ContentBasedRouter.png`
+
+ícone do componente
+
+## Geração de um componente de forma automática
+
+Após estruturar o componente, pode-se executar o script python `gerar_componentes.py` localizado no diretório raiz do projeto para que os arquivos sejam adicionados aos diretórios corretos dentro do projeto, além de gerar arquivos de import automaticamente.
