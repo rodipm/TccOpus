@@ -4,8 +4,8 @@ class MoveableStackItem extends StatefulWidget {
   static int idCounter = 0;
 
   final String type;
-  final Widget childContents;
-  final Map<String, dynamic> childDetails;
+  final Widget componentWidgets;
+  final Map<String, dynamic> componentConfigs;
 
   final Function clickHandler;
   final Function updatePositionHandler;
@@ -17,26 +17,26 @@ class MoveableStackItem extends StatefulWidget {
   final int id;
 
   MoveableStackItem(this.type, this.clickHandler, this.updatePositionHandler,
-      this.editHandler, this.childContents, this.childDetails, this.position)
+      this.editHandler, this.componentWidgets, this.componentConfigs, this.position)
       : id = MoveableStackItem.idCounter,
         selected = false;
 
-  MoveableStackItem.update({MoveableStackItem oldItem, bool isSelected, Map<String, dynamic> newChildDetails})
+  MoveableStackItem.update({MoveableStackItem oldItem, bool isSelected, Map<String, dynamic> newcomponentConfigs})
       : type = oldItem.type,
-        childContents = oldItem.childContents,
+        componentWidgets = oldItem.componentWidgets,
         clickHandler = oldItem.clickHandler,
         updatePositionHandler = oldItem.updatePositionHandler,
         editHandler = oldItem.editHandler,
         position = oldItem.position,
         id = oldItem.id,
-        childDetails = newChildDetails != null ? newChildDetails : oldItem.childDetails,
+        componentConfigs = newcomponentConfigs != null ? newcomponentConfigs : oldItem.componentConfigs,
         selected = isSelected != null ? isSelected : oldItem.selected;
 
   Map<String, dynamic> toJSON() {
     return {
       "id": this.id.toString(),
       "type": this.type.toString(),
-      ...this.childDetails,
+      ...this.componentConfigs,
     };
   }
   static void incrementIdCounter() {
@@ -87,7 +87,7 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
             });
             widget.updatePositionHandler(widget.id, xPosition, yPosition);
           },
-          child: widget.childContents,
+          child: widget.componentWidgets,
         ),
       ),
     );

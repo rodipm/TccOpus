@@ -18,7 +18,7 @@ class _EditItemPaneState extends State<EditItemPane> {
   Map<String, dynamic> generateNewItemDetails() {
     Map<String, dynamic> newItemDetails = {};
     print(editItemsControllers);
-    for (String editItem in widget.selectedItem.childDetails.keys) {
+    for (String editItem in widget.selectedItem.componentConfigs.keys) {
       newItemDetails.addAll({editItem: editItemsControllers[editItem].text});
     }
     return newItemDetails;
@@ -28,11 +28,11 @@ class _EditItemPaneState extends State<EditItemPane> {
   Widget build(BuildContext context) {
     this.editItems = [];
     this.editItemsControllers = {};
-    for (String editItem in widget.selectedItem.childDetails.keys) {
+    for (String editItem in widget.selectedItem.componentConfigs.keys) {
       editItemsControllers.addAll({editItem: TextEditingController()});
       editItemsControllers[editItem].text =
-          widget.selectedItem.childDetails[editItem];
-      print(widget.selectedItem.childDetails);
+          widget.selectedItem.componentConfigs[editItem];
+      print(widget.selectedItem.componentConfigs);
       editItems.add(
         TextFormField(
           decoration: InputDecoration(labelText: editItem),

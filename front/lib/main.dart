@@ -67,8 +67,11 @@ class _MainCanvasState extends State<MainCanvas> {
           addIdToConnect,
           updateItemPosition,
           selectEditItem,
-          item.childContent,
-          item.childDetails,
+          item.componentWidget,
+          item.componentConfigs,
+          item.componentConfigControllers,
+          item.updateConfigs,
+          item.buildEditPane,
           correctedPosition);
       items.addAll({_newItem.id: _newItem});
 
@@ -104,13 +107,14 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   // Atualiza as configurações atuais do elemento EIP
-  void updateItemDetails(int id, Map<String, dynamic> _newChildDetails) {
+  void updateItemDetails(int id, Map<String, dynamic> _newcomponentConfigs, Map<String, dynamic> _newcomponentConfigControllers) {
     setState(() {
       MoveableStackItem oldItem = items[id];
-      print(oldItem.childDetails);
+      print(oldItem.componentConfigs);
       items[id] = MoveableStackItem.update(
         oldItem: oldItem,
-        newChildDetails: _newChildDetails,
+        newcomponentConfigs: _newcomponentConfigs,
+        newcomponentConfigControllers: _newcomponentConfigControllers,
       );
       editingItem = null;
       editingItemPaneWidget = null;

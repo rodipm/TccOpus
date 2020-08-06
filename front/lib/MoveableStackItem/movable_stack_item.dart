@@ -4,8 +4,11 @@ class MoveableStackItem extends StatefulWidget {
   static int idCounter = 0;
 
   final String type;
-  final Widget childContents;
-  final Map<String, dynamic> childDetails;
+  final Widget componentWidgets;
+  final Map<String, dynamic> componentConfigs;
+  final Map<String, dynamic> componentConfigControllers;
+  final Function updateConfigs;
+  final Function buildEditPane;
 
   final Function clickHandler;
   final Function updatePositionHandler;
@@ -16,29 +19,50 @@ class MoveableStackItem extends StatefulWidget {
 
   final int id;
 
-  MoveableStackItem(this.type, this.clickHandler, this.updatePositionHandler,
-      this.editHandler, this.childContents, this.childDetails, this.position)
+  MoveableStackItem(
+      this.type,
+      this.clickHandler,
+      this.updatePositionHandler,
+      this.editHandler,
+      this.componentWidgets,
+      this.componentConfigs,
+      this.componentConfigControllers,
+      this.updateConfigs,
+      this.buildEditPane,
+      this.position)
       : id = MoveableStackItem.idCounter,
         selected = false;
 
-  MoveableStackItem.update({MoveableStackItem oldItem, bool isSelected, Map<String, dynamic> newChildDetails})
+  MoveableStackItem.update(
+      {MoveableStackItem oldItem,
+      bool isSelected,
+      Map<String, dynamic> newcomponentConfigs,
+      Map<String, dynamic> newcomponentConfigControllers})
       : type = oldItem.type,
-        childContents = oldItem.childContents,
+        componentWidgets = oldItem.componentWidgets,
         clickHandler = oldItem.clickHandler,
         updatePositionHandler = oldItem.updatePositionHandler,
         editHandler = oldItem.editHandler,
         position = oldItem.position,
         id = oldItem.id,
-        childDetails = newChildDetails != null ? newChildDetails : oldItem.childDetails,
+        componentConfigs = newcomponentConfigs != null
+            ? newcomponentConfigs
+            : oldItem.componentConfigs,
+        componentConfigControllers = newcomponentConfigControllers != null
+            ? newcomponentConfigControllers
+            : oldItem.componentConfigControllers,
+        updateConfigs = oldItem.updateConfigs,
+        buildEditPane = oldItem.buildEditPane,
         selected = isSelected != null ? isSelected : oldItem.selected;
 
   Map<String, dynamic> toJSON() {
     return {
       "id": this.id,
       "type": this.type,
-      ...this.childDetails,
+      ...this.componentConfigs,
     };
   }
+
   static void incrementIdCounter() {
     MoveableStackItem.idCounter++;
   }
@@ -87,7 +111,7 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
             });
             widget.updatePositionHandler(widget.id, xPosition, yPosition);
           },
-          child: widget.childContents,
+          child: widget.componentWidgets,
         ),
       ),
     );

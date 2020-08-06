@@ -6,14 +6,14 @@ class SampleEIP {
   final double width;
   final double height;
 
-  Widget childContent;
-  Map<String, dynamic> childDetails = {
+  Widget componentWidget;
+  Map<String, dynamic> componentConfigs = {
     "fileName": null,
   };
 
   // final Offset position;
   SampleEIP(this.width, this.height) {
-    childContent = Container(
+    componentWidget = Container(
       width: width,
       height: height,
       color: Colors.red,
@@ -34,11 +34,11 @@ class SampleEIP {
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: childContent,
+          feedback: componentWidget,
           onDraggableCanceled: (velocity, offset) {
             insertNewEipItem(this, offset);
           },
-          child: childContent),
+          child: componentWidget),
     );
   }
 }

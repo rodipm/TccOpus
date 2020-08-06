@@ -46,7 +46,7 @@ Responsável pela organização dos elementos do front-end (widgets) na tela e c
 
 Cada elemento EIP que pode ser adicionado a lista de elementos arrastáveis e editáveis deve ser inserido neste diretório. 
 
-Eles são representados como classes dart contendo tipo, childDetails (corresponde as possíveis configurações deste elemento) e childContent (representando widgets do Flutter que representam o elemento visualmente). 
+Eles são representados como classes dart contendo tipo, componentConfigs (corresponde as possíveis configurações deste elemento) e componentWidget (representando widgets do Flutter que representam o elemento visualmente). 
 
 Estes elementos seguem todos uma forma semelhante que pode ser observada nos arquivos. Em especial no arquivo `sample_eip.dart`.
 
@@ -149,9 +149,232 @@ Cria-se um diretório dentro de `ComponentesEip` com o nome 'ContentBasedRouter'
 
 Arquivo python contendo uma classe chamada 'ContentBasedRouter' que extende e implementa a classe abstrada 'EipComponent'. Esta classe deve implementar o método parse utilizado pelo gerador de código.
 
+```python
+from .eip_component import EipComponent
+from copy import deepcopy
+
+class ContentBasedRouter(EipComponent):
+    def parse(self, generate_code, items_info, current_node_number, current_node, generated_code, visited_nodes, dependencies):
+        new_visited_nodes = deepcopy(visited_nodes)
+        new_dependencies = deepcopy(dependencies)
+
+        choices = []
+        for [child_node_number, choice] in current_node['choices']:
+            if choice:
+                rec_code, deps = generate_code(
+                    items_info, child_node_number, generated_code, new_visited_nodes, dependencies)
+                new_dependencies.update(deps)
+                choices.append(f"\n\t.when({choice})\n\t\t" + rec_code)
+            else:
+                rec_code, deps = generate_code(
+                    items_info, child_node_number, generated_code, new_visited_nodes, dependencies)
+                new_dependencies.update(deps)
+                choices.append(f"\n\t.otherwise()\n\t\t" + rec_code)
+
+        return (generated_code + "\n.choice()" + "".join(choices) + "\n.end()", new_dependencies)
+
+```
+
 + `content_based_router.dart`
 
-Arquivo .dart contendo a definição do componente, incluindo sua aparência e possíveis configurações. Estas configurações são consumidas no arquivo python responsável pelo parse do componente.
+Arquivo .dart contendo a definição da classe do componente, incluindo sua aparência e possíveis configurações. Estas configurações são consumidas no arquivo python responsável pelo parse do componente.
+
+Um componente deve conter em sua classe os seguintes metodos e atributos:
++ final String type = "TipoDoComponente";
++ final String subType = "CategoriaDoComponente";
++ final double width;
++ final double height;
++ Widget componentWidget;
++ Map<String, dynamic> componentConfigs = {// Configurações do componente};
++ Map<String, dynamic> componentConfigControllers = {// Controladores de input do componente};
++ Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {// Logica para atualizar as configuracões do componente}
++ List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions, config, configControllers, editItems, baseWidget) { // Lógica de apresentação das configuraçoes do componente no menu de edição }
++ Construtor
++ Icon
+
+    Exemplo de classe para utilizar como base:
+
+```dart
+import 'package:flutter/material.dart';
+
+class SampleComponent {
+  final String type = "SampleComponent";
+  final String subType = "CategoriaDoComponente";
+
+  final double width;
+  final double height;
+
+  Widget componentWidget;
+  Map<String, dynamic> componentConfigs = {
+      // Configurações do componente
+  };
+
+  Map<String, dynamic> componentConfigControllers = {
+    // Controladores de input do componente
+  };
+
+  Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
+      // Logica para atualizar as configuracões do componente
+  }
+
+  List<Widget> buildEditPane(
+      selectedItem, selectedItemID, itemsPositions, config, configControllers, editItems, baseWidget) {
+    
+    // Lógica de apresentação das configuraçoes do componente no menu de edição
+    return editItems;
+  }
+
+  // Construtor do componente
+  SampleComponent(this.width, this.height) {
+    componentWidget = Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/SampleComponent.png'),
+          fit: BoxFit.fill,
+        ),
+      ),
+    );
+  }
+
+  Widget icon(Function insertNewEipItem) {
+    return SizedBox(
+      width: 100,
+      child: Draggable(
+          feedback: componentWidget,
+          onDraggableCanceled: (velocity, offset) {
+            insertNewEipItem(this, offset);
+          },
+          child: componentWidget),
+    );
+  }
+}
+
+```
+
+
+Exemplo do ContentBasedRouter
+
+```dart
+import 'package:flutter/material.dart';
+
+class ContentBasedRouter {
+  final String type = "ContentBasedRouter";
+  final String subType = "MessageRouting";
+  final double width;
+  final double height;
+
+  Widget componentWidget;
+  Map<String, dynamic> componentConfigs = {
+    "choices": null,
+  };
+
+  Map<String, dynamic> componentConfigControllers = {
+    "contentBasedRouterControllers": {},
+  };
+
+  Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
+    Map<String, dynamic> newComponentConfigs = {};
+    newComponentConfigs.addAll({config: []});
+
+    for (var choiceTargetID
+        in configControllers["contentBasedRouterControllers"][config].keys) {
+      newComponentConfigs[config].add([
+        choiceTargetID,
+        configControllers["contentBasedRouterControllers"][config]
+                [choiceTargetID]
+            .text
+      ]);
+    }
+    return newComponentConfigs;
+  }
+
+  List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
+      config, configControllers, editItems, baseWidget) {
+    if (selectedItem.componentConfigs[config] == null) {
+      configControllers["contentBasedRouterControllers"].addAll({config: {}});
+      for (int i in itemsPositions[selectedItemID]["connectsTo"]) {
+        configControllers["contentBasedRouterControllers"][config]
+            .addAll({i: TextEditingController()});
+        configControllers["contentBasedRouterControllers"][config][i].text =
+            selectedItem.componentConfigs[config];
+
+        editItems.add(
+          TextFormField(
+            decoration: InputDecoration(labelText: config + " [$i]"),
+            controller: configControllers["contentBasedRouterControllers"]
+                [config][i],
+          ),
+        );
+      }
+    } else {
+      configControllers["contentBasedRouterControllers"].addAll({config: {}});
+      for (var i in selectedItem.componentConfigs[config]) {
+        configControllers["contentBasedRouterControllers"][config]
+            .addAll({i[0]: TextEditingController()});
+        configControllers["contentBasedRouterControllers"][config][i[0]].text =
+            i[1];
+
+        editItems.add(
+          TextFormField(
+            decoration: InputDecoration(labelText: config + " [${i[0]}]"),
+            controller: configControllers["contentBasedRouterControllers"]
+                [config][i[0]],
+          ),
+        );
+      }
+
+      for (int i in itemsPositions[selectedItemID]["connectsTo"]) {
+        if (!configControllers["contentBasedRouterControllers"][config]
+            .keys
+            .toList()
+            .contains(i)) {
+          configControllers["contentBasedRouterControllers"][config]
+              .addAll({i: TextEditingController()});
+          configControllers["contentBasedRouterControllers"][config][i].text =
+              "";
+
+          editItems.add(
+            TextFormField(
+              decoration: InputDecoration(labelText: config + " [$i]"),
+              controller: configControllers["contentBasedRouterControllers"]
+                  [config][i],
+            ),
+          );
+        }
+      }
+    }
+    return editItems;
+  }
+
+  ContentBasedRouter(this.width, this.height) {
+    componentWidget = Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/ContentBasedRouter.png'),
+          fit: BoxFit.fill,
+        ),
+      ),
+    );
+  }
+
+  Widget icon(Function insertNewEipItem) {
+    return SizedBox(
+      width: 100,
+      child: Draggable(
+          feedback: componentWidget,
+          onDraggableCanceled: (velocity, offset) {
+            insertNewEipItem(this, offset);
+          },
+          child: componentWidget),
+    );
+  }
+}
+
+```
 
 + `ContentBasedRouter.png`
 

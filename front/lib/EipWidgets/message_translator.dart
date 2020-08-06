@@ -1,21 +1,49 @@
 import 'package:flutter/material.dart';
 
-
-
 class MessageTranslator {
   final String type = "MessageTranslator";
+  final String subType = "MessagingSystem";
 
   final double width;
   final double height;
 
-  Widget childContent;
-  Map<String, dynamic> childDetails = {
-    "process": "public void process(Exchange exchange) {\n\tMessage in = exchange.getIn();\n\tin.setBody();\n}"
+  Widget componentWidget;
+  Map<String, dynamic> componentConfigs = {
+    "process":
+        "public void process(Exchange exchange) {\n\tMessage in = exchange.getIn();\n\tin.setBody();\n}"
   };
 
-  // final Offset position;
+  Map<String, dynamic> componentConfigControllers = {
+    "messageTranslatorControllers": {},
+  };
+
+  Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
+    return {
+      config: configControllers["messageTranslatorControllers"][config].text
+    };
+  }
+
+  List<Widget> buildEditPane(
+      selectedItem, selectedItemID, itemsPositions, config, configControllers, editItems, baseWidget) {
+    configControllers["messageTranslatorControllers"]
+        .addAll({config: TextEditingController()});
+
+    configControllers["messageTranslatorControllers"][config].text =
+        selectedItem.componentConfigs[config];
+
+    editItems.add(
+      TextFormField(
+        autofocus: true,
+        maxLines: 10,
+        // keyboardType: TextInputType.multiline,
+        controller: configControllers["messageTranslatorControllers"][config],
+      ),
+    );
+    return editItems;
+  }
+
   MessageTranslator(this.width, this.height) {
-    childContent = Container(
+    componentWidget = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
@@ -31,11 +59,11 @@ class MessageTranslator {
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: childContent,
+          feedback: componentWidget,
           onDraggableCanceled: (velocity, offset) {
             insertNewEipItem(this, offset);
           },
-          child: childContent),
+          child: componentWidget),
     );
   }
 }

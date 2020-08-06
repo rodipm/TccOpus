@@ -25,7 +25,7 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
     if current_node_number not in visited_nodes:
         # Tratamento de diferentes tipos de elementos EIP
         # Cada elemento tem sua própria forma de tratamento e gera códigos específicos
-        # Baseia-se na descrição dos childDetails da classe representante do elemento no front-end
+        # Baseia-se na descrição dos componentConfigs da classe representante do elemento no front-end
 
         current_node = items_info[str(current_node_number)]
 

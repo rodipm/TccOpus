@@ -1,10 +1,5 @@
 // Import das classes representantes dos elementos EIP (EipWidgets)
-import 'package:front/EipWidgets/message_filter.dart';
-import 'package:front/EipWidgets/message.dart';
-import 'package:front/EipWidgets/content_based_router.dart';
-import 'package:front/EipWidgets/message_endpoint.dart';
-import 'package:front/EipWidgets/message_translator.dart';
-// import 'package:front/EipWidgets/import_widgets.dart';
+import 'package:front/EipWidgets/import_widgets.dart';
 import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {
@@ -22,16 +17,13 @@ class _LeftSidePaneState extends State<LeftSidePane> {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> eipItems = {
-      "MessagingSystem": [
-        Message(100, 100).icon(widget.insertNewEipItem),
-        MessageTranslator(100, 100).icon(widget.insertNewEipItem),
-        MessageEndpoint(100, 100).icon(widget.insertNewEipItem),
-      ],
-      "MessageRouting": [
-        ContentBasedRouter(100, 100).icon(widget.insertNewEipItem),
-        MessageFilter(100, 100).icon(widget.insertNewEipItem)
-      ]
+      "MessagingSystem": [],
+      "MessageRouting": []
     };
+    for (String _key in eipWidgets.keys) {
+      var eipComponent = eipWidgets[_key];
+      eipItems[eipComponent.subType].add(eipComponent.icon(widget.insertNewEipItem));
+    }
     return Column(
       children: <Widget>[
         Container(
@@ -42,6 +34,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Text("Gerar Código"),
                 IconButton(
                   tooltip: "Gerar Código",
                   icon: Icon(
@@ -104,7 +97,6 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(Icons.expand_less),
                           Text("Message Routing"),
                         ]),
                   ),

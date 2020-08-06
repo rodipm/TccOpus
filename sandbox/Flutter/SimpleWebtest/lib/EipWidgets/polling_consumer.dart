@@ -6,14 +6,14 @@ class PollingConsumer {
   final double width;
   final double height;
 
-  Widget childContent;
-  Map<String, dynamic> childDetails = {
+  Widget componentWidget;
+  Map<String, dynamic> componentConfigs = {
     "uri": null,
   };
 
   // final Offset position;
   PollingConsumer(this.width, this.height) {
-    childContent = Container(
+    componentWidget = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
@@ -29,11 +29,11 @@ class PollingConsumer {
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: childContent,
+          feedback: componentWidget,
           onDraggableCanceled: (velocity, offset) {
             insertNewEipItem(this, offset);
           },
-          child: childContent),
+          child: componentWidget),
     );
   }
 }

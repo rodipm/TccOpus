@@ -6,14 +6,14 @@ class AnotherEip {
   final double width;
   final double height;
 
-  Widget childContent;
-  Map<String, dynamic> childDetails = {
+  Widget componentWidget;
+  Map<String, dynamic> componentConfigs = {
     "url": null,
   };
 
   // final Offset position;
   AnotherEip(this.width, this.height) {
-    childContent = Container(
+    componentWidget = Container(
       width: width,
       height: height,
       color: Colors.green,
@@ -22,7 +22,7 @@ class AnotherEip {
 
   Widget icon(Function insertNewEipItem) {
     return Draggable(
-      feedback: childContent,
+      feedback: componentWidget,
       onDraggableCanceled: (velocity, offset) {
         //print(offset);
         //print(offset.dx);
@@ -30,7 +30,7 @@ class AnotherEip {
         insertNewEipItem(this, offset);
         //print(offset);
       },
-      child: childContent
+      child: componentWidget
     );
   }
 }

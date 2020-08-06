@@ -6,10 +6,10 @@
     },
     "start": {
         "vscode": [
-            "<<ctrl+shift+'>>cd front/EIPEditor",
+            "<<ctrl+shift+`>>cd front",
             "flutter run -d chrome",
-            "<<ctrl+shift+'>>cd back",
-            "nodemon app.py"
+            "<<ctrl+shift+`>>cd back",
+            "python -m flask run --reload"
         ]
     },
     "scripts": {
