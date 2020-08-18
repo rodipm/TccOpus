@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {
   final Function insertNewEipItem;
-  final Function sendDiagramHandler;
 
-  LeftSidePane(this.insertNewEipItem, this.sendDiagramHandler);
+  LeftSidePane(this.insertNewEipItem);
   @override
   _LeftSidePaneState createState() => _LeftSidePaneState();
 }
@@ -26,26 +25,6 @@ class _LeftSidePaneState extends State<LeftSidePane> {
     }
     return Column(
       children: <Widget>[
-        Container(
-          color: Colors.black.withAlpha(90),
-          child: Container(
-            height: 50,
-            width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Gerar Código"),
-                IconButton(
-                  tooltip: "Gerar Código",
-                  icon: Icon(
-                    Icons.done,
-                  ),
-                  onPressed: () => widget.sendDiagramHandler(),
-                ),
-              ],
-            ),
-          ),
-        ),
         _eipItemsMenu(eipItems),
       ],
     );

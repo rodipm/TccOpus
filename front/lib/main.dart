@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:front/EditItemPane/edit_item_pane.dart';
 import 'package:front/LeftSidePane/left_side_pane.dart';
+import 'package:front/EditCanvasPane/edit_canvas_pane.dart';
 import 'package:front/Lines/lines.dart';
 import 'package:front/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +44,15 @@ class _MainCanvasState extends State<MainCanvas> {
   // Item atual sendo configurado ou editado
   MoveableStackItem editingItem;
 
+  // Elemenos EIP e Linhas no canvas
+  List<Widget> canvasChild = [];
+
+  // Stack de acoes efetuadas no canvas
+  List<Map<String, dynamic>> undoStack = [];
+
+  // Stack de acoes para serem refeitas no canvas
+  List<Map<String, dynamic>> redoStack = [];
+
   // Utilizado para mostrar e esconder o painel de edição de items da parte direita
   Widget editingItemPaneWidget;
 
@@ -52,14 +63,16 @@ class _MainCanvasState extends State<MainCanvas> {
   double mainCanvasSize;
   double leftSidePaneSize;
   double editPaneSize;
+  double editCanvasPaneHeight;
+  double canvasPaneHeight;
 
   // Insere novo elemento EIP na área de canvas editável
   void insertNewEipItem(dynamic item, Offset position) {
     setState(() {
-      // Correção da coordenada x da posição do elemento 
+      // Correção da coordenada x da posição do elemento
       // baseado no tamanho do painel de seleção esquerdo
-      Offset correctedPosition =
-          Offset(position.dx - leftSidePaneSize, position.dy);
+      Offset correctedPosition = Offset(
+          position.dx - leftSidePaneSize, position.dy - editCanvasPaneHeight);
 
       // Novo item a ser adicionado no canvas
       MoveableStackItem _newItem = MoveableStackItem(
@@ -87,11 +100,28 @@ class _MainCanvasState extends State<MainCanvas> {
           }
         },
       );
+      updateCanvasStacks();
+      updataCanvasChild();
     });
   }
 
+  // Remove um elemento do canvas
+  void deleteItem(int itemId) {
+    print("deleteItem");
+    setState(() {
+      this.items.remove(itemId);
+      print(this.items);
+      this.itemsPositions.remove(itemId);
+      if (this.idsToConnect.contains(itemId)) this.idsToConnect = [];
+      if (this.editingItem != null && this.editingItem.id == itemId) this.editingItem = null;
+    });
+    updateCanvasStacks();
+    updataCanvasChild();
+  }
+
   // Atualiza a posição do item na tela
-  void updateItemPosition(int id, double xPosition, double yPosition) {
+  void updateItemPosition(
+      int id, double xPosition, double yPosition, bool doUpdateCanvasStack) {
     setState(() {
       this.itemsPositions.update(
             id,
@@ -100,14 +130,20 @@ class _MainCanvasState extends State<MainCanvas> {
               "yPosition": yPosition,
               "width": item["width"],
               "height": item["height"],
-              "connectsTo": item["connectsTo"]
+              "connectsTo": Set.from(item["connectsTo"])
             },
           );
     });
+    if (doUpdateCanvasStack) {
+      print("onPanEnd");
+      updateCanvasStacks();
+    }
+    updataCanvasChild();
   }
 
   // Atualiza as configurações atuais do elemento EIP
-  void updateItemDetails(int id, Map<String, dynamic> _newcomponentConfigs, Map<String, dynamic> _newcomponentConfigControllers) {
+  void updateItemDetails(int id, Map<String, dynamic> _newcomponentConfigs,
+      Map<String, dynamic> _newcomponentConfigControllers) {
     setState(() {
       MoveableStackItem oldItem = items[id];
       print(oldItem.componentConfigs);
@@ -119,6 +155,8 @@ class _MainCanvasState extends State<MainCanvas> {
       editingItem = null;
       editingItemPaneWidget = null;
     });
+
+    updateCanvasStacks();
   }
 
   // Selects an item to be displayed on righ side pane
@@ -127,12 +165,13 @@ class _MainCanvasState extends State<MainCanvas> {
   void selectEditItem(int id) {
     setState(() {
       editingItem = items[id];
-      this.editingItemPaneWidget = EditItemPane(
-          this.editingItem, id, this.updateItemDetails, this.itemsPositions);
+      this.editingItemPaneWidget = EditItemPane(this.editingItem, id,
+          this.updateItemDetails, this.deleteItem, this.itemsPositions);
     });
+    updataCanvasChild();
   }
 
-  // Ativa e desativa a borda de indicação 
+  // Ativa e desativa a borda de indicação
   // de item selecionado
   void toggleItemSelectedBorder(int id) {
     MoveableStackItem oldItem = items[id];
@@ -142,6 +181,7 @@ class _MainCanvasState extends State<MainCanvas> {
         isSelected: !oldItem.selected,
       );
     });
+    updataCanvasChild();
   }
 
   // Adiciona um id à variável idsToConnect
@@ -158,8 +198,25 @@ class _MainCanvasState extends State<MainCanvas> {
         toggleItemSelectedBorder(idsToConnect[1]);
 
         // Add connection from the first selected item to the second
-        if (idsToConnect[0] != idsToConnect[1])
-          itemsPositions[idsToConnect[0]]["connectsTo"].add(idsToConnect[1]);
+        if (idsToConnect[0] != idsToConnect[1]) {
+          Map<int, Map<String, dynamic>> newItemsPositions = {};
+
+          for (int id in itemsPositions.keys)
+            newItemsPositions.addAll({
+              id: {
+                "xPosition": itemsPositions[id]["xPosition"],
+                "yPosition": itemsPositions[id]["yPosition"],
+                "width": itemsPositions[id]["width"],
+                "height": itemsPositions[id]["height"],
+                "connectsTo": Set.from(itemsPositions[id]["connectsTo"])
+              }
+            });
+
+          newItemsPositions[idsToConnect[0]]["connectsTo"].add(idsToConnect[1]);
+          itemsPositions = Map.from(newItemsPositions);
+          updateCanvasStacks();
+          updataCanvasChild();
+        }
 
         // Clear idsToConnect
         idsToConnect.clear();
@@ -199,7 +256,7 @@ class _MainCanvasState extends State<MainCanvas> {
       jsonPositions.addAll({itemPositionKey.toString(): parsedPositionItems});
     }
 
-    // Pacote a ser mandado contendo 
+    // Pacote a ser mandado contendo
     // os items do diagrama (com suas configurações e ids)
     // e as posições contendo as coordenadas, tamanho e conexões com outros elementos
     var diagramPayload = {
@@ -230,7 +287,7 @@ class _MainCanvasState extends State<MainCanvas> {
                     IconButton(
                       icon: Icon(Icons.file_download),
                       onPressed: () {
-                        // Efetua o download do arquivo do projeto identificado 
+                        // Efetua o download do arquivo do projeto identificado
                         // na resposta do request feito com os dados do diagrama
                         var fileName = json.decode(response.body)["fileName"];
                         print(fileName);
@@ -260,6 +317,88 @@ class _MainCanvasState extends State<MainCanvas> {
     }
   }
 
+  // Função utilizada para atualizar os widgets no canvas
+  void updataCanvasChild() {
+    setState(() {
+      this.canvasChild = [Lines(itemsPositions), ...items.values.toList()];
+    });
+  }
+
+  // Função chamada por diversas outras funções referentes a alterações no canvas
+  void updateCanvasStacks() {
+    this.undoStack.add({
+      "items": Map.from(this.items),
+      "itemsPositions": Map.from(this.itemsPositions),
+      "idsToConnect": List.from(this.idsToConnect),
+      "editingItem": this.editingItem
+    });
+
+    this.redoStack = [];
+
+    print("undoStack");
+    print(inspect(this.undoStack));
+    print("redoStack");
+    print(inspect(this.redoStack));
+  }
+
+  // Função para atualizar o estado do canvas e refletir as alteracoes visualmente
+  void updateCanvasState(Map<String, dynamic> canvasState) {
+    setState(() {
+      this.items = Map.from(canvasState["items"]);
+      this.itemsPositions = Map.from(canvasState["itemsPositions"]);
+      this.idsToConnect = List.from(canvasState["idsToConnect"]);
+      this.editingItem = canvasState["editingItem"];
+      for (int itemId in canvasState["items"].keys) {
+        print(canvasState["items"][itemId].position);
+        print(Offset(itemsPositions[itemId]["xPosition"],
+            itemsPositions[itemId]["yPosition"]));
+
+        this.items[itemId] = MoveableStackItem.update(
+          oldItem: this.items[itemId],
+          isSelected: this.items[itemId].selected,
+          newPosition: Offset(itemsPositions[itemId]["xPosition"],
+              itemsPositions[itemId]["yPosition"]),
+        );
+      }
+    });
+  }
+
+  void undoCanvas() {
+    if (this.undoStack.isNotEmpty) {
+      Map<String, dynamic> currentCanvasState = this.undoStack.removeLast();
+      this.redoStack.add(currentCanvasState);
+      if (this.undoStack.isNotEmpty)
+        updateCanvasState(this.undoStack.last);
+      else
+        updateCanvasState({
+          "items": Map(),
+          "itemsPositions": Map(),
+          "idsToConnect": List(),
+          "editingItem": null
+        });
+      updataCanvasChild();
+
+      print("undoStack");
+      print(inspect(this.undoStack));
+      print("redoStack");
+      print(inspect(this.redoStack));
+    }
+  }
+
+  void redoCanvas() {
+    if (this.redoStack.isNotEmpty) {
+      Map<String, dynamic> prevCanvasState = this.redoStack.removeLast();
+      this.undoStack.add(prevCanvasState);
+      updateCanvasState(prevCanvasState);
+      updataCanvasChild();
+
+      print("undoStack");
+      print(inspect(this.undoStack));
+      print("redoStack");
+      print(inspect(this.redoStack));
+    }
+  }
+
   // Renderização do widget contendo
   // Painel de seleção de elementos EIP a esquerda
   // Diagrama editável no centro (canvas)
@@ -268,6 +407,9 @@ class _MainCanvasState extends State<MainCanvas> {
   Widget build(BuildContext context) {
     // Painel de edição ocupa 15% da tela
     this.leftSidePaneSize = MediaQuery.of(context).size.width * 0.15;
+    this.editCanvasPaneHeight = MediaQuery.of(context).size.height * 0.05;
+    this.canvasPaneHeight =
+        MediaQuery.of(context).size.height - this.editCanvasPaneHeight;
 
     // Remover o painel de edição de itens quando não houver item selecionado
     if (this.editingItem == null) {
@@ -283,13 +425,21 @@ class _MainCanvasState extends State<MainCanvas> {
       Container(
         width: this.leftSidePaneSize,
         color: Colors.blueGrey,
-        child: LeftSidePane(this.insertNewEipItem, this.sendDiagram),
+        child: LeftSidePane(this.insertNewEipItem),
       ),
       Container(
-        // flex: 85,
         width: this.mainCanvasSize,
-        child: Stack(
-          children: [Lines(itemsPositions), ...items.values.toList()],
+        child: Column(
+          children: <Widget>[
+            EditCanvasPane(this.mainCanvasSize, this.editCanvasPaneHeight,
+                this.sendDiagram, this.undoCanvas, this.redoCanvas),
+            Container(
+              height: this.canvasPaneHeight,
+              child: Stack(
+                children: this.canvasChild,
+              ),
+            )
+          ],
         ),
       ),
     ];

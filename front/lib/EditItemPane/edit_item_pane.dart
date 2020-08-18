@@ -6,8 +6,9 @@ class EditItemPane extends StatefulWidget {
   final MoveableStackItem selectedItem;
   final int selectedItemID;
   final Function updateItemDetails;
+  final Function deleteItem;
   final Map<int, Map<String, dynamic>> itemsPositions;
-  EditItemPane(this.selectedItem, this.selectedItemID, this.updateItemDetails,
+  EditItemPane(this.selectedItem, this.selectedItemID, this.updateItemDetails, this.deleteItem,
       this.itemsPositions);
 
   @override
@@ -20,10 +21,10 @@ class _EditItemPaneState extends State<EditItemPane> {
   Map<String, dynamic> componentConfigControllers;
 
   Map<String, dynamic> updateComponentConfigs() {
-
     Map<String, dynamic> newComponentConfigs;
     for (String componentConfig in widget.selectedItem.componentConfigs.keys) {
-      newComponentConfigs =  widget.selectedItem.updateConfigs(widget.selectedItem, componentConfig, componentConfigControllers);
+      newComponentConfigs = widget.selectedItem.updateConfigs(
+          widget.selectedItem, componentConfig, componentConfigControllers);
     }
 
     return newComponentConfigs;
@@ -32,11 +33,18 @@ class _EditItemPaneState extends State<EditItemPane> {
   @override
   Widget build(BuildContext context) {
     this.editItems = [];
-    this.componentConfigControllers = widget.selectedItem.componentConfigControllers;
+    this.componentConfigControllers =
+        widget.selectedItem.componentConfigControllers;
 
     for (String componentConfig in widget.selectedItem.componentConfigs.keys) {
-      editItems = widget.selectedItem.buildEditPane(widget.selectedItem, widget.selectedItemID, widget.itemsPositions, componentConfig, this.componentConfigControllers, this.editItems, this);
-
+      editItems = widget.selectedItem.buildEditPane(
+          widget.selectedItem,
+          widget.selectedItemID,
+          widget.itemsPositions,
+          componentConfig,
+          this.componentConfigControllers,
+          this.editItems,
+          this);
     }
 
     return Container(
@@ -54,13 +62,24 @@ class _EditItemPaneState extends State<EditItemPane> {
                   textAlign: TextAlign.center),
             ),
             ...editItems,
-            IconButton(
-              icon: Icon(Icons.save),
-              onPressed: () => widget.updateItemDetails(
-                widget.selectedItem.id,
-                this.updateComponentConfigs(),
-                this.componentConfigControllers,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: () => widget.updateItemDetails(
+                    widget.selectedItem.id,
+                    this.updateComponentConfigs(),
+                    this.componentConfigControllers,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red,),
+                  onPressed: () => widget.deleteItem(
+                    widget.selectedItem.id,
+                  ),
+                )
+              ],
             )
           ],
         ),

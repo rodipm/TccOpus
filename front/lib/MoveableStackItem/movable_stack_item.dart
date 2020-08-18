@@ -14,10 +14,14 @@ class MoveableStackItem extends StatefulWidget {
   final Function updatePositionHandler;
   final Function editHandler;
 
-  final Offset position;
+  Offset position;
   final bool selected;
 
   final int id;
+
+  set setPosition(Offset pos) {
+    position = pos;
+  }
 
   MoveableStackItem(
       this.type,
@@ -36,6 +40,7 @@ class MoveableStackItem extends StatefulWidget {
   MoveableStackItem.update(
       {MoveableStackItem oldItem,
       bool isSelected,
+      Offset newPosition,
       Map<String, dynamic> newcomponentConfigs,
       Map<String, dynamic> newcomponentConfigControllers})
       : type = oldItem.type,
@@ -43,7 +48,7 @@ class MoveableStackItem extends StatefulWidget {
         clickHandler = oldItem.clickHandler,
         updatePositionHandler = oldItem.updatePositionHandler,
         editHandler = oldItem.editHandler,
-        position = oldItem.position,
+        position = newPosition != null ? newPosition : oldItem.position,
         id = oldItem.id,
         componentConfigs = newcomponentConfigs != null
             ? newcomponentConfigs
@@ -90,8 +95,8 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: yPosition,
-      left: xPosition,
+      top: widget.position.dy,
+      left: widget.position.dx,
       child: Container(
         decoration: widget.selected
             ? BoxDecoration(
@@ -106,10 +111,15 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
           onDoubleTap: () => widget.editHandler(widget.id),
           onPanUpdate: (tapInfo) {
             setState(() {
-              xPosition += tapInfo.delta.dx;
-              yPosition += tapInfo.delta.dy;
+              widget.position += Offset(tapInfo.delta.dx, tapInfo.delta.dy);
+              // xPosition += tapInfo.delta.dx;
+              // yPosition += tapInfo.delta.dy;
             });
-            widget.updatePositionHandler(widget.id, xPosition, yPosition);
+            widget.updatePositionHandler(
+                widget.id, widget.position.dx, widget.position.dy, false);
+          },
+          onPanEnd: (details) {
+            widget.updatePositionHandler(widget.id, widget.position.dx, widget.position.dy, true);
           },
           child: widget.componentWidgets,
         ),
