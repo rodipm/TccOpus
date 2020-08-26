@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {
   final Function insertNewEipItem;
+  final Function displayCreateNewProjectPaneHandler;
+  final Function displayOpenProjectPaneHandler;
+  final Function displaySaveProjectPaneHandler;
 
-  LeftSidePane(this.insertNewEipItem);
+  LeftSidePane(this.insertNewEipItem, this.displayCreateNewProjectPaneHandler, this.displayOpenProjectPaneHandler, this.displaySaveProjectPaneHandler);
   @override
   _LeftSidePaneState createState() => _LeftSidePaneState();
 }
@@ -21,7 +24,8 @@ class _LeftSidePaneState extends State<LeftSidePane> {
     };
     for (String _key in eipWidgets.keys) {
       var eipComponent = eipWidgets[_key];
-      eipItems[eipComponent.subType].add(eipComponent.icon(widget.insertNewEipItem));
+      eipItems[eipComponent.subType]
+          .add(eipComponent.icon(widget.insertNewEipItem));
     }
     return Column(
       children: <Widget>[
@@ -38,6 +42,22 @@ class _LeftSidePaneState extends State<LeftSidePane> {
           // height: 400,
           child: Column(
             children: <Widget>[
+              Container(
+                color: Colors.black.withAlpha(35),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  width: double.infinity,
+                  child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(icon: Icon(Icons.create_new_folder),color: Colors.white,onPressed: () => widget.displayCreateNewProjectPaneHandler(),tooltip: "Criar projeto",),
+                          IconButton(icon: Icon(Icons.folder_open),color: Colors.white,onPressed: () => widget.displayOpenProjectPaneHandler(),tooltip: "Abrir projeto",),
+                          IconButton(icon: Icon(Icons.save),color: Colors.white,onPressed: () => widget.displaySaveProjectPaneHandler(),tooltip: "Salvar projeto",),
+                        ]),
+                  ),
+                ),
+              ),
               Container(
                 color: Colors.black.withAlpha(50),
                 child: Container(

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:front/ProjectManagement/create_new_project_pane.dart';
+import 'package:front/ProjectManagement/save_project_pane.dart';
 import 'package:http/http.dart' as http;
 import 'package:front/EditItemPane/edit_item_pane.dart';
 import 'package:front/LeftSidePane/left_side_pane.dart';
@@ -25,6 +27,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainCanvas extends StatefulWidget {
+  final url = "http://localhost:5000/";
+
   MainCanvas();
   @override
   _MainCanvasState createState() => _MainCanvasState();
@@ -65,6 +69,111 @@ class _MainCanvasState extends State<MainCanvas> {
   double editPaneSize;
   double editCanvasPaneHeight;
   double canvasPaneHeight;
+
+  // Project info
+  Map<String, dynamic> projectInfo = {"user": "", "project_name": ""};
+
+  /*  CREATE - OPEN - SAVE PROJECTS */
+
+  void displayCreateNewProjectPane() {
+    print("displayCreateNewProjectPane");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // retorna um objeto do tipo Dialog
+        return CreateNewProjectPane(
+            this.updateProjectInfo, this.canvasPaneHeight, this.mainCanvasSize);
+      },
+    );
+    resetCanvasState();
+  }
+
+  void displayOpenProjectPane() async {
+    print("displayOpenProjectPane");
+    try {
+      var response = await http.post(widget.url + "open_project",
+          body: json.encode({}), headers: {'Content-type': 'application/json'});
+      print("RESPONSE");
+      print(response.body);
+
+      // TODO CARREGAR NO CANVAS A PARTIR DA RESPONSE
+      
+      resetCanvasState();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void displaySaveProjectPane() {
+    print("displaySaveProjectPane");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // retorna um objeto do tipo Dialog
+        return SaveProjectPane(
+            this.saveProject, this.canvasPaneHeight, this.mainCanvasSize);
+      },
+    );
+  }
+
+  void updateProjectInfo(projectName) {
+    print("update project info");
+    print(projectName);
+    this.projectInfo = {"user": "Rodrigo", "project_name": projectName};
+  }
+
+  void saveProject() async {
+    Map<String, Map<String, dynamic>> jsonItems = {};
+    Map<String, Map<String, dynamic>> jsonPositions = {};
+
+    items.forEach((key, value) {
+      jsonItems.addAll({key.toString(): value.toJSON()});
+    });
+
+    for (var itemPositionKey in this.itemsPositions.keys) {
+      Map<String, dynamic> parsedPositionItems = {};
+      for (var itemPositionItemKey
+          in this.itemsPositions[itemPositionKey].keys) {
+        if (itemPositionItemKey != "connectsTo")
+          parsedPositionItems.addAll({
+            itemPositionItemKey: this
+                .itemsPositions[itemPositionKey][itemPositionItemKey]
+                .toString()
+          });
+        else {
+          var parsedConnectsTo = new List();
+          for (var connectsToItem in this.itemsPositions[itemPositionKey]
+              [itemPositionItemKey]) {
+            parsedConnectsTo.add(connectsToItem.toString());
+          }
+          parsedPositionItems.addAll({itemPositionItemKey: parsedConnectsTo});
+        }
+      }
+      jsonPositions.addAll({itemPositionKey.toString(): parsedPositionItems});
+    }
+
+    Map<String, dynamic> projectData = {
+      "user": projectInfo["user"],
+      "project_name": projectInfo["project_name"],
+      "canvas_state": {
+        "items": jsonItems,
+        "itemsPositions": jsonPositions,
+        "idsToConnect": List.from(this.idsToConnect),
+        "editingItem": this.editingItem,
+      },
+    };
+
+    try {
+      await http.post(widget.url + "save_project",
+          body: json.encode(projectData),
+          headers: {'Content-type': 'application/json'});
+      displaySaveProjectPane();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  /* Canvas and Components*/
 
   // Insere novo elemento EIP na área de canvas editável
   void insertNewEipItem(dynamic item, Offset position) {
@@ -113,7 +222,8 @@ class _MainCanvasState extends State<MainCanvas> {
       print(this.items);
       this.itemsPositions.remove(itemId);
       if (this.idsToConnect.contains(itemId)) this.idsToConnect = [];
-      if (this.editingItem != null && this.editingItem.id == itemId) this.editingItem = null;
+      if (this.editingItem != null && this.editingItem.id == itemId)
+        this.editingItem = null;
     });
     updateCanvasStacks();
     updataCanvasChild();
@@ -225,7 +335,7 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   // Envia os dados do diagrama para o back-end
-  void sendDiagram() async {
+  void generateCode() async {
     Map<String, Map<String, dynamic>> jsonItems = {};
     Map<String, Map<String, dynamic>> jsonPositions = {};
 
@@ -265,9 +375,8 @@ class _MainCanvasState extends State<MainCanvas> {
     };
 
     // Efetua o POST request para o back_end
-    final url = "http://localhost:5000/send_diagram";
     try {
-      var response = await http.post(url,
+      var response = await http.post(widget.url + "generate_code",
           body: json.encode(diagramPayload),
           headers: {'Content-type': 'application/json'});
 
@@ -339,6 +448,17 @@ class _MainCanvasState extends State<MainCanvas> {
     print(inspect(this.undoStack));
     print("redoStack");
     print(inspect(this.redoStack));
+  }
+
+  void resetCanvasState() {
+    setState(() {
+      this.items = Map();
+      this.itemsPositions = Map();
+      this.idsToConnect = List();
+      this.editingItem = null;
+    });
+    updateCanvasStacks();
+    updataCanvasChild();
   }
 
   // Função para atualizar o estado do canvas e refletir as alteracoes visualmente
@@ -425,14 +545,18 @@ class _MainCanvasState extends State<MainCanvas> {
       Container(
         width: this.leftSidePaneSize,
         color: Colors.blueGrey,
-        child: LeftSidePane(this.insertNewEipItem),
+        child: LeftSidePane(
+            this.insertNewEipItem,
+            this.displayCreateNewProjectPane,
+            this.displayOpenProjectPane,
+            this.saveProject),
       ),
       Container(
         width: this.mainCanvasSize,
         child: Column(
           children: <Widget>[
             EditCanvasPane(this.mainCanvasSize, this.editCanvasPaneHeight,
-                this.sendDiagram, this.undoCanvas, this.redoCanvas),
+                this.generateCode, this.undoCanvas, this.redoCanvas),
             Container(
               height: this.canvasPaneHeight,
               child: Stack(

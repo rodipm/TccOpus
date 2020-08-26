@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 class EditCanvasPane extends StatefulWidget {
   final double canvasSize;
   final double editCanvasPaneHeight;
-  final Function sendDiagramHandler;
+  final Function generateCodeHandler;
   final Function undoCanvasHandler;
   final Function redoCanvasHandler;
 
   EditCanvasPane(
-      this.canvasSize, this.editCanvasPaneHeight, this.sendDiagramHandler, this.undoCanvasHandler, this.redoCanvasHandler);
+      this.canvasSize, this.editCanvasPaneHeight, this.generateCodeHandler, this.undoCanvasHandler, this.redoCanvasHandler);
 
   @override
   _EditCanvasPaneState createState() => _EditCanvasPaneState();
@@ -82,7 +82,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                     icon: Icon(
                       Icons.done,
                     ),
-                    onPressed: () => widget.sendDiagramHandler(),
+                    onPressed: () => widget.generateCodeHandler(),
                   ),
                 ],
               ),

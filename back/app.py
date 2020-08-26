@@ -14,8 +14,8 @@ CORS(app)
 def index():
     return "EIPEditor back-end."
 
-@app.route('/send_diagram', methods=['POST'])
-def send_diagram():
+@app.route('/generate_code', methods=['POST'])
+def generate_code():
     test = []
     items_info = {}
 
@@ -49,6 +49,23 @@ def download_project():
     print(fileName)
 
     return send_file(os.path.join("projetos_gerados", fileName), attachment_filename='IntegrationProject.zip', as_attachment=True), 200
+
+projeto_salvo = {}
+
+@app.route('/save_project', methods=['POST'])
+def save_project():
+    global projeto_salvo
+    print(request.json)
+    projeto_salvo = request.json
+
+    return {}
+
+
+@app.route('/open_project', methods=['POST'])
+def open_project():
+    print("open project")
+    print(projeto_salvo)
+    return projeto_salvo
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
