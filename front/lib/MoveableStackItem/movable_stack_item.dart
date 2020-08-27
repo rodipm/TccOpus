@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MoveableStackItem extends StatefulWidget {
-  static int idCounter = 0;
+  static int idCounter = -1;
 
   final String type;
   final Widget componentWidgets;
@@ -23,6 +23,10 @@ class MoveableStackItem extends StatefulWidget {
     position = pos;
   }
 
+  static resetIdCounter() {
+    idCounter = -1;
+  }
+
   MoveableStackItem(
       this.type,
       this.clickHandler,
@@ -34,7 +38,7 @@ class MoveableStackItem extends StatefulWidget {
       this.updateConfigs,
       this.buildEditPane,
       this.position)
-      : id = MoveableStackItem.idCounter,
+      : id = MoveableStackItem.incrementIdCounter(),
         selected = false;
 
   MoveableStackItem.update(
@@ -68,8 +72,9 @@ class MoveableStackItem extends StatefulWidget {
     };
   }
 
-  static void incrementIdCounter() {
+  static int incrementIdCounter() {
     MoveableStackItem.idCounter++;
+    return idCounter;
   }
 
   @override
@@ -82,7 +87,7 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
   bool selected;
 
   _MoveableStackItemState() {
-    MoveableStackItem.incrementIdCounter();
+    // MoveableStackItem.incrementIdCounter();
   }
 
   @override

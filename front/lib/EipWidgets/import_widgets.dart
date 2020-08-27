@@ -5,9 +5,24 @@ import 'package:front/EipWidgets/message_filter.dart';
 import 'package:front/EipWidgets/message_translator.dart';
 
 Map<String, dynamic> eipWidgets = {
-	'ContentBasedRouter': ContentBasedRouter(100, 100),
-	'Message': Message(100, 100),
-	'MessageEndpoint': MessageEndpoint(100, 100),
-	'MessageFilter': MessageFilter(100, 100),
-	'MessageTranslator': MessageTranslator(100, 100),
+	'ContentBasedRouter': contentbasedrouter,
+	'Message': message,
+	'MessageEndpoint': messageendpoint,
+	'MessageFilter': messagefilter,
+	'MessageTranslator': messagetranslator,
 };
+dynamic contentbasedrouter() {
+	return ContentBasedRouter(100, 100);
+}
+dynamic message() {
+	return Message(100, 100);
+}
+dynamic messageendpoint() {
+	return MessageEndpoint(100, 100);
+}
+dynamic messagefilter() {
+	return MessageFilter(100, 100);
+}
+dynamic messagetranslator() {
+	return MessageTranslator(100, 100);
+}

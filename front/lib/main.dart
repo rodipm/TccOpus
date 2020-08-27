@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:front/EipWidgets/message.dart';
 import 'package:front/ProjectManagement/create_new_project_pane.dart';
 import 'package:front/ProjectManagement/save_project_pane.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +10,8 @@ import 'package:front/EditCanvasPane/edit_canvas_pane.dart';
 import 'package:front/Lines/lines.dart';
 import 'package:front/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
+// Import das classes representantes dos elementos EIP (EipWidgets)
+import 'package:front/EipWidgets/import_widgets.dart';
 import 'dart:html' as html;
 
 void main() => runApp(MyApp());
@@ -93,12 +96,69 @@ class _MainCanvasState extends State<MainCanvas> {
     try {
       var response = await http.post(widget.url + "open_project",
           body: json.encode({}), headers: {'Content-type': 'application/json'});
-      print("RESPONSE");
-      print(response.body);
-
-      // TODO CARREGAR NO CANVAS A PARTIR DA RESPONSE
-      
       resetCanvasState();
+
+      print("RESPONSE");
+      var responseDecoded = json.decode(response.body);
+      print(responseDecoded);
+
+      updateProjectInfo(responseDecoded["project_name"]);
+
+      var canvasState = responseDecoded["canvas_state"];
+
+      this.idsToConnect = [];
+
+      for (String itemId in canvasState["items"].keys) {
+        var currItem = canvasState["items"][itemId];
+
+        String itemType = currItem["type"];
+
+        Offset position = Offset(
+            double.parse(canvasState["itemsPositions"][itemId]["xPosition"]),
+            double.parse(canvasState["itemsPositions"][itemId]["yPosition"]));
+
+        var itemClass = eipWidgets[itemType]();
+        Map<String, dynamic> parsedComponentConfigs =
+            itemClass.parseComponentConfigsFromJson(currItem);
+
+        MoveableStackItem _newItem = MoveableStackItem(
+            itemType,
+            addIdToConnect,
+            updateItemPosition,
+            selectEditItem,
+            itemClass.componentWidget,
+            parsedComponentConfigs,
+            Map<String, dynamic>.from(itemClass.componentConfigControllers),
+            itemClass.updateConfigs,
+            itemClass.buildEditPane,
+            position);
+
+        print("OPEN PROJECT NEW ITEM");
+        print(itemClass.componentConfigs);
+        print(_newItem.componentConfigs);
+        print(_newItem.componentConfigControllers);
+        var consTo = Set<int>();
+        for (String id in canvasState["itemsPositions"][itemId]["connectsTo"])
+          consTo.add(int.parse(id));
+
+        setState(() {
+          this.items.addAll({int.parse(itemId): _newItem});
+          this.itemsPositions.addAll({
+            int.parse(itemId): {
+              "xPosition": position.dx,
+              "yPosition": position.dy,
+              "width":
+                  double.parse(canvasState["itemsPositions"][itemId]["width"]),
+              "height":
+                  double.parse(canvasState["itemsPositions"][itemId]["height"]),
+              "connectsTo": consTo,
+            }
+          });
+        });
+      }
+
+      updateCanvasStacks();
+      updateCanvasChild();
     } catch (e) {
       print(e);
     }
@@ -158,8 +218,6 @@ class _MainCanvasState extends State<MainCanvas> {
       "canvas_state": {
         "items": jsonItems,
         "itemsPositions": jsonPositions,
-        "idsToConnect": List.from(this.idsToConnect),
-        "editingItem": this.editingItem,
       },
     };
 
@@ -178,6 +236,11 @@ class _MainCanvasState extends State<MainCanvas> {
   // Insere novo elemento EIP na área de canvas editável
   void insertNewEipItem(dynamic item, Offset position) {
     setState(() {
+      print("INSERT NEW ITEM ++++++++++++++");
+      print("INSERT NEW ITEM ++++++++++++++");
+      print("INSERT NEW ITEM ++++++++++++++");
+      
+
       // Correção da coordenada x da posição do elemento
       // baseado no tamanho do painel de seleção esquerdo
       Offset correctedPosition = Offset(
@@ -190,8 +253,8 @@ class _MainCanvasState extends State<MainCanvas> {
           updateItemPosition,
           selectEditItem,
           item.componentWidget,
-          item.componentConfigs,
-          item.componentConfigControllers,
+          Map<String, dynamic>.from(item.componentConfigs),
+          Map<String, dynamic>.from(item.componentConfigControllers),
           item.updateConfigs,
           item.buildEditPane,
           correctedPosition);
@@ -210,13 +273,14 @@ class _MainCanvasState extends State<MainCanvas> {
         },
       );
       updateCanvasStacks();
-      updataCanvasChild();
+      updateCanvasChild();
     });
   }
 
   // Remove um elemento do canvas
   void deleteItem(int itemId) {
     print("deleteItem");
+    print(itemId);
     setState(() {
       this.items.remove(itemId);
       print(this.items);
@@ -224,14 +288,21 @@ class _MainCanvasState extends State<MainCanvas> {
       if (this.idsToConnect.contains(itemId)) this.idsToConnect = [];
       if (this.editingItem != null && this.editingItem.id == itemId)
         this.editingItem = null;
+
+      // Remover todas as conexoes para este id
+      for (int id in itemsPositions.keys) {
+        itemsPositions[id]["connectsTo"].remove(itemId);
+      }
     });
     updateCanvasStacks();
-    updataCanvasChild();
+    updateCanvasChild();
   }
 
   // Atualiza a posição do item na tela
   void updateItemPosition(
       int id, double xPosition, double yPosition, bool doUpdateCanvasStack) {
+    print("updateItemPosition");
+    print(id);
     setState(() {
       this.itemsPositions.update(
             id,
@@ -248,7 +319,7 @@ class _MainCanvasState extends State<MainCanvas> {
       print("onPanEnd");
       updateCanvasStacks();
     }
-    updataCanvasChild();
+    updateCanvasChild();
   }
 
   // Atualiza as configurações atuais do elemento EIP
@@ -259,7 +330,7 @@ class _MainCanvasState extends State<MainCanvas> {
       print(oldItem.componentConfigs);
       items[id] = MoveableStackItem.update(
         oldItem: oldItem,
-        newcomponentConfigs: _newcomponentConfigs,
+        newcomponentConfigs: Map<String, dynamic>.from(_newcomponentConfigs),
         newcomponentConfigControllers: _newcomponentConfigControllers,
       );
       editingItem = null;
@@ -278,7 +349,7 @@ class _MainCanvasState extends State<MainCanvas> {
       this.editingItemPaneWidget = EditItemPane(this.editingItem, id,
           this.updateItemDetails, this.deleteItem, this.itemsPositions);
     });
-    updataCanvasChild();
+    updateCanvasChild();
   }
 
   // Ativa e desativa a borda de indicação
@@ -291,7 +362,7 @@ class _MainCanvasState extends State<MainCanvas> {
         isSelected: !oldItem.selected,
       );
     });
-    updataCanvasChild();
+    updateCanvasChild();
   }
 
   // Adiciona um id à variável idsToConnect
@@ -325,7 +396,7 @@ class _MainCanvasState extends State<MainCanvas> {
           newItemsPositions[idsToConnect[0]]["connectsTo"].add(idsToConnect[1]);
           itemsPositions = Map.from(newItemsPositions);
           updateCanvasStacks();
-          updataCanvasChild();
+          updateCanvasChild();
         }
 
         // Clear idsToConnect
@@ -427,7 +498,7 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   // Função utilizada para atualizar os widgets no canvas
-  void updataCanvasChild() {
+  void updateCanvasChild() {
     setState(() {
       this.canvasChild = [Lines(itemsPositions), ...items.values.toList()];
     });
@@ -456,9 +527,13 @@ class _MainCanvasState extends State<MainCanvas> {
       this.itemsPositions = Map();
       this.idsToConnect = List();
       this.editingItem = null;
+      this.editingItemPaneWidget = null;
+      this.undoStack = [];
+      this.redoStack = [];
+      MoveableStackItem.resetIdCounter();
     });
     updateCanvasStacks();
-    updataCanvasChild();
+    updateCanvasChild();
   }
 
   // Função para atualizar o estado do canvas e refletir as alteracoes visualmente
@@ -496,7 +571,7 @@ class _MainCanvasState extends State<MainCanvas> {
           "idsToConnect": List(),
           "editingItem": null
         });
-      updataCanvasChild();
+      updateCanvasChild();
 
       print("undoStack");
       print(inspect(this.undoStack));
@@ -510,7 +585,7 @@ class _MainCanvasState extends State<MainCanvas> {
       Map<String, dynamic> prevCanvasState = this.redoStack.removeLast();
       this.undoStack.add(prevCanvasState);
       updateCanvasState(prevCanvasState);
-      updataCanvasChild();
+      updateCanvasChild();
 
       print("undoStack");
       print(inspect(this.undoStack));

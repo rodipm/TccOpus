@@ -32,9 +32,11 @@ class _EditItemPaneState extends State<EditItemPane> {
 
   @override
   Widget build(BuildContext context) {
+    print("WIDGET SELECTEDITEM COMPONENTCONFIGS");
+    print(widget.selectedItem.componentConfigs);
     this.editItems = [];
     this.componentConfigControllers =
-        widget.selectedItem.componentConfigControllers;
+        Map<String, dynamic>.from(widget.selectedItem.componentConfigControllers);
 
     for (String componentConfig in widget.selectedItem.componentConfigs.keys) {
       editItems = widget.selectedItem.buildEditPane(

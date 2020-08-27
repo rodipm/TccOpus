@@ -23,7 +23,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
       "MessageRouting": []
     };
     for (String _key in eipWidgets.keys) {
-      var eipComponent = eipWidgets[_key];
+      var eipComponent = eipWidgets[_key]();
       eipItems[eipComponent.subType]
           .add(eipComponent.icon(widget.insertNewEipItem));
     }

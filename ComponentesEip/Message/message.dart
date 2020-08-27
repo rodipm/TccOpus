@@ -20,7 +20,17 @@ class Message {
     ]
   };
 
-  Map<String, dynamic> componentConfigControllers = {
+  Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
+    Map<String, dynamic> _compConfigs =
+        Map<String, dynamic>.from(componentConfigs);
+    _compConfigs["protocol"][0] = jsonConfig["protocol"][0];
+    _compConfigs["protocol"][1] = jsonConfig["protocol"][1];
+    _compConfigs["protocol"][2] = jsonConfig["protocol"][2];
+
+    return _compConfigs;
+  }
+
+  final Map<String, dynamic> componentConfigControllers = {
     "messageControllers": {},
     "editItemsValues": {}
   };
@@ -38,14 +48,14 @@ class Message {
     return {
       config: [
         selectedItem.componentConfigs[config][0],
-        configControllers["editItemsValues"][config],
+        configControllers["editItemsValues"][config].toString(),
         protocolOptions
       ]
     };
   }
 
-  List<Widget> buildEditPane(
-      selectedItem, selectedItemID, itemsPositions, config, configControllers, editItems, baseWidget) {
+  List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
+      config, configControllers, editItems, baseWidget) {
     String _chosenValue;
 
     if (selectedItem.componentConfigs[config][1] != null)
@@ -72,6 +82,7 @@ class Message {
             onChanged: (String newValue) {
               baseWidget.setState(() {
                 configControllers["editItemsValues"][config] = newValue;
+                baseWidget.componentConfigControllers["editItemsValues"][config] = newValue;
               });
             },
             items: selectedItem.componentConfigs[config][0].keys
@@ -88,6 +99,7 @@ class Message {
     );
 
     if (_chosenValue != null) {
+      configControllers["messageControllers"] = Map<dynamic, TextEditingController>();
       int protocolOptionIndex = 0;
       for (var protocolOption in selectedItem.componentConfigs[config][0]
           [_chosenValue]) {

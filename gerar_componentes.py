@@ -27,7 +27,7 @@ for component in components:
     copyfile(os.path.join(path_componentes, component, file_dart),
              os.path.join(path_componentes_front, file_dart))
     imports_file_front.append(
-        [f"import 'package:front/EipWidgets/{file_dart}'", f"'{component}': {component}(100, 100)"])
+        [f"import 'package:front/EipWidgets/{file_dart}'", f"'{component}': {component.lower()}", "dynamic " + component.lower() + "() {\n\treturn " + component + "(100, 100);\n}"])
 
     # Imagens para os assets do front
     copyfile(os.path.join(path_componentes, component, component + ".png"),
@@ -41,10 +41,12 @@ with open(os.path.join(path_componentes_back, "components_imports.py"), "w") as 
 with open(os.path.join(path_componentes_front, "import_widgets.dart"), "w") as f:
     import_widgets = ""
     create_widgets = ""
+    create_functions = ""
 
     for imp in imports_file_front:
         import_widgets += imp[0] + ";\n"
         create_widgets += "\t" + imp[1] + ",\n"
+        create_functions += imp[2] + "\n"
 
-    import_file = import_widgets + "\n" + "Map<String, dynamic> eipWidgets = {\n" + create_widgets + "};"
+    import_file = import_widgets + "\n" + "Map<String, dynamic> eipWidgets = {\n" + create_widgets + "};" + "\n" + create_functions
     f.write(import_file)

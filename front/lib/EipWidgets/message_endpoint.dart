@@ -20,6 +20,16 @@ class MessageEndpoint {
     ]
   };
 
+  Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
+    
+    Map<String, dynamic> _compConfigs = Map<String, dynamic>.from(componentConfigs);
+    _compConfigs["protocol"][0] = jsonConfig["protocol"][0];
+    _compConfigs["protocol"][1] = jsonConfig["protocol"][1];
+    _compConfigs["protocol"][2] = jsonConfig["protocol"][2];
+
+    return _compConfigs;
+  }
+  
  Map<String, dynamic> componentConfigControllers = {
     "messageControllers": {},
     "editItemsValues": {}
@@ -47,8 +57,6 @@ class MessageEndpoint {
   List<Widget> buildEditPane(
       selectedItem, selectedItemID, itemsPositions, config, configControllers, editItems, baseWidget) {
     String _chosenValue;
-    print("BUILD EDIT PANE");
-    print(configControllers);
 
     if (selectedItem.componentConfigs[config][1] != null)
       _chosenValue = selectedItem.componentConfigs[config][1];

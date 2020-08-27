@@ -13,6 +13,13 @@ class MessageTranslator {
         "public void process(Exchange exchange) {\n\tMessage in = exchange.getIn();\n\tin.setBody();\n}"
   };
 
+  Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
+    Map<String, dynamic> _compConfigs = Map<String, dynamic>.from(componentConfigs);
+    _compConfigs["process"] = jsonConfig["process"];
+
+    return _compConfigs;
+  }
+
   Map<String, dynamic> componentConfigControllers = {
     "messageTranslatorControllers": {},
   };
@@ -23,8 +30,8 @@ class MessageTranslator {
     };
   }
 
-  List<Widget> buildEditPane(
-      selectedItem, selectedItemID, itemsPositions, config, configControllers, editItems, baseWidget) {
+  List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
+      config, configControllers, editItems, baseWidget) {
     configControllers["messageTranslatorControllers"]
         .addAll({config: TextEditingController()});
 

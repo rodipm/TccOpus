@@ -12,6 +12,13 @@ class MessageFilter {
     "choices": null,
   };
 
+  Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
+    Map<String, dynamic> _compConfigs = Map<String, dynamic>.from(componentConfigs);
+    _compConfigs["choices"] = jsonConfig["choices"];
+
+    return _compConfigs;
+  }
+
   Map<String, dynamic> componentConfigControllers = {
     "messageFilterControllers": {},
   };
