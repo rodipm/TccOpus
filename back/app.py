@@ -3,9 +3,10 @@ from flask_cors import CORS
 from copy import deepcopy
 import json
 import os
-from code_generation.code_generator import create_routes
-from code_generation.parser import parse
-from code_generation.project_generator import create_project
+from back.code_generation.code_generator import create_routes
+from back.code_generation.parser import parse
+from back.code_generation.project_generator import create_project
+from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromUser
 
 app = Flask(__name__)
 CORS(app)
@@ -55,17 +56,31 @@ projeto_salvo = {}
 @app.route('/save_project', methods=['POST'])
 def save_project():
     global projeto_salvo
-    print(request.json)
-    projeto_salvo = request.json
+    saveProject(request.json)
 
     return {}
 
-
 @app.route('/open_project', methods=['POST'])
 def open_project():
-    print("open project")
-    print(projeto_salvo)
-    return projeto_salvo
+    user_name = request.json["user_name"]
+    project_name = request.json["project_name"]
+    print(user_name, project_name)
+
+    projeto = loadProject(user_name, project_name)
+    return projeto
+
+@app.route('/projects', methods=['GET'])
+def projects():
+    user_name = request.args.get('user_name')
+    
+    projects = getAllProjectsFromUser(user_name)
+
+    names = []
+
+    for proj in projects:
+        names.append(proj['project_name'])
+
+    return json.dumps({"project_names": names}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

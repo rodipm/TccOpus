@@ -1,7 +1,8 @@
+// Import das classes representantes dos elementos EIP (EipWidgets)
 import 'dart:convert';
 import 'dart:developer';
-import 'package:front/EipWidgets/message.dart';
 import 'package:front/ProjectManagement/create_new_project_pane.dart';
+import 'package:front/ProjectManagement/open_project_pane.dart';
 import 'package:front/ProjectManagement/save_project_pane.dart';
 import 'package:http/http.dart' as http;
 import 'package:front/EditItemPane/edit_item_pane.dart';
@@ -10,11 +11,14 @@ import 'package:front/EditCanvasPane/edit_canvas_pane.dart';
 import 'package:front/Lines/lines.dart';
 import 'package:front/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
-// Import das classes representantes dos elementos EIP (EipWidgets)
 import 'package:front/EipWidgets/import_widgets.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:html' as html;
 
-void main() => runApp(MyApp());
+Future main() async {
+  await DotEnv().load('.env');
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -30,7 +34,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainCanvas extends StatefulWidget {
-  final url = "http://localhost:5000/";
+  final url = DotEnv().env['BACK_URL'];
 
   MainCanvas();
   @override
@@ -38,6 +42,10 @@ class MainCanvas extends StatefulWidget {
 }
 
 class _MainCanvasState extends State<MainCanvas> {
+  //******************//
+  //  STATE VARIABLES //
+  //******************//
+
   // Todos os itens do canvas (área editável do diagrama)
   Map<int, MoveableStackItem> items = {};
 
@@ -76,7 +84,9 @@ class _MainCanvasState extends State<MainCanvas> {
   // Project info
   Map<String, dynamic> projectInfo = {"user": "", "project_name": ""};
 
-  /*  CREATE - OPEN - SAVE PROJECTS */
+  //***************************//
+  //  CREATE/OPEN/SAVE PROJECT //
+  //***************************//
 
   void displayCreateNewProjectPane() {
     print("displayCreateNewProjectPane");
@@ -92,17 +102,43 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   void displayOpenProjectPane() async {
+    String userName = "Rodrigo";
+
+    try {
+      var response =
+          await http.get(widget.url + "projects?user_name=" + userName);
+      List<String> projectNames = List<String>.from(json.decode(response.body)["project_names"]);
+
+      if (projectNames.length > 0) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // retorna um objeto do tipo Dialog
+            return OpenProjectPane(userName, projectNames, openProject, canvasPaneHeight, mainCanvasSize);
+          },
+        );
+      }
+    }
+    catch (e) {
+      print(e);
+    }
+  }
+
+  void openProject(String userName, String projectName) async {
     print("displayOpenProjectPane");
     try {
       var response = await http.post(widget.url + "open_project",
-          body: json.encode({}), headers: {'Content-type': 'application/json'});
+          body:
+              json.encode({"user_name": userName, "project_name": projectName}),
+          headers: {'Content-type': 'application/json'});
       resetCanvasState();
 
       print("RESPONSE");
       var responseDecoded = json.decode(response.body);
       print(responseDecoded);
 
-      updateProjectInfo(responseDecoded["project_name"]);
+      updateProjectInfo(
+          responseDecoded["user"], responseDecoded["project_name"]);
 
       var canvasState = responseDecoded["canvas_state"];
 
@@ -176,10 +212,10 @@ class _MainCanvasState extends State<MainCanvas> {
     );
   }
 
-  void updateProjectInfo(projectName) {
+  void updateProjectInfo(user, projectName) {
     print("update project info");
     print(projectName);
-    this.projectInfo = {"user": "Rodrigo", "project_name": projectName};
+    this.projectInfo = {"user": user, "project_name": projectName};
   }
 
   void saveProject() async {
@@ -231,16 +267,13 @@ class _MainCanvasState extends State<MainCanvas> {
     }
   }
 
-  /* Canvas and Components*/
+  //*************************//
+  //  CANVAS AND COMPONENTS  //
+  //*************************//
 
   // Insere novo elemento EIP na área de canvas editável
   void insertNewEipItem(dynamic item, Offset position) {
     setState(() {
-      print("INSERT NEW ITEM ++++++++++++++");
-      print("INSERT NEW ITEM ++++++++++++++");
-      print("INSERT NEW ITEM ++++++++++++++");
-      
-
       // Correção da coordenada x da posição do elemento
       // baseado no tamanho do painel de seleção esquerdo
       Offset correctedPosition = Offset(
@@ -279,8 +312,6 @@ class _MainCanvasState extends State<MainCanvas> {
 
   // Remove um elemento do canvas
   void deleteItem(int itemId) {
-    print("deleteItem");
-    print(itemId);
     setState(() {
       this.items.remove(itemId);
       print(this.items);
@@ -405,98 +436,6 @@ class _MainCanvasState extends State<MainCanvas> {
     });
   }
 
-  // Envia os dados do diagrama para o back-end
-  void generateCode() async {
-    Map<String, Map<String, dynamic>> jsonItems = {};
-    Map<String, Map<String, dynamic>> jsonPositions = {};
-
-    items.forEach((key, value) {
-      jsonItems.addAll({key.toString(): value.toJSON()});
-    });
-
-    // Processa os dados para transforma-los em json
-    for (var itemPositionKey in this.itemsPositions.keys) {
-      Map<String, dynamic> parsedPositionItems = {};
-      for (var itemPositionItemKey
-          in this.itemsPositions[itemPositionKey].keys) {
-        if (itemPositionItemKey != "connectsTo")
-          parsedPositionItems.addAll({
-            itemPositionItemKey: this
-                .itemsPositions[itemPositionKey][itemPositionItemKey]
-                .toString()
-          });
-        else {
-          var parsedConnectsTo = new List();
-          for (var connectsToItem in this.itemsPositions[itemPositionKey]
-              [itemPositionItemKey]) {
-            parsedConnectsTo.add(connectsToItem.toString());
-          }
-          parsedPositionItems.addAll({itemPositionItemKey: parsedConnectsTo});
-        }
-      }
-      jsonPositions.addAll({itemPositionKey.toString(): parsedPositionItems});
-    }
-
-    // Pacote a ser mandado contendo
-    // os items do diagrama (com suas configurações e ids)
-    // e as posições contendo as coordenadas, tamanho e conexões com outros elementos
-    var diagramPayload = {
-      "items": jsonItems,
-      "positions": jsonPositions,
-    };
-
-    // Efetua o POST request para o back_end
-    try {
-      var response = await http.post(widget.url + "generate_code",
-          body: json.encode(diagramPayload),
-          headers: {'Content-type': 'application/json'});
-
-      // Mostra o diálogo com o código gerado e o botão de download do projeto (.zip)
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // retorna um objeto do tipo Dialog
-          return AlertDialog(
-            title: Text("Código Gerado"),
-            content: Column(
-              children: [
-                Text(json.decode(response.body)["routes"].join(";\n") + "\n"),
-                Row(
-                  children: <Widget>[
-                    Text("Download Project"),
-                    IconButton(
-                      icon: Icon(Icons.file_download),
-                      onPressed: () {
-                        // Efetua o download do arquivo do projeto identificado
-                        // na resposta do request feito com os dados do diagrama
-                        var fileName = json.decode(response.body)["fileName"];
-                        print(fileName);
-                        html.window.open(
-                            "http://localhost:5000/download_project?fileName=${fileName}",
-                            "");
-                      },
-                    )
-                  ],
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              // define os botões na base do dialogo
-              FlatButton(
-                child: Text("Fechar"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } catch (e) {
-      print(e);
-    }
-  }
-
   // Função utilizada para atualizar os widgets no canvas
   void updateCanvasChild() {
     setState(() {
@@ -593,6 +532,104 @@ class _MainCanvasState extends State<MainCanvas> {
       print(inspect(this.redoStack));
     }
   }
+
+  //********************//
+  //  CODE GENERATION   //
+  //********************//
+
+  // Envia os dados do diagrama para o back-end
+  void generateCode() async {
+    Map<String, Map<String, dynamic>> jsonItems = {};
+    Map<String, Map<String, dynamic>> jsonPositions = {};
+
+    items.forEach((key, value) {
+      jsonItems.addAll({key.toString(): value.toJSON()});
+    });
+
+    // Processa os dados para transforma-los em json
+    for (var itemPositionKey in this.itemsPositions.keys) {
+      Map<String, dynamic> parsedPositionItems = {};
+      for (var itemPositionItemKey
+          in this.itemsPositions[itemPositionKey].keys) {
+        if (itemPositionItemKey != "connectsTo")
+          parsedPositionItems.addAll({
+            itemPositionItemKey: this
+                .itemsPositions[itemPositionKey][itemPositionItemKey]
+                .toString()
+          });
+        else {
+          var parsedConnectsTo = new List();
+          for (var connectsToItem in this.itemsPositions[itemPositionKey]
+              [itemPositionItemKey]) {
+            parsedConnectsTo.add(connectsToItem.toString());
+          }
+          parsedPositionItems.addAll({itemPositionItemKey: parsedConnectsTo});
+        }
+      }
+      jsonPositions.addAll({itemPositionKey.toString(): parsedPositionItems});
+    }
+
+    // Pacote a ser mandado contendo
+    // os items do diagrama (com suas configurações e ids)
+    // e as posições contendo as coordenadas, tamanho e conexões com outros elementos
+    var diagramPayload = {
+      "items": jsonItems,
+      "positions": jsonPositions,
+    };
+
+    // Efetua o POST request para o back_end
+    try {
+      var response = await http.post(widget.url + "generate_code",
+          body: json.encode(diagramPayload),
+          headers: {'Content-type': 'application/json'});
+
+      // Mostra o diálogo com o código gerado e o botão de download do projeto (.zip)
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // retorna um objeto do tipo Dialog
+          return AlertDialog(
+            title: Text("Código Gerado"),
+            content: Column(
+              children: [
+                Text(json.decode(response.body)["routes"].join(";\n") + "\n"),
+                Row(
+                  children: <Widget>[
+                    Text("Download Project"),
+                    IconButton(
+                      icon: Icon(Icons.file_download),
+                      onPressed: () {
+                        // Efetua o download do arquivo do projeto identificado
+                        // na resposta do request feito com os dados do diagrama
+                        var fileName = json.decode(response.body)["fileName"];
+                        print(fileName);
+                        html.window.open(
+                            widget.url + "download_project?fileName=$fileName",
+                            "");
+                      },
+                    )
+                  ],
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              // define os botões na base do dialogo
+              FlatButton(
+                child: Text("Fechar"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  /* WIDGET BUILD */
 
   // Renderização do widget contendo
   // Painel de seleção de elementos EIP a esquerda

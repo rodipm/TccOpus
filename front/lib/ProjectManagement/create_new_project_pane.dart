@@ -34,7 +34,7 @@ class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
             IconButton(
               icon: Icon(Icons.save),
               onPressed: () {
-                widget.updateProjectInfoHandler(projectNameController.text);
+                widget.updateProjectInfoHandler("Rodrigo", projectNameController.text);
                 Navigator.of(context).pop();
               },
             ),
