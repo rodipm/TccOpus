@@ -82,7 +82,7 @@ class _MainCanvasState extends State<MainCanvas> {
   double canvasPaneHeight;
 
   // Project info
-  Map<String, dynamic> projectInfo = {"user": "", "project_name": ""};
+  Map<String, dynamic> projectInfo = {"client": "", "project_name": "", "type": ""};
 
   //***************************//
   //  CREATE/OPEN/SAVE PROJECT //
@@ -102,11 +102,11 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   void displayOpenProjectPane() async {
-    String userName = "Rodrigo";
+    String clientEmail = "rodrigomacharelli@opus-software.com.br";
 
     try {
       var response =
-          await http.get(widget.url + "projects?user_name=" + userName);
+          await http.get(widget.url + "projects?client_email=" + clientEmail);
       List<String> projectNames = List<String>.from(json.decode(response.body)["project_names"]);
 
       if (projectNames.length > 0) {
@@ -114,22 +114,22 @@ class _MainCanvasState extends State<MainCanvas> {
           context: context,
           builder: (BuildContext context) {
             // retorna um objeto do tipo Dialog
-            return OpenProjectPane(userName, projectNames, openProject, canvasPaneHeight, mainCanvasSize);
+            return OpenProjectPane(clientEmail, projectNames, openProject, canvasPaneHeight, mainCanvasSize);
           },
         );
       }
     }
-    catch (e) {
+    catch (e) { 
       print(e);
     }
   }
 
-  void openProject(String userName, String projectName) async {
+  void openProject(String clientEmail, String projectName) async {
     print("displayOpenProjectPane");
     try {
       var response = await http.post(widget.url + "open_project",
           body:
-              json.encode({"user_name": userName, "project_name": projectName}),
+              json.encode({"client_email": clientEmail, "project_name": projectName, }),
           headers: {'Content-type': 'application/json'});
       resetCanvasState();
 
@@ -138,7 +138,7 @@ class _MainCanvasState extends State<MainCanvas> {
       print(responseDecoded);
 
       updateProjectInfo(
-          responseDecoded["user"], responseDecoded["project_name"]);
+          responseDecoded["client"], responseDecoded["project_name"], projectType: responseDecoded["type"]);
 
       var canvasState = responseDecoded["canvas_state"];
 
@@ -212,10 +212,15 @@ class _MainCanvasState extends State<MainCanvas> {
     );
   }
 
-  void updateProjectInfo(user, projectName) {
+  void updateProjectInfo(client, projectName, {projectType=Null}) {
     print("update project info");
-    print(projectName);
-    this.projectInfo = {"user": user, "project_name": projectName};
+    print(projectType);
+
+    var projType = projectType;
+    if (projType == Null)
+      projType = projectInfo["type"];
+      
+    this.projectInfo = {"client": client, "project_name": projectName, "type": projType};
   }
 
   void saveProject() async {
@@ -249,8 +254,9 @@ class _MainCanvasState extends State<MainCanvas> {
     }
 
     Map<String, dynamic> projectData = {
-      "user": projectInfo["user"],
+      "client": projectInfo["client"],
       "project_name": projectInfo["project_name"],
+      "type": projectInfo["type"],
       "canvas_state": {
         "items": jsonItems,
         "itemsPositions": jsonPositions,

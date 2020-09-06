@@ -6,7 +6,7 @@ import os
 from back.code_generation.code_generator import create_routes
 from back.code_generation.parser import parse
 from back.code_generation.project_generator import create_project
-from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromUser
+from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient, createTables, testAddUser
 
 app = Flask(__name__)
 CORS(app)
@@ -51,30 +51,28 @@ def download_project():
 
     return send_file(os.path.join("projetos_gerados", fileName), attachment_filename='IntegrationProject.zip', as_attachment=True), 200
 
-projeto_salvo = {}
 
 @app.route('/save_project', methods=['POST'])
 def save_project():
-    global projeto_salvo
+    print(request.json)
     saveProject(request.json)
 
     return {}
 
 @app.route('/open_project', methods=['POST'])
 def open_project():
-    user_name = request.json["user_name"]
+    client_email = request.json["client_email"]
     project_name = request.json["project_name"]
-    print(user_name, project_name)
+    print(client_email, project_name)
 
-    projeto = loadProject(user_name, project_name)
+    projeto = loadProject(client_email, project_name)
     return projeto
 
 @app.route('/projects', methods=['GET'])
 def projects():
-    user_name = request.args.get('user_name')
-    
-    projects = getAllProjectsFromUser(user_name)
-
+    client_email = request.args.get('client_email')
+    print(client_email)
+    projects = getAllProjectsFromClient(client_email)
     names = []
 
     for proj in projects:

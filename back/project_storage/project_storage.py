@@ -13,20 +13,21 @@ def createTables():
     cur = conn.cursor()
 
     cur.execute("""
-    CREATE TABLE users (
-        user_id SERIAL PRIMARY KEY,
-        user_name CHAR(100) NOT NULL,
-        user_pass CHAR(100) NOT NULL
+    CREATE TABLE client (
+        id SERIAL PRIMARY KEY,
+        email CHAR(100) UNIQUE,
+        pass CHAR(100) NOT NULL
     );
     """)
 
     cur.execute("""
-    CREATE TABLE projects (
-        project_id  SERIAL PRIMARY KEY,
-        user_id INT NOT NULL,
-        project_name CHAR(100) NOT NULL UNIQUE,
-        project_data VARCHAR,
-        FOREIGN KEY (user_id) REFERENCES users(user_id)
+    CREATE TABLE project (
+        id  SERIAL PRIMARY KEY,
+        client_id INT NOT NULL,
+        name VARCHAR NOT NULL,
+        canvas_state VARCHAR,
+        type VARCHAR,
+        FOREIGN KEY (client_id) REFERENCES client(id)
     );
     """)
 
@@ -34,10 +35,11 @@ def createTables():
 
     cur.close()
     conn.close()
+    print("Tables create")
 
-
-def getUserId(cur, user_name):
-    cur.execute(f"SELECT user_id FROM users WHERE user_name='{user_name}';")
+def getClientId(cur, client_email):
+    print(client_email)
+    cur.execute(f"SELECT id FROM client WHERE email='{client_email}';")
     res = cur.fetchone()
     return res[0]
 
@@ -46,15 +48,17 @@ def saveProject(project_data):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
 
-    user_name = project_data["user"]
-    user_id = getUserId(cur, user_name)
+    client_email = project_data["client"]
+    client_id = getClientId(cur, client_email)
 
     project_name = project_data["project_name"]
 
-    text_project_data = json.dumps(project_data["canvas_state"])
+    project_type = project_data["type"]
 
-    cur.execute("INSERT INTO projects (user_id, project_name, project_data) VALUES (%s,%s,%s);",
-                (user_id, project_name, text_project_data))
+    text_canvas_state = json.dumps(project_data["canvas_state"])
+
+    cur.execute("INSERT INTO project (client_id, name, canvas_state, type) VALUES (%s,%s,%s,%s);",
+                (client_id, project_name, text_canvas_state, project_type))
 
 
     conn.commit()
@@ -62,21 +66,23 @@ def saveProject(project_data):
     conn.close()
 
 
-def getAllProjectsFromUser(user_name):
+def getAllProjectsFromClient(client_email):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
 
-    user_id = getUserId(cur, user_name)
+    client_id = getClientId(cur, client_email)
 
-    cur.execute("SELECT * FROM projects WHERE user_id=%s", (user_id,))
+    cur.execute("SELECT * FROM project WHERE client_id=%s", (client_id,))
     res = cur.fetchall()
 
+    print(res)
     projects = []
 
     for proj in res:
         project = {
-            "user": user_name,
+            "client": client_email,
             "project_name": proj[2].strip(),
+            "type": proj[4],
             "canvas_state": json.loads(proj[3])
         }
         projects.append(project)
@@ -86,8 +92,8 @@ def getAllProjectsFromUser(user_name):
 
     return projects
 
-def loadProject(user_name, project_name):
-    projects = getAllProjectsFromUser(user_name)
+def loadProject(client_email, project_name):
+    projects = getAllProjectsFromClient(client_email)
 
     for proj in projects:
         if proj["project_name"] == project_name:
@@ -100,17 +106,18 @@ def testAddUser():
     cur = conn.cursor()
 
     try:
-        cur.execute("INSERT INTO users (user_name, user_pass) VALUES ('Rodrigo', '123455');")
+        cur.execute("INSERT INTO client (email, pass) VALUES ('rodrigomacharelli@opus-software.com.br', '123455');")
     except psycopg2.errors.UniqueViolation:
-        print("Usuário já existe")
+        print("Email já cadastrado")
 
     conn.commit()
     cur.close()
     conn.close()
 
 project_data = {
-    "user": "Rodrigo",
+    "client": "rodrigomacharelli@opus-software.com.br",
     "project_name": "Outro Projeto",
+    "type": "EIP",
     "canvas_state": {
         "items": {0: "a", 1: "b"},
         "itemsPositions": {},

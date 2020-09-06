@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 
 class OpenProjectPane extends StatefulWidget {
-  final String userName;
+  final String clientEmail;
   final List<String> projectNames;
   final Function openProjectHandler;
   final double canvasPaneHeight;
   final double mainCanvasSize;
 
-  OpenProjectPane(this.userName, this.projectNames, this.openProjectHandler, this.canvasPaneHeight,
-      this.mainCanvasSize);
+  OpenProjectPane(this.clientEmail, this.projectNames, this.openProjectHandler,
+      this.canvasPaneHeight, this.mainCanvasSize);
 
   @override
   _OpenProjectPaneState createState() => _OpenProjectPaneState();
 }
 
 class _OpenProjectPaneState extends State<OpenProjectPane> {
+  String chosenProject = "";
+
   @override
   Widget build(BuildContext context) {
 
-    String chosenProject = widget.projectNames[0];
-
+    if (chosenProject == "")
+      chosenProject = widget.projectNames[0];
+      
     return AlertDialog(
       title: Text("Abrir Projeto"),
       content: Container(
@@ -29,12 +32,15 @@ class _OpenProjectPaneState extends State<OpenProjectPane> {
           children: [
             Text("Nome do Projeto"),
             DropdownButton<String>(
-              value: widget.projectNames[0],
+              value: chosenProject,
               icon: Icon(Icons.arrow_downward),
               iconSize: 24,
               elevation: 16,
               onChanged: (String newValue) {
-                chosenProject = newValue;
+                print("changed");
+                setState(() {
+                  chosenProject = newValue;
+                });
               },
               items: widget.projectNames.map<DropdownMenuItem<String>>(
                 (String value) {
@@ -49,14 +55,13 @@ class _OpenProjectPaneState extends State<OpenProjectPane> {
         ),
       ),
       actions: <Widget>[
-        // define os botões na base do dialogo
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.check),
               onPressed: () {
-                widget.openProjectHandler(widget.userName, chosenProject);
+                widget.openProjectHandler(widget.clientEmail, chosenProject);
                 Navigator.of(context).pop();
               },
             ),
