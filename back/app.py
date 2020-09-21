@@ -6,7 +6,8 @@ import os
 from back.code_generation.code_generator import create_routes
 from back.code_generation.parser import parse
 from back.code_generation.project_generator import create_project
-from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient, createTables, testAddUser
+from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient
+from back.user_storage.user_storage import clientLogin, addClient, createTables
 
 app = Flask(__name__)
 CORS(app)
@@ -79,6 +80,28 @@ def projects():
         names.append(proj['project_name'])
 
     return json.dumps({"project_names": names}), 200
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.json['email']
+    password = request.json['pass']
+    logged = clientLogin(email, password)
+
+    if logged:
+        return json.dumps({"logged": True, "email": email}), 200
+    else:
+        return json.dumps({"logged": False}), 200
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    email = request.json['email']
+    password = request.json['pass']
+    signedup = addClient(email, password)
+
+    if signedup:
+        return json.dumps({"signedup": True, "email": email}), 200
+    else:
+        return json.dumps({"signedup": False}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
