@@ -51,6 +51,8 @@ class _EditItemPaneState extends State<EditItemPane> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(5, 20, 5, 10),
+      decoration: BoxDecoration(color: Colors.grey.shade700, borderRadius: BorderRadius.circular(10),),
+      margin: EdgeInsets.fromLTRB(0, 0, MediaQuery.of(context).size.width * 0.02, 0),
       child: Center(
         child: Column(
           children: <Widget>[

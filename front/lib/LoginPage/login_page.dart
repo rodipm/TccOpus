@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         height: MediaQuery.of(context).size.height * 0.1,
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-              MediaQuery.of(context).size.width * 0.1, 10, 0, 0),
+              MediaQuery.of(context).size.width * 0.02, 10, 0, 0),
           child: Text(
             "Editor Visual",
             style: TextStyle(

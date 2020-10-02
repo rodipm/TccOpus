@@ -18,7 +18,7 @@ class LinesState extends State<Lines> {
 
   @override
   Widget build(_) => Container(
-        color: Colors.grey,
+        color: Colors.grey.shade800,
         child: CustomPaint(
           size: Size.infinite,
           painter: LinesPainter(widget.itemsPositions),
@@ -54,19 +54,19 @@ class LinesPainter extends CustomPainter {
                 _end - Offset(15, 0),
                 Paint()
                   ..strokeWidth = 4
-                  ..color = Colors.black);
+                  ..color = Color(0xff01A0C7));
             canvas.drawLine(
                 _end,
                 _end - Offset(15, 10),
                 Paint()
                   ..strokeWidth = 4
-                  ..color = Colors.black);
+                  ..color = Color(0xff01A0C7));
               canvas.drawLine(
                 _end,
                 _end - Offset(15, -10),
                 Paint()
                   ..strokeWidth = 4
-                  ..color = Colors.black);
+                  ..color = Color(0xff01A0C7));
           }
         },
       );

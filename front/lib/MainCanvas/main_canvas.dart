@@ -14,6 +14,7 @@ import 'package:front/EipWidgets/import_widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:html' as html;
 
+
 class MainCanvas extends StatefulWidget {
   final url;
   final String clientEmail;
@@ -61,6 +62,7 @@ class _MainCanvasState extends State<MainCanvas> {
   double editPaneSize;
   double editCanvasPaneHeight;
   double canvasPaneHeight;
+  double headerHeight;
 
   // Project info
   Map<String, dynamic> projectInfo = {
@@ -87,10 +89,9 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   void displayOpenProjectPane() async {
-
     try {
-      var response =
-          await http.get(widget.url + "projects?client_email=" + widget.clientEmail);
+      var response = await http
+          .get(widget.url + "projects?client_email=" + widget.clientEmail);
       List<String> projectNames =
           List<String>.from(json.decode(response.body)["project_names"]);
 
@@ -99,8 +100,8 @@ class _MainCanvasState extends State<MainCanvas> {
           context: context,
           builder: (BuildContext context) {
             // retorna um objeto do tipo Dialog
-            return OpenProjectPane(widget.clientEmail, projectNames, openProject,
-                canvasPaneHeight, mainCanvasSize);
+            return OpenProjectPane(widget.clientEmail, projectNames,
+                openProject, canvasPaneHeight, mainCanvasSize);
           },
         );
       }
@@ -273,8 +274,8 @@ class _MainCanvasState extends State<MainCanvas> {
     setState(() {
       // Correção da coordenada x da posição do elemento
       // baseado no tamanho do painel de seleção esquerdo
-      Offset correctedPosition = Offset(
-          position.dx - leftSidePaneSize, position.dy - editCanvasPaneHeight);
+      Offset correctedPosition = Offset(position.dx - leftSidePaneSize,
+          position.dy - editCanvasPaneHeight - headerHeight);
 
       // Novo item a ser adicionado no canvas
       MoveableStackItem _newItem = MoveableStackItem(
@@ -637,8 +638,10 @@ class _MainCanvasState extends State<MainCanvas> {
     // Painel de edição ocupa 15% da tela
     this.leftSidePaneSize = MediaQuery.of(context).size.width * 0.15;
     this.editCanvasPaneHeight = MediaQuery.of(context).size.height * 0.05;
-    this.canvasPaneHeight =
-        MediaQuery.of(context).size.height - this.editCanvasPaneHeight;
+    this.headerHeight = MediaQuery.of(context).size.height * 0.1;
+    this.canvasPaneHeight = MediaQuery.of(context).size.height -
+        this.editCanvasPaneHeight -
+        this.headerHeight;
 
     // Remover o painel de edição de itens quando não houver item selecionado
     if (this.editingItem == null) {
@@ -653,19 +656,15 @@ class _MainCanvasState extends State<MainCanvas> {
     List<Widget> scaffoldRowChildren = [
       Container(
         width: this.leftSidePaneSize,
-        color: Colors.blueGrey,
+        color: Colors.grey.shade800,
         child: LeftSidePane(
-            this.insertNewEipItem,
-            this.displayCreateNewProjectPane,
-            this.displayOpenProjectPane,
-            this.saveProject),
+          this.insertNewEipItem,
+        ),
       ),
       Container(
         width: this.mainCanvasSize,
         child: Column(
           children: <Widget>[
-            EditCanvasPane(this.mainCanvasSize, this.editCanvasPaneHeight,
-                this.generateCode, this.undoCanvas, this.redoCanvas),
             Container(
               height: this.canvasPaneHeight,
               child: Stack(
@@ -687,8 +686,50 @@ class _MainCanvasState extends State<MainCanvas> {
       );
 
     return Scaffold(
-      body: Row(
-        children: scaffoldRowChildren,
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Colors.grey.shade800,
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: this.headerHeight,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      MediaQuery.of(context).size.width * 0.02, 10, 0, 0),
+                  child: Text(
+                    "Editor Visual",
+                    style: TextStyle(
+                        fontSize: 45,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              EditCanvasPane(
+                  this.displayCreateNewProjectPane,
+                  this.displayOpenProjectPane,
+                  this.saveProject,
+                  this.editCanvasPaneHeight,
+                  this.generateCode,
+                  this.undoCanvas,
+                  this.redoCanvas),
+              Container(
+                height: MediaQuery.of(context).size.height -
+                    this.headerHeight -
+                    this.editCanvasPaneHeight,
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: scaffoldRowChildren,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

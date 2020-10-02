@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {
   final Function insertNewEipItem;
-  final Function displayCreateNewProjectPaneHandler;
-  final Function displayOpenProjectPaneHandler;
-  final Function displaySaveProjectPaneHandler;
 
-  LeftSidePane(this.insertNewEipItem, this.displayCreateNewProjectPaneHandler, this.displayOpenProjectPaneHandler, this.displaySaveProjectPaneHandler);
+
+  LeftSidePane(this.insertNewEipItem);
   @override
   _LeftSidePaneState createState() => _LeftSidePaneState();
 }
@@ -37,29 +35,14 @@ class _LeftSidePaneState extends State<LeftSidePane> {
   Widget _eipItemsMenu(Map<String, dynamic> eipItems) {
     return Expanded(
       child: Container(
-        color: Colors.blueGrey,
+        decoration: BoxDecoration(color: Colors.grey.shade700, borderRadius: BorderRadius.circular(10),),
+        margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.02, 0, 0, 0),
         child: Container(
           // height: 400,
           child: Column(
             children: <Widget>[
               Container(
-                color: Colors.black.withAlpha(35),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  width: double.infinity,
-                  child: Center(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(icon: Icon(Icons.create_new_folder),color: Colors.white,onPressed: () => widget.displayCreateNewProjectPaneHandler(),tooltip: "Criar projeto",),
-                          IconButton(icon: Icon(Icons.folder_open),color: Colors.white,onPressed: () => widget.displayOpenProjectPaneHandler(),tooltip: "Abrir projeto",),
-                          IconButton(icon: Icon(Icons.save),color: Colors.white,onPressed: () => widget.displaySaveProjectPaneHandler(),tooltip: "Salvar projeto",),
-                        ]),
-                  ),
-                ),
-              ),
-              Container(
-                color: Colors.black.withAlpha(50),
+                // color: Colors.black.withAlpha(50),
                 child: Container(
                   height: 50,
                   width: double.infinity,
@@ -67,7 +50,10 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("Messaging System"),
+                          Text(
+                            "Messaging System",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ]),
                   ),
                 ),
@@ -76,7 +62,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                 child: Container(
                   width: 200,
                   height: 200,
-                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
                     itemCount: eipItems["MessagingSystem"].length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -88,7 +74,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                 ),
               ),
               Container(
-                color: Colors.black.withAlpha(50),
+                // color: Colors.black.withAlpha(50),
                 child: Container(
                   height: 50,
                   width: double.infinity,
@@ -96,7 +82,10 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("Message Routing"),
+                          Text(
+                            "Message Routing",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ]),
                   ),
                 ),
@@ -105,7 +94,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                 child: Container(
                   width: 200,
                   height: 100,
-                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
                     itemCount: eipItems["MessageRouting"].length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
