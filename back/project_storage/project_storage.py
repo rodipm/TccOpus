@@ -7,6 +7,7 @@ load_dotenv()
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
+
 def getClientId(cur, client_email):
     print(client_email)
     cur.execute(f"SELECT id FROM client WHERE email='{client_email}';")
@@ -18,7 +19,7 @@ def saveProject(project_data):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
 
-    client_email = project_data["client"]
+    client_email = project_data["client_email"]
     client_id = getClientId(cur, client_email)
 
     project_name = project_data["project_name"]
@@ -27,9 +28,17 @@ def saveProject(project_data):
 
     text_canvas_state = json.dumps(project_data["canvas_state"])
 
-    cur.execute("INSERT INTO project (client_id, name, canvas_state, type) VALUES (%s,%s,%s,%s);",
-                (client_id, project_name, text_canvas_state, project_type))
+    cur.execute("SELECT project.name FROM project INNER JOIN client ON project.client_id = client.id WHERE client.email = %s;",
+                (client_email,))
 
+    res = cur.fetchall()
+
+    if len(res):
+        cur.execute("UPDATE project SET canvas_state = %s WHERE name = %s;",
+                    (text_canvas_state, project_name))
+    else:
+        cur.execute("INSERT INTO project (client_id, name, canvas_state, type) VALUES (%s,%s,%s,%s);",
+                    (client_id, project_name, text_canvas_state, project_type))
 
     conn.commit()
     cur.close()
@@ -62,11 +71,12 @@ def getAllProjectsFromClient(client_email):
 
     return projects
 
+
 def loadProject(client_email, project_name):
     projects = getAllProjectsFromClient(client_email)
 
     for proj in projects:
         if proj["project_name"] == project_name:
             return proj
-    
+
     return None

@@ -4,9 +4,10 @@ class CreateNewProjectPane extends StatefulWidget {
   final Function updateProjectInfoHandler;
   final double canvasPaneHeight;
   final double mainCanvasSize;
+  final String clientEmail;
 
   CreateNewProjectPane(this.updateProjectInfoHandler, this.canvasPaneHeight,
-      this.mainCanvasSize);
+      this.mainCanvasSize, this.clientEmail);
 
   @override
   _CreateNewProjectPaneState createState() => _CreateNewProjectPaneState();
@@ -34,7 +35,7 @@ class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
             IconButton(
               icon: Icon(Icons.save),
               onPressed: () {
-                widget.updateProjectInfoHandler("rodrigomacharelli@opus-software.com.br", projectNameController.text);
+                widget.updateProjectInfoHandler(widget.clientEmail, projectNameController.text);
                 Navigator.of(context).pop();
               },
             ),

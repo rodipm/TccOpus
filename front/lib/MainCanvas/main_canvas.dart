@@ -14,11 +14,11 @@ import 'package:front/EipWidgets/import_widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:html' as html;
 
-
 class MainCanvas extends StatefulWidget {
   final url;
   final String clientEmail;
-  MainCanvas(this.url, this.clientEmail);
+  final Function logoutHandler;
+  MainCanvas(this.url, this.clientEmail, this.logoutHandler);
   @override
   _MainCanvasState createState() => _MainCanvasState();
 }
@@ -71,6 +71,7 @@ class _MainCanvasState extends State<MainCanvas> {
     "type": ""
   };
 
+
   //***************************//
   //  CREATE/OPEN/SAVE PROJECT //
   //***************************//
@@ -82,7 +83,7 @@ class _MainCanvasState extends State<MainCanvas> {
       builder: (BuildContext context) {
         // retorna um objeto do tipo Dialog
         return CreateNewProjectPane(
-            this.updateProjectInfo, this.canvasPaneHeight, this.mainCanvasSize);
+            this.updateProjectInfo, this.canvasPaneHeight, this.mainCanvasSize, widget.clientEmail);
       },
     );
     resetCanvasState();
@@ -246,7 +247,7 @@ class _MainCanvasState extends State<MainCanvas> {
     }
 
     Map<String, dynamic> projectData = {
-      "client": projectInfo["client"],
+      "client_email": projectInfo["client"],
       "project_name": projectInfo["project_name"],
       "type": projectInfo["type"],
       "canvas_state": {
@@ -571,6 +572,7 @@ class _MainCanvasState extends State<MainCanvas> {
     // os items do diagrama (com suas configurações e ids)
     // e as posições contendo as coordenadas, tamanho e conexões com outros elementos
     var diagramPayload = {
+      "client_email": projectInfo["client"],
       "items": jsonItems,
       "positions": jsonPositions,
     };
@@ -695,20 +697,47 @@ class _MainCanvasState extends State<MainCanvas> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: this.headerHeight,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      MediaQuery.of(context).size.width * 0.02, 10, 0, 0),
-                  child: Text(
-                    "Editor Visual",
-                    style: TextStyle(
-                        fontSize: 45,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                    textAlign: TextAlign.left,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: this.headerHeight,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.width * 0.02, 10, 0, 0),
+                      child: Text(
+                        "Editor Visual",
+                        style: TextStyle(
+                            fontSize: 45,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
                   ),
-                ),
+                  Container(
+                    margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          color: Color(0xff01A0C7)),
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(Icons.logout),
+                              color: Colors.white,
+                              onPressed: () =>
+                                  widget.logoutHandler(),
+                              tooltip: "Logout",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               EditCanvasPane(
                   this.displayCreateNewProjectPane,

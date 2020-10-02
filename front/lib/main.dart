@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front/MainCanvas/main_canvas.dart';
 import 'package:front/utils.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 Future main() async {
   await DotEnv().load('.env');
@@ -24,12 +26,11 @@ class _MyAppState extends State<MyApp> {
   String email;
   bool isLogged = false;
 
-
   bool isLoggedHandler(var logInfo) {
     setState(() {
       this.isLogged = logInfo['logged'];
       this.email = logInfo['email'];
-      setLocalStorage("SAMPLE_SESSION_ID");
+      setLocalStorage(this.email);
     });
     return this.isLogged;
   }
@@ -38,21 +39,50 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       this.isLogged = signupInfo['signedup'];
       this.email = signupInfo['email'];
-      setLocalStorage("SAMPLE_SESSION_ID");
+      setLocalStorage(this.email);
     });
+  }
+
+  logOut() async {
+    print("logout");
+    String email = getLocalStorage();
+
+    if (email != null) {
+      var response = await http.post(widget.url + "logout",
+          body: json.encode({"client_email": email}),
+          headers: {'Content-type': 'application/json'});
+
+      bool resLogged = json.decode(response.body)['logged'];
+      setState(() {
+        this.isLogged = resLogged;
+      });
+    }
+  }
+
+  isClientLogged() async {
+    String email = getLocalStorage();
+
+    if (email != null) {
+      var response = await http.post(widget.url + "islogged",
+          body: json.encode({"client_email": email}),
+          headers: {'Content-type': 'application/json'});
+
+      bool resLogged = json.decode(response.body)['logged'];
+      print(resLogged);
+      if (resLogged != this.isLogged) {
+        setState(() {
+          this.isLogged = resLogged;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    this.isClientLogged();
 
-    print("LOCAL STORAGE");
-    String sessionId = getLocalStorage();
-
-    if (sessionId != null)
-      this.isLogged = true;
-      
     if (this.isLogged)
-      this.homeWidget = MainCanvas(widget.url, this.email);
+      this.homeWidget = MainCanvas(widget.url, this.email, this.logOut);
     else
       this.homeWidget =
           LoginPage(isLoggedHandler, isSignedUpHandler, widget.url);

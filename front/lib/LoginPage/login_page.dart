@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
     print(email);
     print(pass);
     var response = await http.post(widget.url + "login",
-        body: json.encode({"email": email, "pass": pass}),
+        body: json.encode({"client_email": email, "pass": pass}),
         headers: {'Content-type': 'application/json'});
 
     if (!widget.isLoggedHandler(json.decode(response.body))) {
@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     print("addClient $email, $pass");
 
     var response = await http.post(widget.url + "signup",
-        body: json.encode({"email": email, "pass": pass}),
+        body: json.encode({"client_email": email, "pass": pass}),
         headers: {'Content-type': 'application/json'});
 
     if (!widget.isSignedUpHandler(json.decode(response.body))) {
