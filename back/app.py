@@ -10,6 +10,7 @@ from back.project_storage.project_storage import saveProject, loadProject, getAl
 from back.user_storage.user_storage import clientLogin, addClient, createTables
 from uuid import uuid4
 from datetime import timedelta
+from back.errors import InvalidClientEmail
 
 app = Flask(__name__)
 app.secret_key = str(uuid4())
@@ -18,8 +19,8 @@ CORS(app)
 
 session = {}
 
-def check_logged(request):
-    print("CHECK_LOGGED")
+def check_logged_session(request):
+    print("check_logged_session")
     print(session)
     client_email = request.json['client_email']
     print("client_email")
@@ -29,10 +30,6 @@ def check_logged(request):
     else:
         return False
 
-# @app.before_request
-# def make_session_permanent():
-#     print("make_session_permanent")
-#     session.permanent = True
 
 @app.route('/')
 def index():
@@ -40,7 +37,7 @@ def index():
 
 @app.route('/generate_code', methods=['POST'])
 def generate_code():
-    logged = check_logged(request)
+    logged = check_logged_session(request)
     if not logged:
         return {"logged": False}
 
@@ -84,7 +81,7 @@ def save_project():
     print("SAVE PROJECT")
 
     print(request.json)
-    logged = check_logged(request)
+    logged = check_logged_session(request)
     if not logged:
         return {"logged": False}
 
@@ -95,7 +92,7 @@ def save_project():
 
 @app.route('/open_project', methods=['POST'])
 def open_project():
-    logged = check_logged(request)
+    logged = check_logged_session(request)
     if not logged:
         return {"logged": False}
 
@@ -110,15 +107,23 @@ def open_project():
 def projects():
     client_email = request.args.get('client_email')
     print(client_email)
-    projects = getAllProjectsFromClient(client_email)
-    names = []
-    print(projects)
-    print(names)
 
-    for proj in projects:
-        names.append(proj['project_name'])
+    try:
+        projects = getAllProjectsFromClient(client_email)
+        names = []
+        print(projects)
+        print(names)
 
-    return json.dumps({"project_names": names}), 200
+        for proj in projects:
+            names.append(proj['project_name'])
+
+        return json.dumps({"project_names": names}), 200
+
+    except InvalidClientEmail as e:
+        return json.dumps({"error": e.title, "status": e.status, "message": e.message}), e.status
+
+
+# Login Section
 
 @app.route('/login', methods=['POST'])
 def login():

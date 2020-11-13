@@ -94,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 5),
                         child: TextField(
+                          
                           controller: loginEmail,
                           obscureText: false,
                           style: TextStyle(color: Colors.white),
