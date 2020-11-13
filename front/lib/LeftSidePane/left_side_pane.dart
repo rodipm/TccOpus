@@ -173,6 +173,70 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   ),
                 ),
               ),
+              Container(
+                // color: Colors.black.withAlpha(50),
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "Conditional",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ]),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: GridView.builder(
+                    itemCount: basicItems["Conditional"].length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, crossAxisSpacing: 30),
+                    itemBuilder: (context, index) {
+                      return basicItems["Conditional"][index];
+                    },
+                  ),
+                ),
+              ),
+              Container(
+                // color: Colors.black.withAlpha(50),
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "IO",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ]),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: GridView.builder(
+                    itemCount: basicItems["IO"].length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, crossAxisSpacing: 30),
+                    itemBuilder: (context, index) {
+                      return basicItems["IO"][index];
+                    },
+                  ),
+                ),
+              ),
             ],
           ),
         ),

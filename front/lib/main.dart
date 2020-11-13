@@ -35,12 +35,13 @@ class _MyAppState extends State<MyApp> {
     return this.isLogged;
   }
 
-  void isSignedUpHandler(var signupInfo) {
+  bool isSignedUpHandler(var signupInfo) {
     setState(() {
       this.isLogged = signupInfo['signedup'];
       this.email = signupInfo['email'];
       setLocalStorage(this.email);
     });
+    return this.isLogged;
   }
 
   logOut() async {

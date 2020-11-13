@@ -76,7 +76,7 @@ def generate_code():
         return json.dumps({"routes": routes, "fileName": zip_project}), 200
 
     elif project_type == "BASIC":
-        routes, dependencies = create_basic(items_info)
+        routes, _ = create_basic(items_info)
         return json.dumps({"routes": routes}), 200
 
 @app.route('/download_project', methods=['GET'])

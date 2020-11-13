@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         body: json.encode({"client_email": email, "pass": pass}),
         headers: {'Content-type': 'application/json'});
 
-    if (!widget.isSignedUpHandler(json.decode(response.body))) {
+    if (widget.isSignedUpHandler(json.decode(response.body)) == false) {
       setState(() {
         this.errorString = "Email já cadastrado!";
       });
