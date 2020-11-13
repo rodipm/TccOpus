@@ -3,9 +3,10 @@ from flask_cors import CORS
 from copy import deepcopy
 import json
 import os
-from back.code_generation.code_generator import create_routes
+from back.code_generation.code_generator_eip import create_routes
+from back.code_generation.code_generator_basic import create_basic
 from back.code_generation.parser import parse
-from back.code_generation.project_generator import create_project
+from back.code_generation.project_generator_eip import create_project
 from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient
 from back.user_storage.user_storage import clientLogin, addClient, createTables
 from uuid import uuid4
@@ -37,15 +38,18 @@ def index():
 
 @app.route('/generate_code', methods=['POST'])
 def generate_code():
+    print("GENERATE CODE")
+    print(request.json)
     logged = check_logged_session(request)
     if not logged:
+        print("NOT LOGGED")
         return {"logged": False}
 
-    test = []
     items_info = {}
 
     items = request.json['items']
     positions = request.json['positions']
+    project_type = request.json['type']
 
     print("ITEMS", items)
     print("POSITIONS", positions)
@@ -56,17 +60,24 @@ def generate_code():
 
     print("items info", items_info)
 
-    # Parse
-    if (parse(items_info)):
-        print("Parser OK")
-        # Generate Code
-        routes, dependencies = create_routes(items_info)
-        print(routes, dependencies)
-    else:
-        routes = {}
+    if project_type == "EIP":
+        routes = ""
+        dependencies = ""
+        # Parse
+        if (parse(items_info)):
+            print("Parser OK")
+            # Generate Code
+            routes, dependencies = create_routes(items_info)
+            print(routes, dependencies)
+        else:
+            routes = {}
 
-    zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
-    return json.dumps({"routes": routes, "fileName": zip_project}), 200
+        zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
+        return json.dumps({"routes": routes, "fileName": zip_project}), 200
+
+    elif project_type == "BASIC":
+        routes, dependencies = create_basic(items_info)
+        return json.dumps({"routes": routes}), 200
 
 @app.route('/download_project', methods=['GET'])
 def download_project():

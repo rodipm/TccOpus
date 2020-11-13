@@ -1,33 +1,45 @@
 // Import das classes representantes dos elementos EIP (EipWidgets)
 import 'package:front/EipWidgets/import_widgets.dart';
+// Import das classes representantes dos elementos BASIC (BasicWidgets)
+import 'package:front/BasicWidgets/import_widgets.dart';
 import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {
-  final Function insertNewEipItem;
+  final Function insertNewItem;
+  final Map<String, dynamic> projectInfo;
 
-
-  LeftSidePane(this.insertNewEipItem);
+  LeftSidePane(this.insertNewItem, this.projectInfo);
   @override
   _LeftSidePaneState createState() => _LeftSidePaneState();
 }
 
 // Painel de seleção (lado esquerdo) dos elementos EIP arrastáveis
 class _LeftSidePaneState extends State<LeftSidePane> {
-  bool eipItemsMenuOpen = true;
+  bool itemsMenuOpen = true;
+
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> eipItems = {
-      "MessagingSystem": [],
-      "MessageRouting": []
-    };
-    for (String _key in eipWidgets.keys) {
-      var eipComponent = eipWidgets[_key]();
-      eipItems[eipComponent.subType]
-          .add(eipComponent.icon(widget.insertNewEipItem));
+    Map<String, dynamic> visualItems;
+    Map<String, dynamic> importedWidgets;
+    Function itemsMenu;
+
+    if (widget.projectInfo["type"] == "EIP") {
+      visualItems = {"MessagingSystem": [], "MessageRouting": []};
+      importedWidgets = eipWidgets;
+      itemsMenu = _eipItemsMenu;
+    } else if (widget.projectInfo["type"] == "BASIC") {
+      visualItems = {"Assign": [], "Conditional": [], "IO": []};
+      importedWidgets = basicWidgets;
+      itemsMenu = _basicItemsMenu;
+    }
+    for (String _key in importedWidgets.keys) {
+      var visualItem = importedWidgets[_key]();
+      visualItems[visualItem.subType]
+          .add(visualItem.icon(widget.insertNewItem));
     }
     return Column(
       children: <Widget>[
-        _eipItemsMenu(eipItems),
+        itemsMenu(visualItems),
       ],
     );
   }
@@ -35,8 +47,12 @@ class _LeftSidePaneState extends State<LeftSidePane> {
   Widget _eipItemsMenu(Map<String, dynamic> eipItems) {
     return Expanded(
       child: Container(
-        decoration: BoxDecoration(color: Colors.grey.shade700, borderRadius: BorderRadius.circular(10),),
-        margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.02, 0, 0, 0),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade700,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.fromLTRB(
+            MediaQuery.of(context).size.width * 0.02, 0, 0, 0),
         child: Container(
           // height: 400,
           child: Column(
@@ -101,6 +117,58 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
                       return eipItems["MessageRouting"][index];
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _basicItemsMenu(Map<String, dynamic> basicItems) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade700,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.fromLTRB(
+            MediaQuery.of(context).size.width * 0.02, 0, 0, 0),
+        child: Container(
+          // height: 400,
+          child: Column(
+            children: <Widget>[
+              Container(
+                // color: Colors.black.withAlpha(50),
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "Assign",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ]),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: GridView.builder(
+                    itemCount: basicItems["Assign"].length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, crossAxisSpacing: 30),
+                    itemBuilder: (context, index) {
+                      return basicItems["Assign"][index];
                     },
                   ),
                 ),

@@ -1,3 +1,5 @@
+import 'package:front/EipWidgets/import_widgets.dart';
+import 'package:front/BasicWidgets/import_widgets.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:front/ProjectManagement/create_new_project_pane.dart';
@@ -10,7 +12,6 @@ import 'package:front/EditCanvasPane/edit_canvas_pane.dart';
 import 'package:front/Lines/lines.dart';
 import 'package:front/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
-import 'package:front/EipWidgets/import_widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:html' as html;
 
@@ -68,9 +69,8 @@ class _MainCanvasState extends State<MainCanvas> {
   Map<String, dynamic> projectInfo = {
     "client": "",
     "project_name": "",
-    "type": ""
+    "type": "BASIC"
   };
-
 
   //***************************//
   //  CREATE/OPEN/SAVE PROJECT //
@@ -82,8 +82,8 @@ class _MainCanvasState extends State<MainCanvas> {
       context: context,
       builder: (BuildContext context) {
         // retorna um objeto do tipo Dialog
-        return CreateNewProjectPane(
-            this.updateProjectInfo, this.canvasPaneHeight, this.mainCanvasSize, widget.clientEmail);
+        return CreateNewProjectPane(this.updateProjectInfo,
+            this.canvasPaneHeight, this.mainCanvasSize, widget.clientEmail);
       },
     );
     resetCanvasState();
@@ -126,9 +126,14 @@ class _MainCanvasState extends State<MainCanvas> {
       var responseDecoded = json.decode(response.body);
       print(responseDecoded);
 
+      // TEMP
+      String _projectType = "EIP";
+      if (responseDecoded["type"] == null)
+        _projectType = responseDecoded["type"];
+
       updateProjectInfo(
           responseDecoded["client"], responseDecoded["project_name"],
-          projectType: responseDecoded["type"]);
+          projectType: _projectType);
 
       var canvasState = responseDecoded["canvas_state"];
 
@@ -144,6 +149,12 @@ class _MainCanvasState extends State<MainCanvas> {
             double.parse(canvasState["itemsPositions"][itemId]["yPosition"]));
 
         var itemClass = eipWidgets[itemType]();
+
+        if (this.projectInfo["type"] == "EIP")
+          itemClass = eipWidgets[itemType]();
+        else if (this.projectInfo["type"] == "BASIC")
+          itemClass = basicWidgets[itemType]();
+
         Map<String, dynamic> parsedComponentConfigs =
             itemClass.parseComponentConfigsFromJson(currItem);
 
@@ -209,11 +220,13 @@ class _MainCanvasState extends State<MainCanvas> {
     var projType = projectType;
     if (projType == Null) projType = projectInfo["type"];
 
-    this.projectInfo = {
-      "client": client,
-      "project_name": projectName,
-      "type": projType
-    };
+    setState(() {
+      this.projectInfo = {
+        "client": client,
+        "project_name": projectName,
+        "type": projType
+      };
+    });
   }
 
   void saveProject() async {
@@ -247,7 +260,7 @@ class _MainCanvasState extends State<MainCanvas> {
     }
 
     Map<String, dynamic> projectData = {
-      "client_email": projectInfo["client"],
+      "client_email": widget.clientEmail,
       "project_name": projectInfo["project_name"],
       "type": projectInfo["type"],
       "canvas_state": {
@@ -270,8 +283,8 @@ class _MainCanvasState extends State<MainCanvas> {
   //  CANVAS AND COMPONENTS  //
   //*************************//
 
-  // Insere novo elemento EIP na área de canvas editável
-  void insertNewEipItem(dynamic item, Offset position) {
+  // Insere novo elemento visual na área de canvas editável
+  void insertNewItem(dynamic item, Offset position) {
     setState(() {
       // Correção da coordenada x da posição do elemento
       // baseado no tamanho do painel de seleção esquerdo
@@ -572,7 +585,8 @@ class _MainCanvasState extends State<MainCanvas> {
     // os items do diagrama (com suas configurações e ids)
     // e as posições contendo as coordenadas, tamanho e conexões com outros elementos
     var diagramPayload = {
-      "client_email": projectInfo["client"],
+      "client_email": widget.clientEmail,
+      "type": this.projectInfo["type"],
       "items": jsonItems,
       "positions": jsonPositions,
     };
@@ -660,7 +674,8 @@ class _MainCanvasState extends State<MainCanvas> {
         width: this.leftSidePaneSize,
         color: Colors.grey.shade800,
         child: LeftSidePane(
-          this.insertNewEipItem,
+          this.insertNewItem,
+          this.projectInfo,
         ),
       ),
       Container(
@@ -716,7 +731,8 @@ class _MainCanvasState extends State<MainCanvas> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
+                    margin: EdgeInsets.only(
+                        right: MediaQuery.of(context).size.width * 0.02),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -728,8 +744,7 @@ class _MainCanvasState extends State<MainCanvas> {
                             IconButton(
                               icon: Icon(Icons.logout),
                               color: Colors.white,
-                              onPressed: () =>
-                                  widget.logoutHandler(),
+                              onPressed: () => widget.logoutHandler(),
                               tooltip: "Logout",
                             ),
                           ],

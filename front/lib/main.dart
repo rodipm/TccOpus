@@ -62,6 +62,9 @@ class _MyAppState extends State<MyApp> {
   isClientLogged() async {
     String email = getLocalStorage();
 
+    print("isClientLogged");
+    print("email:");
+    print(email);
     if (email != null) {
       var response = await http.post(widget.url + "islogged",
           body: json.encode({"client_email": email}),

@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart';
 
-class MessageTranslator {
-  final String type = "MessageTranslator";
-  final String subType = "MessagingSystem";
+class AssignStatement {
+  final String type = "AssignStatement";
+  final String subType = "Assign";
 
   final double width;
   final double height;
 
   Widget componentWidget;
-  Map<String, dynamic> componentConfigs = {
-    "process":
-        "public void process(Exchange exchange) {\n\tMessage in = exchange.getIn();\n\tin.setBody();\n}"
-  };
+  Map<String, dynamic> componentConfigs = {"var_name": "", "expression": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
-    Map<String, dynamic> _compConfigs = Map<String, dynamic>.from(componentConfigs);
-    _compConfigs["process"] = jsonConfig["process"];
-
+    Map<String, dynamic> _compConfigs =
+        Map<String, dynamic>.from(componentConfigs);
+    _compConfigs["var_name"] = jsonConfig["var_name"];
+    _compConfigs["expression"] = jsonConfig["expression"];
     return _compConfigs;
   }
 
   Map<String, dynamic> componentConfigControllers = {
-    "messageTranslatorControllers": {},
+    "messageTranslatorControllers": {}
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
+    print("UPDATE CONFIGS");
+    print(selectedItem);
+    print(config);
+    print(configControllers);
     return {
-      config: configControllers["messageTranslatorControllers"][config].text
+      "var_name": configControllers["messageTranslatorControllers"]["var_name"].text,
+      "expression": configControllers["messageTranslatorControllers"]["expression"].text
     };
   }
 
@@ -41,7 +44,6 @@ class MessageTranslator {
     editItems.add(
       TextFormField(
         autofocus: true,
-        maxLines: 10,
         // keyboardType: TextInputType.multiline,
         controller: configControllers["messageTranslatorControllers"][config],
       ),
@@ -49,13 +51,13 @@ class MessageTranslator {
     return editItems;
   }
 
-  MessageTranslator(this.width, this.height) {
+  AssignStatement(this.width, this.height) {
     componentWidget = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/MessageTranslator.png'),
+          image: AssetImage('assets/AssignStatement.png'),
           fit: BoxFit.fill,
         ),
       ),

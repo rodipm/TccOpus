@@ -83,13 +83,13 @@ class MessageFilter {
     );
   }
 
-  Widget icon(Function insertNewEipItem) {
+  Widget icon(Function insertNewItem) {
     return SizedBox(
       width: 100,
       child: Draggable(
           feedback: componentWidget,
           onDraggableCanceled: (velocity, offset) {
-            insertNewEipItem(this, offset);
+            insertNewItem(this, offset);
           },
           child: componentWidget),
     );
