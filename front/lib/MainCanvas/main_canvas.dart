@@ -69,9 +69,10 @@ class _MainCanvasState extends State<MainCanvas> {
   Map<String, dynamic> projectInfo = {
     "client": "",
     "project_name": "",
-    "type": "BASIC"
+    "type": "EIP"
   };
 
+  bool isProjectCreated = false;
   //***************************//
   //  CREATE/OPEN/SAVE PROJECT //
   //***************************//
@@ -126,14 +127,9 @@ class _MainCanvasState extends State<MainCanvas> {
       var responseDecoded = json.decode(response.body);
       print(responseDecoded);
 
-      // TEMP
-      String _projectType = "EIP";
-      if (responseDecoded["type"] == null)
-        _projectType = responseDecoded["type"];
-
       updateProjectInfo(
           responseDecoded["client"], responseDecoded["project_name"],
-          projectType: _projectType);
+          responseDecoded["type"]);
 
       var canvasState = responseDecoded["canvas_state"];
 
@@ -179,6 +175,7 @@ class _MainCanvasState extends State<MainCanvas> {
           consTo.add(int.parse(id));
 
         setState(() {
+          this.isProjectCreated = true;
           this.items.addAll({int.parse(itemId): _newItem});
           this.itemsPositions.addAll({
             int.parse(itemId): {
@@ -213,19 +210,17 @@ class _MainCanvasState extends State<MainCanvas> {
     );
   }
 
-  void updateProjectInfo(client, projectName, {projectType = Null}) {
+  void updateProjectInfo(client, projectName, projectType) {
     print("update project info");
     print(projectType);
-
-    var projType = projectType;
-    if (projType == Null) projType = projectInfo["type"];
 
     setState(() {
       this.projectInfo = {
         "client": client,
         "project_name": projectName,
-        "type": projType
+        "type": projectType
       };
+      this.isProjectCreated = true;
     });
   }
 
@@ -658,6 +653,8 @@ class _MainCanvasState extends State<MainCanvas> {
     this.canvasPaneHeight = MediaQuery.of(context).size.height -
         this.editCanvasPaneHeight -
         this.headerHeight;
+    
+    bool isProjectCreated = this.projectInfo["project_name"] != "";    
 
     // Remover o painel de edição de itens quando não houver item selecionado
     if (this.editingItem == null) {
@@ -676,6 +673,7 @@ class _MainCanvasState extends State<MainCanvas> {
         child: LeftSidePane(
           this.insertNewItem,
           this.projectInfo,
+          () => this.isProjectCreated
         ),
       ),
       Container(
@@ -761,7 +759,8 @@ class _MainCanvasState extends State<MainCanvas> {
                   this.editCanvasPaneHeight,
                   this.generateCode,
                   this.undoCanvas,
-                  this.redoCanvas),
+                  this.redoCanvas,
+                  () => this.isProjectCreated),
               Container(
                 height: MediaQuery.of(context).size.height -
                     this.headerHeight -

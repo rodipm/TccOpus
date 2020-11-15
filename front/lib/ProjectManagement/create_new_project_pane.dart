@@ -15,6 +15,7 @@ class CreateNewProjectPane extends StatefulWidget {
 
 class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
   final projectNameController = TextEditingController();
+  String projectType = "EIP";
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,34 @@ class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
         height: 0.5 * widget.canvasPaneHeight,
         width: 0.3 * widget.mainCanvasSize,
         child: Column(
-          children: [Text("Nome do Projeto"), TextFormField(controller: projectNameController)],
+          children: [
+            Text("Nome do Projeto"),
+            TextFormField(controller: projectNameController),
+            Text("Tipo de Projeto"),
+            DropdownButton<String>(
+              value: projectType,
+              icon: Icon(Icons.arrow_downward),
+              iconSize: 24,
+              elevation: 16,
+              style: TextStyle(color: Colors.deepPurple),
+              underline: Container(
+                height: 2,
+                color: Colors.deepPurpleAccent,
+              ),
+              onChanged: (String newValue) {
+                setState(() {
+                  projectType = newValue;
+                });
+              },
+              items: <String>['EIP', 'BASIC']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            )
+          ],
         ),
       ),
       actions: <Widget>[
@@ -35,7 +63,8 @@ class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
             IconButton(
               icon: Icon(Icons.save),
               onPressed: () {
-                widget.updateProjectInfoHandler(widget.clientEmail, projectNameController.text);
+                widget.updateProjectInfoHandler(widget.clientEmail,
+                    projectNameController.text, projectType);
                 Navigator.of(context).pop();
               },
             ),

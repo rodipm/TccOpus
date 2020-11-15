@@ -112,22 +112,31 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
               )
             : null,
         child: GestureDetector(
-          onTap: () => widget.clickHandler(widget.id),
-          onDoubleTap: () => widget.editHandler(widget.id),
-          onPanUpdate: (tapInfo) {
-            setState(() {
-              widget.position += Offset(tapInfo.delta.dx, tapInfo.delta.dy);
-              // xPosition += tapInfo.delta.dx;
-              // yPosition += tapInfo.delta.dy;
-            });
-            widget.updatePositionHandler(
-                widget.id, widget.position.dx, widget.position.dy, false);
-          },
-          onPanEnd: (details) {
-            widget.updatePositionHandler(widget.id, widget.position.dx, widget.position.dy, true);
-          },
-          child: widget.componentWidgets,
-        ),
+            onTap: () => widget.clickHandler(widget.id),
+            onDoubleTap: () => widget.editHandler(widget.id),
+            onPanUpdate: (tapInfo) {
+              setState(() {
+                widget.position += Offset(tapInfo.delta.dx, tapInfo.delta.dy);
+                // xPosition += tapInfo.delta.dx;
+                // yPosition += tapInfo.delta.dy;
+              });
+              widget.updatePositionHandler(
+                  widget.id, widget.position.dx, widget.position.dy, false);
+            },
+            onPanEnd: (details) {
+              widget.updatePositionHandler(
+                  widget.id, widget.position.dx, widget.position.dy, true);
+            },
+            child: Stack(
+              alignment: Alignment.topRight,
+              children: [
+                widget.componentWidgets,
+                Text(
+                  widget.id.toString(),
+                  style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ],
+            )),
       ),
     );
   }

@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 class LeftSidePane extends StatefulWidget {
   final Function insertNewItem;
   final Map<String, dynamic> projectInfo;
+  final Function isProjectCreated;
 
-  LeftSidePane(this.insertNewItem, this.projectInfo);
+  LeftSidePane(this.insertNewItem, this.projectInfo, this.isProjectCreated);
   @override
   _LeftSidePaneState createState() => _LeftSidePaneState();
 }
@@ -23,24 +24,65 @@ class _LeftSidePaneState extends State<LeftSidePane> {
     Map<String, dynamic> importedWidgets;
     Function itemsMenu;
 
-    if (widget.projectInfo["type"] == "EIP") {
-      visualItems = {"MessagingSystem": [], "MessageRouting": []};
-      importedWidgets = eipWidgets;
-      itemsMenu = _eipItemsMenu;
-    } else if (widget.projectInfo["type"] == "BASIC") {
-      visualItems = {"Assign": [], "Conditional": [], "IO": []};
-      importedWidgets = basicWidgets;
-      itemsMenu = _basicItemsMenu;
-    }
-    for (String _key in importedWidgets.keys) {
-      var visualItem = importedWidgets[_key]();
-      visualItems[visualItem.subType]
-          .add(visualItem.icon(widget.insertNewItem));
+    if (widget.isProjectCreated() == false)
+      itemsMenu = _noProjectMenu;
+    else {
+      if (widget.projectInfo["type"] == "EIP") {
+        visualItems = {"MessagingSystem": [], "MessageRouting": []};
+        importedWidgets = eipWidgets;
+        itemsMenu = _eipItemsMenu;
+      } else if (widget.projectInfo["type"] == "BASIC") {
+        visualItems = {"Assign": [], "Conditional": [], "IO": []};
+        importedWidgets = basicWidgets;
+        itemsMenu = _basicItemsMenu;
+      }
+      for (String _key in importedWidgets.keys) {
+        var visualItem = importedWidgets[_key]();
+        visualItems[visualItem.subType]
+            .add(visualItem.icon(widget.insertNewItem));
+      }
     }
     return Column(
       children: <Widget>[
         itemsMenu(visualItems),
       ],
+    );
+  }
+
+  Widget _noProjectMenu(Map<String, dynamic> items) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade700,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.fromLTRB(
+            MediaQuery.of(context).size.width * 0.02, 0, 0, 0),
+        child: Container(
+          // height: 400,
+          child: Column(
+            children: <Widget>[
+              Container(
+                // color: Colors.black.withAlpha(50),
+                child: Container(
+                  height: 50,
+                  width: 400,
+                  child: Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "No project selected...",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ]),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

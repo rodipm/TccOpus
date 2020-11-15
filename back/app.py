@@ -26,6 +26,10 @@ def check_logged_session(request):
     client_email = request.json['client_email']
     print("client_email")
     print(client_email)
+
+    # TEMP
+    return True
+    
     if client_email in session:
         return True
     else:

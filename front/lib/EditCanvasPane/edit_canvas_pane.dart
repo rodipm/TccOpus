@@ -9,6 +9,7 @@ class EditCanvasPane extends StatefulWidget {
   final Function generateCodeHandler;
   final Function undoCanvasHandler;
   final Function redoCanvasHandler;
+  final Function isProjectCreated;
 
   EditCanvasPane(
       this.displayCreateNewProjectPaneHandler,
@@ -17,7 +18,8 @@ class EditCanvasPane extends StatefulWidget {
       this.editCanvasPaneHeight,
       this.generateCodeHandler,
       this.undoCanvasHandler,
-      this.redoCanvasHandler);
+      this.redoCanvasHandler,
+      this.isProjectCreated);
 
   @override
   _EditCanvasPaneState createState() => _EditCanvasPaneState();
@@ -42,81 +44,95 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Color(0xff01A0C7)),
+                GestureDetector(
+                  onTap: widget.isProjectCreated() == true
+                      ? null
+                      : () => widget.displaySaveProjectPaneHandler(),
                   child: Container(
-                    height: widget.editCanvasPaneHeight,
-                    width: this.itemBlockWidth / 4,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.save),
-                          color: Colors.white,
-                          onPressed: () =>
-                              widget.displaySaveProjectPaneHandler(),
-                          tooltip: "Salvar projeto",
-                        ),
-                        Text(
-                          "Salvar",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: widget.isProjectCreated() == true
+                            ? Color(0xff01A0C7)
+                            : Colors.grey),
+                    child: Container(
+                      height: widget.editCanvasPaneHeight,
+                      width: this.itemBlockWidth / 4,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.save),
+                            color: Colors.white,
+                            onPressed: widget.isProjectCreated() == true
+                                ? () => widget.displaySaveProjectPaneHandler()
+                                : null,
+                            tooltip: "Salvar projeto",
+                          ),
+                          Text(
+                            "Salvar",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Color(0xff01A0C7)),
+                GestureDetector(
+                  onTap: () => widget.displayCreateNewProjectPaneHandler(),
                   child: Container(
-                    height: widget.editCanvasPaneHeight,
-                    width: this.itemBlockWidth / 4,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.create_new_folder),
-                          color: Colors.white,
-                          onPressed: () =>
-                              widget.displayCreateNewProjectPaneHandler(),
-                          tooltip: "Novo projeto",
-                        ),
-                        Text(
-                          "Novo",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: Color(0xff01A0C7)),
+                    child: Container(
+                      height: widget.editCanvasPaneHeight,
+                      width: this.itemBlockWidth / 4,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.create_new_folder),
+                            color: Colors.white,
+                            onPressed: () =>
+                                widget.displayCreateNewProjectPaneHandler(),
+                            tooltip: "Novo Projeto",
+                          ),
+                          Text(
+                            "Novo",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Color(0xff01A0C7)),
+                GestureDetector(
+                  onTap: () => widget.displayOpenProjectPaneHandler(),
                   child: Container(
-                    height: widget.editCanvasPaneHeight,
-                    width: this.itemBlockWidth / 4,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.folder_open),
-                          color: Colors.white,
-                          onPressed: () =>
-                              widget.displayOpenProjectPaneHandler(),
-                          tooltip: "Abrir projeto",
-                        ),
-                        Text(
-                          "Abrir",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: Color(0xff01A0C7)),
+                    child: Container(
+                      height: widget.editCanvasPaneHeight,
+                      width: this.itemBlockWidth / 4,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.create_new_folder),
+                            color: Colors.white,
+                            onPressed: () =>
+                                widget.displayOpenProjectPaneHandler(),
+                            tooltip: "Abrir Projeto",
+                          ),
+                          Text(
+                            "Abrir",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -125,90 +141,121 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                    ),
-                    color: Color(0xff01A0C7),
-                  ),
-                  padding: EdgeInsets.only(right: 3),
+                GestureDetector(
+                  onTap: widget.isProjectCreated() == true
+                      ? () => widget.undoCanvasHandler()
+                      : null,
                   child: Container(
-                    height: widget.editCanvasPaneHeight,
-                    width: this.itemBlockWidth / 8,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.undo),
-                          color: Colors.white,
-                          onPressed: () => widget.undoCanvasHandler(),
-                          tooltip: "Desfazer Ação",
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: widget.isProjectCreated() == true
+                            ? Color(0xff01A0C7)
+                            : Colors.grey),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          topLeft: Radius.circular(10),
                         ),
-                      ],
+                        color: widget.isProjectCreated() == true
+                            ? Color(0xff01A0C7)
+                            : Colors.grey,
+                      ),
+                      padding: EdgeInsets.only(right: 3),
+                      child: Container(
+                        height: widget.editCanvasPaneHeight,
+                        width: this.itemBlockWidth / 8,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.undo,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                    ),
-                    color: Color(0xff01A0C7),
-                  ),
+                GestureDetector(
+                  onTap: widget.isProjectCreated() == true
+                      ? () => widget.redoCanvasHandler()
+                      : null,
                   child: Container(
-                    height: widget.editCanvasPaneHeight,
-                    width: this.itemBlockWidth / 8,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.redo),
-                          color: Colors.white,
-                          onPressed: () => widget.redoCanvasHandler(),
-                          tooltip: "Refazer Ação",
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: widget.isProjectCreated() == true
+                            ? Color(0xff01A0C7)
+                            : Colors.grey),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(10),
+                          topRight: Radius.circular(10),
                         ),
-                      ],
+                        color: widget.isProjectCreated() == true
+                            ? Color(0xff01A0C7)
+                            : Colors.grey,
+                      ),
+                      child: Container(
+                        height: widget.editCanvasPaneHeight,
+                        width: this.itemBlockWidth / 8,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.redo,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          Container(
-            width: this.itemBlockWidth,
-            padding: EdgeInsets.fromLTRB(0, 0, MediaQuery.of(context).size.width * 0.02, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: Color(0xff01A0C7),
-                  ),
-                  child: Container(
-                    height: widget.editCanvasPaneHeight,
-                    width: MediaQuery.of(context).size.width * 0.15 - MediaQuery.of(context).size.width * 0.02,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.done),
-                          color: Colors.white,
-                          onPressed: () => widget.generateCodeHandler(),
-                          tooltip: "Gerar Código",
-                        ),
-                        Text(
-                          "Gerar Código",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
+          GestureDetector(
+            onTap: widget.isProjectCreated() == true
+                ? () => widget.generateCodeHandler()
+                : null,
+            child: Container(
+              width: this.itemBlockWidth,
+              padding: EdgeInsets.fromLTRB(
+                  0, 0, MediaQuery.of(context).size.width * 0.02, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: widget.isProjectCreated() == true
+                          ? Color(0xff01A0C7)
+                          : Colors.grey,
+                    ),
+                    child: Container(
+                      height: widget.editCanvasPaneHeight,
+                      width: MediaQuery.of(context).size.width * 0.15 -
+                          MediaQuery.of(context).size.width * 0.02,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.done,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "Gerar Código",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
