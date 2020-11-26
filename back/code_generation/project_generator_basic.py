@@ -7,6 +7,8 @@ from enum import Enum
 
 import llvmlite.ir as ir
 import llvmlite.binding as llvm
+import uuid
+import os
 
 
 # Each token is a tuple of kind and value. kind is one of the enumeration values
@@ -1107,12 +1109,12 @@ def generate_and_eval_kalei(codes):
         if new_result != "None":
             result.append(new_result)
 
-    return result
-    # obj = kalei.compile_to_object_code()
+    nome_arquivo = str(uuid.uuid1())
+    with open(os.path.join("projetos_gerados", nome_arquivo) + ".ll", 'w') as output_file:
+        output_file.write(str(kalei.codegen.module))
 
-    # filename = 'output.ll'
-    # with open(filename, 'w') as output_file:
-    #     output_file.write(str(kalei.codegen.module))
+    return result, nome_arquivo
+    # obj = kalei.compile_to_object_code()
 
     # # Output object code to a file.
     # filename = 'output.o'

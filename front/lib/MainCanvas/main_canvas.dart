@@ -597,10 +597,11 @@ class _MainCanvasState extends State<MainCanvas> {
       var decodedResponse = json.decode(response.body);
       var resultWidgets = [];
       for (var responseData in decodedResponse.keys) {
-        if (responseData == "routes")
-          resultWidgets.add(Text(decodedResponse[responseData].join(";\n") + "\n"));
-        else
-          resultWidgets.add(Text(decodedResponse[responseData].join("\n") + "\n"));
+        if (responseData != "fileName")
+          if (responseData == "routes")
+            resultWidgets.add(Text(decodedResponse[responseData].join(";\n") + "\n"));
+          else
+            resultWidgets.add(Text(decodedResponse[responseData].join("\n") + "\n"));
       }
       // Mostra o diálogo com o código gerado e o botão de download do projeto (.zip)
       showDialog(
@@ -623,7 +624,7 @@ class _MainCanvasState extends State<MainCanvas> {
                         var fileName = json.decode(response.body)["fileName"];
                         print(fileName);
                         html.window.open(
-                            widget.url + "download_project?fileName=$fileName",
+                            widget.url + "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
                             "");
                       },
                     )

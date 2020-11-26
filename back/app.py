@@ -82,15 +82,23 @@ def generate_code():
 
     elif project_type == "BASIC":
         codes, _ = create_basic(items_info)
-        result = generate_and_eval_kalei(codes)
-        return json.dumps({"code": codes, "result": result}), 200
+        result, file_name = generate_and_eval_kalei(codes)
+        return json.dumps({"code": codes, "result": result, "fileName": file_name}), 200
 
 @app.route('/download_project', methods=['GET'])
 def download_project():
-    fileName = request.args.get('fileName') + ".zip"
-    print(fileName)
+    fileName = request.args.get('fileName')
 
-    return send_file(os.path.join("projetos_gerados", fileName), attachment_filename='IntegrationProject.zip', as_attachment=True), 200
+    project_type = request.args.get('type')
+    
+    if project_type == "EIP":
+        fileName += ".zip"
+        attach_filename = "IntegrationProject.zip"
+    elif project_type == "BASIC":
+        fileName += ".ll"
+        attach_filename = "KaleidoscopeIR.ll"
+
+    return send_file(os.path.join("projetos_gerados", fileName), attachment_filename=attach_filename, as_attachment=True), 200
 
 
 @app.route('/save_project', methods=['POST'])
