@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AssignStatement {
   final String type = "AssignStatement";
-  final String subType = "Assign";
+  final String subType = "Expression";
 
   final double width;
   final double height;

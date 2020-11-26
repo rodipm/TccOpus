@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 
-class PrintStatement {
-  final String type = "PrintStatement";
-  final String subType = "IO";
+class ElseStatement {
+  final String type = "ElseStatement";
+  final String subType = "Conditional";
 
   final double width;
   final double height;
 
   Widget componentWidget;
-  Map<String, dynamic> componentConfigs = {"print_items": ""};
+  Map<String, dynamic> componentConfigs = {};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
     Map<String, dynamic> _compConfigs =
         Map<String, dynamic>.from(componentConfigs);
-    _compConfigs["print_items"] = jsonConfig["print_items"];
     return _compConfigs;
   }
 
   Map<String, dynamic> componentConfigControllers = {
-    "printStatementControllers": {}
+    "elseStatementControllers": {}
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
@@ -27,35 +26,34 @@ class PrintStatement {
     print(config);
     print(configControllers);
     return {
-      "print_items": configControllers["printStatementControllers"]["print_items"].text,
     };
   }
 
   List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
       config, configControllers, editItems, baseWidget) {
-    configControllers["printStatementControllers"]
+    configControllers["elseStatementControllers"]
         .addAll({config: TextEditingController()});
 
-    configControllers["printStatementControllers"][config].text =
+    configControllers["elseStatementControllers"][config].text =
         selectedItem.componentConfigs[config];
 
     editItems.add(
       TextFormField(
         autofocus: true,
         // keyboardType: TextInputType.multiline,
-        controller: configControllers["printStatementControllers"][config],
+        controller: configControllers["elseStatementControllers"][config],
       ),
     );
     return editItems;
   }
 
-  PrintStatement(this.width, this.height) {
+  ElseStatement(this.width, this.height) {
     componentWidget = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/PrintStatement.png'),
+          image: AssetImage('assets/ElseStatement.png'),
           fit: BoxFit.fill,
         ),
       ),

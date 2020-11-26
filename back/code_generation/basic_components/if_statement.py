@@ -16,17 +16,22 @@ class IfStatement(BasicComponent):
         print(then_line, "then_line")
         print(else_line, "else_line")
 
-        new_generated_code = f"{current_node_number} IF {condition} THEN {then_line}\n{current_node_number}1 GOTO {else_line}\n"
 
-        rec_code = ""
+        then_code = ""
+        else_code = ""
+
+        for node_num in current_node['connectsTo']:
+            new_code, _ = generate_code(
+                items_info, node_num, generated_code, new_visited_nodes, new_dependencies)
+            if "then" in new_code:
+                then_code = new_code
+            else:
+                else_code = new_code
+        
+
+
+        new_generated_code = f"if ({condition})\n{then_code}\n{else_code}\n"
+
         deps = ""
 
-        branches = []
-
-        for child_node_number in current_node['connectsTo']:
-            rec_code, _ = generate_code(
-                items_info, child_node_number, generated_code, new_visited_nodes, new_dependencies)
-            branches.append(rec_code)
-
-        print("branches", branches)
-        return (new_generated_code + "".join(branches[::-1]), deps)
+        return (new_generated_code, deps)

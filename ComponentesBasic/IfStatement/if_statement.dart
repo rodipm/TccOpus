@@ -8,15 +8,12 @@ class IfStatement {
   final double height;
 
   Widget componentWidget;
-  // Map<String, dynamic> componentConfigs = {"condition": "", "then": "", "else": ""};
   Map<String, dynamic> componentConfigs = {"condition": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
     Map<String, dynamic> _compConfigs =
         Map<String, dynamic>.from(componentConfigs);
     _compConfigs["condition"] = jsonConfig["condition"];
-    // _compConfigs["then"] = jsonConfig["then"];
-    // _compConfigs["else"] = jsonConfig["else"];
     return _compConfigs;
   }
 
@@ -31,8 +28,6 @@ class IfStatement {
     print(configControllers);
     return {
       "condition": configControllers["ifStatementControllers"]["condition"].text,
-      // "then": configControllers["ifStatementControllers"]["then"].text,
-      // "else": configControllers["ifStatementControllers"]["else"].text
     };
   }
 

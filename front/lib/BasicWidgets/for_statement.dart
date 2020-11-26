@@ -8,15 +8,13 @@ class ForStatement {
   final double height;
 
   Widget componentWidget;
-  Map<String, dynamic> componentConfigs = {"var_name": "", "initial": "", "final": "", "increment": ""};
+  Map<String, dynamic> componentConfigs = {"init_exp": "", "condition_exp": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
     Map<String, dynamic> _compConfigs =
         Map<String, dynamic>.from(componentConfigs);
-    _compConfigs["var_name"] = jsonConfig["var_name"];
-    _compConfigs["initial"] = jsonConfig["initial"];
-    _compConfigs["final"] = jsonConfig["final"];
-    _compConfigs["increment"] = jsonConfig["increment"];
+    _compConfigs["init_exp"] = jsonConfig["init_exp"];
+    _compConfigs["condition_exp"] = jsonConfig["condition_exp"];
     return _compConfigs;
   }
 
@@ -26,10 +24,8 @@ class ForStatement {
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
     return {
-      "var_name": configControllers["ForStatementControllers"]["var_name"].text,
-      "initial": configControllers["ForStatementControllers"]["initial"].text,
-      "final": configControllers["ForStatementControllers"]["final"].text,
-      "increment": configControllers["ForStatementControllers"]["increment"].text,
+      "init_exp": configControllers["ForStatementControllers"]["init_exp"].text,
+      "condition_exp": configControllers["ForStatementControllers"]["condition_exp"].text,
     };
   }
 

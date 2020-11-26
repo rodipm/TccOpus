@@ -13,7 +13,7 @@ class AssignStatement(BasicComponent):
         print(var_name, "var_name")
         print(expression, "expression")
 
-        new_generated_code = f"{current_node_number} LET {var_name} = {expression}\n"
+        new_generated_code = f"var {var_name} = {expression} in\n"
 
         rec_code = ""
         deps = ""

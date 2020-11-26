@@ -32,12 +32,15 @@ class _LeftSidePaneState extends State<LeftSidePane> {
         importedWidgets = eipWidgets;
         itemsMenu = _eipItemsMenu;
       } else if (widget.projectInfo["type"] == "BASIC") {
-        visualItems = {"Assign": [], "Conditional": [], "IO": []};
+        visualItems = {"Expression": [], "Conditional": [], "Def": []};
         importedWidgets = basicWidgets;
         itemsMenu = _basicItemsMenu;
       }
       for (String _key in importedWidgets.keys) {
         var visualItem = importedWidgets[_key]();
+        print("SUBTYPE SUBTYPE");
+        print(widget.projectInfo["type"]);
+        print(visualItem.subType);
         visualItems[visualItem.subType]
             .add(visualItem.icon(widget.insertNewItem));
       }
@@ -193,7 +196,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            "Assign",
+                            "Expression",
                             style: TextStyle(color: Colors.white),
                           ),
                         ]),
@@ -206,11 +209,11 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   height: 200,
                   // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
-                    itemCount: basicItems["Assign"].length,
+                    itemCount: basicItems["Expression"].length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
-                      return basicItems["Assign"][index];
+                      return basicItems["Expression"][index];
                     },
                   ),
                 ),
@@ -257,7 +260,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            "IO",
+                            "Def",
                             style: TextStyle(color: Colors.white),
                           ),
                         ]),
@@ -270,11 +273,11 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   height: 200,
                   // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
-                    itemCount: basicItems["IO"].length,
+                    itemCount: basicItems["Def"].length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
-                      return basicItems["IO"][index];
+                      return basicItems["Def"][index];
                     },
                   ),
                 ),

@@ -7,6 +7,7 @@ from back.code_generation.code_generator_eip import create_routes
 from back.code_generation.code_generator_basic import create_basic
 from back.code_generation.parser import parse
 from back.code_generation.project_generator_eip import create_project
+from back.code_generation.project_generator_basic import generate_and_eval_kalei
 from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient
 from back.user_storage.user_storage import clientLogin, addClient, createTables
 from uuid import uuid4
@@ -80,8 +81,9 @@ def generate_code():
         return json.dumps({"routes": routes, "fileName": zip_project}), 200
 
     elif project_type == "BASIC":
-        routes, _ = create_basic(items_info)
-        return json.dumps({"routes": routes}), 200
+        codes, _ = create_basic(items_info)
+        result = generate_and_eval_kalei(codes)
+        return json.dumps({"code": codes, "result": result}), 200
 
 @app.route('/download_project', methods=['GET'])
 def download_project():

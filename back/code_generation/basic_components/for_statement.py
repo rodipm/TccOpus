@@ -7,26 +7,23 @@ class ForStatement(BasicComponent):
         new_visited_nodes = deepcopy(visited_nodes)
         new_dependencies = deepcopy(dependencies)
 
-        var_name = current_node['var_name']
-        initial = current_node['initial']
-        final = current_node['final']
-        increment = current_node['increment']
+        init_exp = current_node['init_exp']
+        condition_exp = current_node['condition_exp']
 
-        after_for = current_node['connectsTo'][0]
-        inside_for = current_node['connectsTo'][1]
-
-        inside_for_code = ""
+        inside_for = current_node['connectsTo'][0]
+        after_for = current_node['connectsTo'][1]
 
         inside_for_code, _ = generate_code(
             items_info, inside_for, generated_code, new_visited_nodes, new_dependencies)
 
-        new_generated_code = f"{current_node_number} FOR {var_name} = {initial} TO {final} INCREMENT {increment} \n{inside_for_code}0{current_node_number} NEXT {var_name}\n"
+        new_generated_code = f"(for {init_exp}, {condition_exp} in \n{inside_for_code})"
 
         rec_code = ""
 
-        branches = []
-
         rec_code, _ = generate_code(
             items_info, after_for, generated_code, new_visited_nodes, new_dependencies)
+
+        if rec_code != "":
+            rec_code = ":\n" + rec_code
 
         return (new_generated_code + rec_code, "")

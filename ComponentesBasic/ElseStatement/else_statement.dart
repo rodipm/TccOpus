@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class GotoStatement {
-  final String type = "GotoStatement";
+class ElseStatement {
+  final String type = "ElseStatement";
   final String subType = "Conditional";
 
   final double width;
@@ -17,7 +17,7 @@ class GotoStatement {
   }
 
   Map<String, dynamic> componentConfigControllers = {
-    "GotoStatementControllers": {}
+    "elseStatementControllers": {}
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
@@ -26,37 +26,34 @@ class GotoStatement {
     print(config);
     print(configControllers);
     return {
-      "condition": configControllers["GotoStatementControllers"]["condition"].text,
-      "then": configControllers["GotoStatementControllers"]["then"].text,
-      "else": configControllers["GotoStatementControllers"]["else"].text
     };
   }
 
   List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
       config, configControllers, editItems, baseWidget) {
-    configControllers["GotoStatementControllers"]
+    configControllers["elseStatementControllers"]
         .addAll({config: TextEditingController()});
 
-    configControllers["GotoStatementControllers"][config].text =
+    configControllers["elseStatementControllers"][config].text =
         selectedItem.componentConfigs[config];
 
     editItems.add(
       TextFormField(
         autofocus: true,
         // keyboardType: TextInputType.multiline,
-        controller: configControllers["GotoStatementControllers"][config],
+        controller: configControllers["elseStatementControllers"][config],
       ),
     );
     return editItems;
   }
 
-  GotoStatement(this.width, this.height) {
+  ElseStatement(this.width, this.height) {
     componentWidget = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/GotoStatement.png'),
+          image: AssetImage('assets/ElseStatement.png'),
           fit: BoxFit.fill,
         ),
       ),

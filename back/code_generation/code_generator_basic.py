@@ -2,18 +2,23 @@ from copy import deepcopy
 from .basic_components.components_imports import *
 import json
 
-# Gera as rotas e dependências de projeto Apache Camel segundo
-# os dados contidos no diagrama gerado
+# Gera o codigo basic a partir do diagrama
 def create_basic(items_info):
-    rotas = []
+    codigo = []
     dependencies = set()
 
-    item = items_info["0"]
-    route, deps = generate_code(items_info, "0", "", [], set())
-    rotas.append(route)
-    dependencies.update(deps)
+    for itemKey in items_info:
+        item = items_info[itemKey]
 
-    return rotas, list(dependencies)
+        # Cada diagrama pode conter mais de uma rota especificada
+        # Cada rota tem inicio com um elemento do tipo Message
+        print("ITEM TYPE", item['type'])
+        if item['type'] in ["DefStatement", "CallStatement"]:
+            route, deps = generate_code(items_info, itemKey, "", [], set())
+            codigo.append(route)
+            dependencies.update(deps)
+
+    return codigo, list(dependencies)
 
 # Percorre a estrutura de dados do diagrama de forma recursiva gerando código respectivo de cada nó
 def generate_code(items_info, current_node_number="0", generated_code="", visited_nodes=[], dependencies=set()):

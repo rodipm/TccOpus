@@ -137,6 +137,8 @@ class _MainCanvasState extends State<MainCanvas> {
 
       for (String itemId in canvasState["items"].keys) {
         var currItem = canvasState["items"][itemId];
+        print("CUR ITEM:");
+        print(currItem);
 
         String itemType = currItem["type"];
 
@@ -144,7 +146,7 @@ class _MainCanvasState extends State<MainCanvas> {
             double.parse(canvasState["itemsPositions"][itemId]["xPosition"]),
             double.parse(canvasState["itemsPositions"][itemId]["yPosition"]));
 
-        var itemClass = eipWidgets[itemType]();
+        var itemClass;
 
         if (this.projectInfo["type"] == "EIP")
           itemClass = eipWidgets[itemType]();
@@ -592,6 +594,14 @@ class _MainCanvasState extends State<MainCanvas> {
           body: json.encode(diagramPayload),
           headers: {'Content-type': 'application/json'});
 
+      var decodedResponse = json.decode(response.body);
+      var resultWidgets = [];
+      for (var responseData in decodedResponse.keys) {
+        if (responseData == "routes")
+          resultWidgets.add(Text(decodedResponse[responseData].join(";\n") + "\n"));
+        else
+          resultWidgets.add(Text(decodedResponse[responseData].join("\n") + "\n"));
+      }
       // Mostra o diálogo com o código gerado e o botão de download do projeto (.zip)
       showDialog(
         context: context,
@@ -601,7 +611,7 @@ class _MainCanvasState extends State<MainCanvas> {
             title: Text("Código Gerado"),
             content: Column(
               children: [
-                Text(json.decode(response.body)["routes"].join(";\n") + "\n"),
+                ...resultWidgets,
                 Row(
                   children: <Widget>[
                     Text("Download Project"),

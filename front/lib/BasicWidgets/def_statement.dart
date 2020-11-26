@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 
-class AssignStatement {
-  final String type = "AssignStatement";
-  final String subType = "Expression";
+class DefStatement {
+  final String type = "DefStatement";
+  final String subType = "Def";
 
   final double width;
   final double height;
 
   Widget componentWidget;
-  Map<String, dynamic> componentConfigs = {"var_name": "", "expression": ""};
+  Map<String, dynamic> componentConfigs = {"name": "", "arguments": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
     Map<String, dynamic> _compConfigs =
         Map<String, dynamic>.from(componentConfigs);
-    _compConfigs["var_name"] = jsonConfig["var_name"];
-    _compConfigs["expression"] = jsonConfig["expression"];
+    _compConfigs["name"] = jsonConfig["name"];
+    _compConfigs["arguments"] = jsonConfig["arguments"];
     return _compConfigs;
   }
 
   Map<String, dynamic> componentConfigControllers = {
-    "messageTranslatorControllers": {}
+    "DefStatementControllers": {}
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
@@ -28,36 +28,37 @@ class AssignStatement {
     print(config);
     print(configControllers);
     return {
-      "var_name": configControllers["messageTranslatorControllers"]["var_name"].text,
-      "expression": configControllers["messageTranslatorControllers"]["expression"].text
+      "name": configControllers["DefStatementControllers"]["name"].text,
+      "arguments":
+          configControllers["DefStatementControllers"]["arguments"].text,
     };
   }
 
   List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
       config, configControllers, editItems, baseWidget) {
-    configControllers["messageTranslatorControllers"]
+    configControllers["DefStatementControllers"]
         .addAll({config: TextEditingController()});
 
-    configControllers["messageTranslatorControllers"][config].text =
+    configControllers["DefStatementControllers"][config].text =
         selectedItem.componentConfigs[config];
 
     editItems.add(
       TextFormField(
         autofocus: true,
         // keyboardType: TextInputType.multiline,
-        controller: configControllers["messageTranslatorControllers"][config],
+        controller: configControllers["DefStatementControllers"][config],
       ),
     );
     return editItems;
   }
 
-  AssignStatement(this.width, this.height) {
+  DefStatement(this.width, this.height) {
     componentWidget = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/AssignStatement.png'),
+          image: AssetImage('assets/DefStatement.png'),
           fit: BoxFit.fill,
         ),
       ),
