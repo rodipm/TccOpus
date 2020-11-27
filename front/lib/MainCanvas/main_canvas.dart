@@ -597,11 +597,17 @@ class _MainCanvasState extends State<MainCanvas> {
       var decodedResponse = json.decode(response.body);
       var resultWidgets = [];
       for (var responseData in decodedResponse.keys) {
-        if (responseData != "fileName")
-          if (responseData == "routes")
+        if (responseData != "fileName") {
+          if (responseData == "routes") {
+            resultWidgets.add(Text(responseData, style: TextStyle(color: Colors.blue),),);
             resultWidgets.add(Text(decodedResponse[responseData].join(";\n") + "\n"));
+          }
           else
+          {
+            resultWidgets.add(Text(responseData, style: TextStyle(color: Colors.blue),),);
             resultWidgets.add(Text(decodedResponse[responseData].join("\n") + "\n"));
+          }
+        }
       }
       // Mostra o diálogo com o código gerado e o botão de download do projeto (.zip)
       showDialog(
@@ -665,7 +671,6 @@ class _MainCanvasState extends State<MainCanvas> {
         this.editCanvasPaneHeight -
         this.headerHeight;
     
-    bool isProjectCreated = this.projectInfo["project_name"] != "";    
 
     // Remover o painel de edição de itens quando não houver item selecionado
     if (this.editingItem == null) {
