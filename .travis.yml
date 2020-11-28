@@ -1,7 +1,9 @@
 matrix:
   include:
     - language: python
+      script:
+      - echo ok
     - language: dart
 
-    
+
       
