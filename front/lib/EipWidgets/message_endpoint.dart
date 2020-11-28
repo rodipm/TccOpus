@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessageEndpoint {
   final String type = "MessageEndpoint";
   final String subType = "MessagingSystem";
-  
+
+  final String documentacao = "https://people.apache.org/~dkulp/camel/message-endpoint.html";
   final double width;
   final double height;
 
@@ -21,16 +23,16 @@ class MessageEndpoint {
   };
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
-    
-    Map<String, dynamic> _compConfigs = Map<String, dynamic>.from(componentConfigs);
+    Map<String, dynamic> _compConfigs =
+        Map<String, dynamic>.from(componentConfigs);
     _compConfigs["protocol"][0] = jsonConfig["protocol"][0];
     _compConfigs["protocol"][1] = jsonConfig["protocol"][1];
     _compConfigs["protocol"][2] = jsonConfig["protocol"][2];
 
     return _compConfigs;
   }
-  
- Map<String, dynamic> componentConfigControllers = {
+
+  Map<String, dynamic> componentConfigControllers = {
     "messageControllers": {},
     "editItemsValues": {}
   };
@@ -54,8 +56,8 @@ class MessageEndpoint {
     };
   }
 
-  List<Widget> buildEditPane(
-      selectedItem, selectedItemID, itemsPositions, config, configControllers, editItems, baseWidget) {
+  List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
+      config, configControllers, editItems, baseWidget) {
     String _chosenValue;
 
     if (selectedItem.componentConfigs[config][1] != null)
@@ -124,9 +126,31 @@ class MessageEndpoint {
       }
     }
 
+    editItems.add(
+      Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: RaisedButton(
+          onPressed: _launchURL,
+          child: new Text('Documentação'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Color(0xff01A0C7),
+        ),
+      ),
+    );
     return editItems;
   }
-  
+
+  _launchURL() async {
+    var url = this.documentacao;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   MessageEndpoint(this.width, this.height) {
     componentWidget = Container(
       width: width,

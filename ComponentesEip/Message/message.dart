@@ -82,7 +82,8 @@ class Message {
             onChanged: (String newValue) {
               baseWidget.setState(() {
                 configControllers["editItemsValues"][config] = newValue;
-                baseWidget.componentConfigControllers["editItemsValues"][config] = newValue;
+                baseWidget.componentConfigControllers["editItemsValues"]
+                    [config] = newValue;
               });
             },
             items: selectedItem.componentConfigs[config][0].keys
@@ -93,13 +94,14 @@ class Message {
                 child: Text(value),
               );
             }).toList(),
-          )
+          ),
         ],
       ),
     );
 
     if (_chosenValue != null) {
-      configControllers["messageControllers"] = Map<dynamic, TextEditingController>();
+      configControllers["messageControllers"] =
+          Map<dynamic, TextEditingController>();
       int protocolOptionIndex = 0;
       for (var protocolOption in selectedItem.componentConfigs[config][0]
           [_chosenValue]) {
@@ -126,7 +128,22 @@ class Message {
       }
     }
 
+    editItems.add(
+  RaisedButton(
+        onPressed: _launchURL,
+        child: new Text('Documentação'),
+      ),
+    );
+
     return editItems;
+  }
+
+  _launchURL() async {
+  const url = 'https://flutter.io';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
   }
 
   Message(this.width, this.height) {

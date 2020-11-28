@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContentBasedRouter {
   final String type = "ContentBasedRouter";
   final String subType = "MessageRouting";
+
+  final String documentacao =
+      "https://people.apache.org/~dkulp/camel/content-based-router.html";
+
   final double width;
   final double height;
 
@@ -12,12 +17,13 @@ class ContentBasedRouter {
   };
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
-    Map<String, dynamic> _compConfigs = Map<String, dynamic>.from(componentConfigs);
+    Map<String, dynamic> _compConfigs =
+        Map<String, dynamic>.from(componentConfigs);
     _compConfigs["choices"] = jsonConfig["choices"];
 
     return _compConfigs;
   }
-  
+
   Map<String, dynamic> componentConfigControllers = {
     "contentBasedRouterControllers": {},
   };
@@ -93,7 +99,29 @@ class ContentBasedRouter {
         }
       }
     }
+    editItems.add(
+      Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: RaisedButton(
+          onPressed: _launchURL,
+          child: new Text('Documentação'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Color(0xff01A0C7),
+        ),
+      ),
+    );
     return editItems;
+  }
+
+  _launchURL() async {
+    var url = this.documentacao;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   ContentBasedRouter(this.width, this.height) {

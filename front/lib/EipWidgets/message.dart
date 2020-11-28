@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Message {
   final String type = "Message";
   final String subType = "MessagingSystem";
+
+  final String documentacao = "https://people.apache.org/~dkulp/camel/message.html";
 
   final double width;
   final double height;
@@ -82,7 +85,8 @@ class Message {
             onChanged: (String newValue) {
               baseWidget.setState(() {
                 configControllers["editItemsValues"][config] = newValue;
-                baseWidget.componentConfigControllers["editItemsValues"][config] = newValue;
+                baseWidget.componentConfigControllers["editItemsValues"]
+                    [config] = newValue;
               });
             },
             items: selectedItem.componentConfigs[config][0].keys
@@ -93,13 +97,14 @@ class Message {
                 child: Text(value),
               );
             }).toList(),
-          )
+          ),
         ],
       ),
     );
 
     if (_chosenValue != null) {
-      configControllers["messageControllers"] = Map<dynamic, TextEditingController>();
+      configControllers["messageControllers"] =
+          Map<dynamic, TextEditingController>();
       int protocolOptionIndex = 0;
       for (var protocolOption in selectedItem.componentConfigs[config][0]
           [_chosenValue]) {
@@ -126,7 +131,29 @@ class Message {
       }
     }
 
+    editItems.add(
+      Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: RaisedButton(
+          onPressed: _launchURL,
+          child: new Text('Documentação'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Color(0xff01A0C7),
+        ),
+      ),
+    );
     return editItems;
+  }
+
+  _launchURL() async {
+    var url = this.documentacao;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Message(this.width, this.height) {
