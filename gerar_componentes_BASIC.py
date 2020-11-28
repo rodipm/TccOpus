@@ -2,9 +2,9 @@ import os
 import re
 from shutil import copyfile
 
-ORIGIN_DIR = "ComponentesBasic"
-BACK_DIR = "basic_components"
-FRONT_DIR = "BasicWidgets"
+ORIGIN_DIR = "ComponentesKalei"
+BACK_DIR = "kalei_components"
+FRONT_DIR = "KaleiWidgets"
 path_componentes = os.path.join(".", ORIGIN_DIR)
 path_componentes_back = os.path.join(".", "back", "code_generation", BACK_DIR)
 path_componentes_front = os.path.join(".", "front", "lib", FRONT_DIR)

@@ -1,7 +1,7 @@
 // Import das classes representantes dos elementos EIP (EipWidgets)
 import 'package:front/EipWidgets/import_widgets.dart';
-// Import das classes representantes dos elementos BASIC (BasicWidgets)
-import 'package:front/BasicWidgets/import_widgets.dart';
+// Import das classes representantes dos elementos KALEI (KaleiWidgets)
+import 'package:front/KaleiWidgets/import_widgets.dart';
 import 'package:flutter/material.dart';
 
 class LeftSidePane extends StatefulWidget {
@@ -31,10 +31,10 @@ class _LeftSidePaneState extends State<LeftSidePane> {
         visualItems = {"MessagingSystem": [], "MessageRouting": []};
         importedWidgets = eipWidgets;
         itemsMenu = _eipItemsMenu;
-      } else if (widget.projectInfo["type"] == "BASIC") {
+      } else if (widget.projectInfo["type"] == "KALEI") {
         visualItems = {"Expression": [], "Conditional": [], "Def": []};
-        importedWidgets = basicWidgets;
-        itemsMenu = _basicItemsMenu;
+        importedWidgets = kaleiWidgets;
+        itemsMenu = _kaleiItemsMenu;
       }
       for (String _key in importedWidgets.keys) {
         var visualItem = importedWidgets[_key]();
@@ -173,7 +173,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
     );
   }
 
-  Widget _basicItemsMenu(Map<String, dynamic> basicItems) {
+  Widget _kaleiItemsMenu(Map<String, dynamic> kaleiItems) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -209,11 +209,11 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   height: 200,
                   // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
-                    itemCount: basicItems["Expression"].length,
+                    itemCount: kaleiItems["Expression"].length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
-                      return basicItems["Expression"][index];
+                      return kaleiItems["Expression"][index];
                     },
                   ),
                 ),
@@ -241,11 +241,11 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   height: 200,
                   // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
-                    itemCount: basicItems["Conditional"].length,
+                    itemCount: kaleiItems["Conditional"].length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
-                      return basicItems["Conditional"][index];
+                      return kaleiItems["Conditional"][index];
                     },
                   ),
                 ),
@@ -273,11 +273,11 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   height: 200,
                   // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
-                    itemCount: basicItems["Def"].length,
+                    itemCount: kaleiItems["Def"].length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
-                      return basicItems["Def"][index];
+                      return kaleiItems["Def"][index];
                     },
                   ),
                 ),

@@ -4,10 +4,10 @@ from copy import deepcopy
 import json
 import os
 from back.code_generation.code_generator_eip import create_routes
-from back.code_generation.code_generator_basic import create_basic
+from back.code_generation.code_generator_kalei import create_kalei
 from back.code_generation.parser import parse
 from back.code_generation.project_generator_eip import create_project
-from back.code_generation.project_generator_basic import generate_and_eval_kalei
+from back.code_generation.project_generator_kalei import generate_and_eval_kalei
 from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient
 from back.user_storage.user_storage import clientLogin, addClient, createTables
 from uuid import uuid4
@@ -80,8 +80,8 @@ def generate_code():
         zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
         return json.dumps({"routes": routes, "fileName": zip_project}), 200
 
-    elif project_type == "BASIC":
-        codes, _ = create_basic(items_info)
+    elif project_type == "KALEI":
+        codes, _ = create_kalei(items_info)
         result, file_name = generate_and_eval_kalei(codes)
         return json.dumps({"code": codes, "result": result, "fileName": file_name}), 200
 
@@ -94,7 +94,7 @@ def download_project():
     if project_type == "EIP":
         fileName += ".zip"
         attach_filename = "IntegrationProject.zip"
-    elif project_type == "BASIC":
+    elif project_type == "KALEI":
         fileName += ".ll"
         attach_filename = "KaleidoscopeIR.ll"
 

@@ -1,5 +1,5 @@
 import 'package:front/EipWidgets/import_widgets.dart';
-import 'package:front/BasicWidgets/import_widgets.dart';
+import 'package:front/KaleiWidgets/import_widgets.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:front/ProjectManagement/create_new_project_pane.dart';
@@ -150,8 +150,8 @@ class _MainCanvasState extends State<MainCanvas> {
 
         if (this.projectInfo["type"] == "EIP")
           itemClass = eipWidgets[itemType]();
-        else if (this.projectInfo["type"] == "BASIC")
-          itemClass = basicWidgets[itemType]();
+        else if (this.projectInfo["type"] == "KALEI")
+          itemClass = kaleiWidgets[itemType]();
 
         Map<String, dynamic> parsedComponentConfigs =
             itemClass.parseComponentConfigsFromJson(currItem);

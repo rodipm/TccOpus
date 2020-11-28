@@ -1,8 +1,8 @@
-from .basic_component import BasicComponent
+from .kalei_component import KaleiComponent
 from copy import deepcopy
 
 
-class ForStatement(BasicComponent):
+class ForStatement(KaleiComponent):
     def parse(self, generate_code, items_info, current_node_number, current_node, generated_code, visited_nodes, dependencies):
         new_visited_nodes = deepcopy(visited_nodes)
         new_dependencies = deepcopy(dependencies)

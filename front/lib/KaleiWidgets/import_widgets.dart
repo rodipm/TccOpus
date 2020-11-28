@@ -1,13 +1,13 @@
-import 'package:front/BasicWidgets/assign_statement.dart';
-import 'package:front/BasicWidgets/call_statement.dart';
-import 'package:front/BasicWidgets/def_statement.dart';
-import 'package:front/BasicWidgets/else_statement.dart';
-import 'package:front/BasicWidgets/expression_statement.dart';
-import 'package:front/BasicWidgets/for_statement.dart';
-import 'package:front/BasicWidgets/if_statement.dart';
-import 'package:front/BasicWidgets/then_statement.dart';
+import 'package:front/KaleiWidgets/assign_statement.dart';
+import 'package:front/KaleiWidgets/call_statement.dart';
+import 'package:front/KaleiWidgets/def_statement.dart';
+import 'package:front/KaleiWidgets/else_statement.dart';
+import 'package:front/KaleiWidgets/expression_statement.dart';
+import 'package:front/KaleiWidgets/for_statement.dart';
+import 'package:front/KaleiWidgets/if_statement.dart';
+import 'package:front/KaleiWidgets/then_statement.dart';
 
-Map<String, dynamic> basicWidgets= {
+Map<String, dynamic> kaleiWidgets= {
 	'AssignStatement': assignstatement,
 	'CallStatement': callstatement,
 	'DefStatement': defstatement,

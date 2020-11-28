@@ -1,9 +1,9 @@
 from copy import deepcopy
-from .basic_components.components_imports import *
+from .kalei_components.components_imports import *
 import json
 
-# Gera o codigo basic a partir do diagrama
-def create_basic(items_info):
+# Gera o codigo kalei a partir do diagrama
+def create_kalei(items_info):
     codigo = []
     dependencies = set()
 
@@ -30,10 +30,10 @@ def generate_code(items_info, current_node_number="0", generated_code="", visite
         current_node = items_info[str(current_node_number)]
 
         # Obtém o tipo do elemento e sua respectiva classe
-        basic_component_type = current_node['type']
-        basic_component_class = globals()[basic_component_type]
-        basic_component = basic_component_class()
+        kalei_component_type = current_node['type']
+        kalei_component_class = globals()[kalei_component_type]
+        kalei_component = kalei_component_class()
 
         # Efetua a chamada do parse para o componente especificado
-        return basic_component.parse(generate_code, items_info, current_node_number, current_node, generated_code, visited_nodes, dependencies)
+        return kalei_component.parse(generate_code, items_info, current_node_number, current_node, generated_code, visited_nodes, dependencies)
 

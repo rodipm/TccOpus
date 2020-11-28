@@ -606,7 +606,7 @@ class LLVMCodeGenerator(object):
     def _create_entry_block_alloca(self, name):
         """Create an alloca in the entry BB of the current function."""
         builder = ir.IRBuilder()
-        builder.position_at_start(self.builder.function.entry_basic_block)
+        builder.position_at_start(self.builder.function.entry_kalei_block)
         return builder.alloca(ir.DoubleType(), size=None, name=name)
 
     def _codegen(self, node):
@@ -664,12 +664,12 @@ class LLVMCodeGenerator(object):
         cmp = self.builder.fcmp_ordered(
             '!=', cond_val, ir.Constant(ir.DoubleType(), 0.0))
 
-        # Create basic blocks to express the control flow, with a conditional
+        # Create kalei blocks to express the control flow, with a conditional
         # branch to either then_bb or else_bb depending on cmp. else_bb and
         # merge_bb are not yet attached to the function's list of BBs because
         # if a nested IfExpr is generated we want to have a reasonably nested
         # order of BBs generated into the function.
-        then_bb = self.builder.function.append_basic_block('then')
+        then_bb = self.builder.function.append_kalei_block('then')
         else_bb = ir.Block(self.builder.function, 'else')
         merge_bb = ir.Block(self.builder.function, 'ifcont')
         self.builder.cbranch(cmp, then_bb, else_bb)
@@ -679,21 +679,21 @@ class LLVMCodeGenerator(object):
         then_val = self._codegen(node.then_expr)
         self.builder.branch(merge_bb)
 
-        # Emission of then_val could have modified the current basic block. To
+        # Emission of then_val could have modified the current kalei block. To
         # properly set up the PHI, remember which block the 'then' part ends in.
         then_bb = self.builder.block
 
         # Emit the 'else' part
-        self.builder.function.basic_blocks.append(else_bb)
+        self.builder.function.kalei_blocks.append(else_bb)
         self.builder.position_at_start(else_bb)
         else_val = self._codegen(node.else_expr)
 
-        # Emission of else_val could have modified the current basic block.
+        # Emission of else_val could have modified the current kalei block.
         else_bb = self.builder.block
         self.builder.branch(merge_bb)
 
         # Emit the merge ('ifcnt') block
-        self.builder.function.basic_blocks.append(merge_bb)
+        self.builder.function.kalei_blocks.append(merge_bb)
         self.builder.position_at_start(merge_bb)
         phi = self.builder.phi(ir.DoubleType(), 'iftmp')
         phi.add_incoming(then_val, then_bb)
@@ -731,7 +731,7 @@ class LLVMCodeGenerator(object):
         # into the var.
         start_val = self._codegen(node.start_expr)
         self.builder.store(start_val, var_addr)
-        loop_bb = self.builder.function.append_basic_block('loop')
+        loop_bb = self.builder.function.append_kalei_block('loop')
 
         # Insert an explicit fall through from the current block to loop_bb
         self.builder.branch(loop_bb)
@@ -761,7 +761,7 @@ class LLVMCodeGenerator(object):
         self.builder.store(nextval, var_addr)
 
         # Create the 'after loop' block and insert it
-        after_bb = self.builder.function.append_basic_block('afterloop')
+        after_bb = self.builder.function.append_kalei_block('afterloop')
 
         # Insert the conditional branch into the end of loop_end_bb
         self.builder.cbranch(cmp, loop_bb, after_bb)
@@ -854,7 +854,7 @@ class LLVMCodeGenerator(object):
         # Create the function skeleton from the prototype.
         func = self._codegen(node.proto)
         # Create the entry BB in the function and set the builder to it.
-        bb_entry = func.append_basic_block('entry')
+        bb_entry = func.append_kalei_block('entry')
         self.builder = ir.IRBuilder(bb_entry)
 
         # Add all arguments to the symbol table and create their allocas
@@ -973,7 +973,7 @@ class KaleidoscopeEvaluator(object):
         # Add putchard
         putchard_ty = ir.FunctionType(ir.DoubleType(), [ir.DoubleType()])
         putchard = ir.Function(module, putchard_ty, 'putchard')
-        irbuilder = ir.IRBuilder(putchard.append_basic_block('entry'))
+        irbuilder = ir.IRBuilder(putchard.append_kalei_block('entry'))
         ival = irbuilder.fptoui(putchard.args[0], ir.IntType(32), 'intcast')
         irbuilder.call(putchar, [ival])
         irbuilder.ret(ir.Constant(ir.DoubleType(), 0))

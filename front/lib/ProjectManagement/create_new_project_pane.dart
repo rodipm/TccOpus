@@ -44,7 +44,7 @@ class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
                   projectType = newValue;
                 });
               },
-              items: <String>['EIP', 'BASIC']
+              items: <String>['EIP', 'KALEI']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
