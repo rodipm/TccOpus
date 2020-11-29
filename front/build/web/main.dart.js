@@ -54940,7 +54940,7 @@ if(J.d(q.a.xU(C.O.bV(0,B.mA(U.mt(o.e).c.a.h(0,"charset")).bV(0,o.x))),!1))q.ac(n
 return P.a8(null,r)}})
 return P.a9($async$pS,r)},
 L:function(a,b){var s,r,q,p,o,n,m,l,k,j,i,h,g,f=this,e=null,d=4278296775,c=F.aj(b,!1).a
-c=M.Q(e,new T.bE(new V.a5(F.aj(b,!1).a.a*0.02,10,0,0),L.aD("Editor Visual",e,e,e,A.bt(e,e,C.j,e,e,e,e,e,e,e,e,45,e,C.ar,e,e,!0,e,e,e,e,e,e),C.bz),e),e,e,e,c.b*0.1,e,e,e)
+c=M.Q(e,new T.bE(new V.a5(F.aj(b,!1).a.a*0.02,10,0,0),L.aD("Editor Visual - TCC",e,e,e,A.bt(e,e,C.j,e,e,e,e,e,e,e,e,45,e,C.ar,e,e,!0,e,e,e,e,e,e),C.bz),e),e,e,e,c.b*0.1,e,e,e)
 s=F.aj(b,!1).a
 r=F.aj(b,!1).a
 q=F.aj(b,!1).a
