@@ -7,7 +7,9 @@ before_script:
   - flutter config --enable-web
 
 script:
+  - ls -la
   - cd front
+  - ls -la
   - flutter build web
 
 deploy:
@@ -15,8 +17,7 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   keep_history: true
-  local_dir: build/web
-  
+  local_dir: front/build/web
 # language: python
 
 # deploy:
