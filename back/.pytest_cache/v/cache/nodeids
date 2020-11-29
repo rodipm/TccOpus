@@ -1,0 +1,4 @@
+[
+  "tests.py::test_list_all_projects",
+  "tests.py::test_list_all_projects_invalid_client"
+]
