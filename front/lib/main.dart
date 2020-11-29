@@ -3,19 +3,19 @@ import 'dart:isolate';
 
 import 'package:front/LoginPage/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front/MainCanvas/main_canvas.dart';
 import 'package:front/utils.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future main() async {
-  await DotEnv().load('.env');
+  // await DotEnv().load('.env');
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  final url = DotEnv().env['BACK_URL'];
+  final url = "http://localhost:5000/";
 
   @override
   _MyAppState createState() => _MyAppState();
