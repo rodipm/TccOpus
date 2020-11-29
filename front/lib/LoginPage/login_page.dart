@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.fromLTRB(
               MediaQuery.of(context).size.width * 0.02, 10, 0, 0),
           child: Text(
-            "Editor Visual",
+            "Editor Visual - 2020",
             style: TextStyle(
                 fontSize: 45, fontWeight: FontWeight.bold, color: Colors.white),
             textAlign: TextAlign.left,
