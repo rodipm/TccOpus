@@ -16,12 +16,12 @@ deploy:
   bucket: tccopusbucket
   key: latest.zip
   bundle_type: zip
-  application: NameOfTheCodeDeployApplicationNameHERE
-  deployment_group: CodeDeployDeploymentGroupNameHERE
+  application: TccOpus
+  deployment_group: TccOpusImplantacao
   region: us-east-2
   on: *2
 script:
-  - touch teste.txt
+  - cd front/build/web
   - zip -r latest *
   - mkdir -p dpl_cd_upload
   - mv latest.zip dpl_cd_upload/latest.zip
