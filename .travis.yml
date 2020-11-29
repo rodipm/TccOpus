@@ -9,18 +9,19 @@ before_script:
 script:
   - ls -la
   - cd front
-  - rm -rf build
-  - mkdir build
-  - cd build
-  - mkdir web
-  - touch index.html
-  - echo '<html>oi</html>' > index.html
-  - cat index.html
+  # - rm -rf build
+  # - mkdir build
+  # - cd build
+  # - mkdir web
+  # - touch index.html
+  # - echo '<html>oi</html>' > index.html
+  # - cat index.html
+  # - ls -la
   - ls -la
-  # - ls -la
-  # - flutter build web --release
-  # - cd build/web
-  # - ls -la
+  - flutter clean
+  - flutter build web --release
+  - cd build/web
+  - ls -la
 
 deploy:
   provider: pages
