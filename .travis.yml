@@ -28,6 +28,8 @@ deploy:
   github_token: $GITHUB_TOKEN
   keep_history: false
   local_dir: front/build/web
+  on:
+    branch: master
 # language: python
 
 # deploy:
