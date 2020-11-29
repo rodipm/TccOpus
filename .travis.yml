@@ -1,9 +1,37 @@
 matrix:
   include:
     - language: python
-      script:
-      - echo ok
+      deploy:
+        - provider: s3
+          access_key_id: $AWS_ACCESS_KEY
+          secret_access_key: $AWS_SECRET_KEY
+          local_dir: dpl_cd_upload
+          skip_cleanup: true
+          on: &2
+            repo: rodipm/TccOpus
+          bucket: tccopusbucket
+          region: us-east-2
+        - provider: codedeploy
+          access_key_id: $AWS_ACCESS_KEY
+          secret_access_key: $AWS_SECRET_KEY
+          bucket: tccopusbucket
+          key: latest.zip
+          bundle_type: zip
+          application: TccOpus
+          deployment_group: TccOpusImplantacao
+          region: us-east-2
+          on: *2
+        script:
+          - touch teste.txt
+          - touch teste2.txt
+          - zip -r latest *
+          - mkdir -p dpl_cd_upload
+          - mv latest.zip dpl_cd_upload/latest.zip
+
     - language: dart
+      script:
+        - echo ok
+
 
 
       
