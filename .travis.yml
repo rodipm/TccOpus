@@ -10,7 +10,7 @@ script:
   - ls -la
   - cd front
   - ls -la
-  - flutter build web
+  - flutter build web --release
 
 deploy:
   provider: pages
