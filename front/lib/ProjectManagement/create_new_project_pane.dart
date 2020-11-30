@@ -34,10 +34,10 @@ class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
               icon: Icon(Icons.arrow_downward),
               iconSize: 24,
               elevation: 16,
-              style: TextStyle(color: Colors.deepPurple),
+              style: TextStyle(color: Color(0xff01A0C7)),
               underline: Container(
                 height: 2,
-                color: Colors.deepPurpleAccent,
+                color: Color(0xff01A0C7),
               ),
               onChanged: (String newValue) {
                 setState(() {

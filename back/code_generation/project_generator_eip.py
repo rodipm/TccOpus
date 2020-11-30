@@ -173,11 +173,16 @@ public class LaunchApp {
 }
     """ % (artifact_id, artifact_id)
 
-    return (pom_file, log_properties_file, sample_route_file, launch_app_file)
+    readme_file = """# Auto generated Apache Camel Project.
+## Execute with:
+
+    mvn clean package; mvn exec:java -Dexec.mainClass=com.opus.LaunchApp
+"""
+    return (pom_file, log_properties_file, sample_route_file, launch_app_file, readme_file)
 
 
 def create_project(artifact_id, group_id, routes, dependencies):
-    (pom_file, log_properties_file, sample_route_file, launch_app_file) = prepare_files(
+    (pom_file, log_properties_file, sample_route_file, launch_app_file, readme_file) = prepare_files(
         artifact_id, group_id, routes, dependencies)
 
     artifact_id_sep_path = artifact_id.split(".")
@@ -186,6 +191,7 @@ def create_project(artifact_id, group_id, routes, dependencies):
     nome_arquivo = str(uuid.uuid1())
     with zipfile.ZipFile(os.path.join("projetos_gerados", nome_arquivo) + ".zip", 'w', zipfile.ZIP_DEFLATED) as zipf:
         zipf.writestr("pom.xml", pom_file)
+        zipf.writestr("readme.md", readme_file)
         zipf.writestr(os.path.join("src", "main", "resources",
                                    "log4j2.properties"), log_properties_file)
         zipf.writestr(os.path.join("src", "main", "java", *
