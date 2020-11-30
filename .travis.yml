@@ -1,41 +1,78 @@
 os: linux
 distro: bionic
 
-matrix:
-  include:
-  - language: python
+before_script:
+  - git clone https://github.com/flutter/flutter.git -b beta
+  - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+  - flutter config --enable-web
+  - sudo apt-get -qq update
+  - sudo apt-get -y install python3-pip
 
-    before_install:
-      - sudo apt-get -qq update
-      - sudo apt-get -y install python3-pip
+script:
+  - ls -la
+  - cd front
+  - ls -la
+  - flutter clean
+  - flutter build web --release
+  - cd ..
+  - cd back
+  - pip3 install -r requirements.txt
+  - cd ..
 
-    install:
-      - cd back
-      - pip3 install -r requirements.txt
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: false
+  local_dir: front/build/web
+  on:
+    branch: master
 
-  - language: dart
 
-    before_script:
-      - git clone https://github.com/flutter/flutter.git -b beta
-      - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
-      - flutter config --enable-web
+# os: linux
+# distro: bionic
 
-    script:
-      - ls -la
-      - cd front
-      - ls -la
-      - flutter clean
-      - flutter build web --release
-      - cd ..
+# matrix:
+#   include:
+#   - language: python
 
-    deploy:
-      provider: pages
-      skip_cleanup: true
-      github_token: $GITHUB_TOKEN
-      keep_history: false
-      local_dir: front/build/web
-      on:
-        branch: master
+#     before_install:
+#       - sudo apt-get -qq update
+#       - sudo apt-get -y install python3-pip
+
+#     install:
+#       - cd back
+#       - pip3 install -r requirements.txt
+
+#   - language: dart
+
+#     before_script:
+#       - git clone https://github.com/flutter/flutter.git -b beta
+#       - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+#       - flutter config --enable-web
+
+#     script:
+#       - ls -la
+#       - cd front
+#       - ls -la
+#       - flutter clean
+#       - flutter build web --release
+#       - cd ..
+
+#     deploy:
+#       provider: pages
+#       skip_cleanup: true
+#       github_token: $GITHUB_TOKEN
+#       keep_history: false
+#       local_dir: front/build/web
+#       on:
+#         branch: master
+
+
+
+
+
+
 # language: python
 
 # deploy:
