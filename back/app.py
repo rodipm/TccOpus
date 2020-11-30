@@ -36,10 +36,9 @@ def check_logged_session(request):
     else:
         return False
 
-
 @app.route('/')
 def index():
-    return "TCC back-end."
+    return "TCC back-end. Opus"
 
 @app.route('/generate_code', methods=['POST'])
 def generate_code():
