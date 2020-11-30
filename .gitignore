@@ -1,3 +1,4 @@
 .space-dev-config.json
 back/projetos_gerados
 __pycache__
+back/venv/

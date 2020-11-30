@@ -1,35 +1,41 @@
 os: linux
 distro: bionic
 
-before_script:
-  - git clone https://github.com/flutter/flutter.git -b beta
-  - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
-  - flutter config --enable-web
+matrix:
+  include:
+  - language: python
 
-script:
-  - ls -la
-  - cd front
-  # - rm -rf build
-  # - mkdir build
-  # - cd build
-  # - mkdir web
-  # - touch index.html
-  # - echo '<html>oi</html>' > index.html
-  # - cat index.html
-  # - ls -la
-  - ls -la
-  - flutter clean
-  - flutter build web --release
-  - cd ..
+    before_install:
+      - sudo apt-get -qq update
+      - sudo apt-get -y install python3-pip
 
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep_history: false
-  local_dir: front/build/web
-  on:
-    branch: master
+    install:
+      - cd back
+      - pip3 install -r requirements.txt
+
+  - language: dart
+
+    before_script:
+      - git clone https://github.com/flutter/flutter.git -b beta
+      - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+      - flutter config --enable-web
+
+    script:
+      - ls -la
+      - cd front
+      - ls -la
+      - flutter clean
+      - flutter build web --release
+      - cd ..
+
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token: $GITHUB_TOKEN
+      keep_history: false
+      local_dir: front/build/web
+      on:
+        branch: master
 # language: python
 
 # deploy:
