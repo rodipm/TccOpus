@@ -34,8 +34,7 @@ deploy:
       branch: master
   - provider: heroku
     app: tcc-opus-back
-    api_key:
-      secure: $HEROKU_TOKEN
+    api_key: $HEROKU_TOKEN
     on:
       branch: master
 
