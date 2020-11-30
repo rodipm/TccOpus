@@ -2,3 +2,4 @@
 back/projetos_gerados
 __pycache__
 back/venv/
+.env
