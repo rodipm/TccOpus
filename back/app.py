@@ -39,7 +39,7 @@ def check_logged_session(request):
 
 @app.route('/')
 def index():
-    return "EIPEditor back-end."
+    return "TCC back-end."
 
 @app.route('/generate_code', methods=['POST'])
 def generate_code():
