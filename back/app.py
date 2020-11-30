@@ -3,16 +3,16 @@ from flask_cors import CORS
 from copy import deepcopy
 import json
 import os
-from back.code_generation.code_generator_eip import create_routes
-from back.code_generation.code_generator_kalei import create_kalei
-from back.code_generation.parser import parse
-from back.code_generation.project_generator_eip import create_project
-from back.code_generation.project_generator_kalei import generate_and_eval_kalei
-from back.project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient
-from back.user_storage.user_storage import clientLogin, addClient, createTables
+from code_generation.code_generator_eip import create_routes
+from code_generation.code_generator_kalei import create_kalei
+from code_generation.parser import parse
+from code_generation.project_generator_eip import create_project
+from code_generation.project_generator_kalei import generate_and_eval_kalei
+from project_storage.project_storage import saveProject, loadProject, getAllProjectsFromClient
+from user_storage.user_storage import clientLogin, addClient, createTables
 from uuid import uuid4
 from datetime import timedelta
-from back.errors import InvalidClientEmail
+from errors import InvalidClientEmail
 
 app = Flask(__name__)
 app.secret_key = str(uuid4())
