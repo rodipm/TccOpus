@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import psycopg2
 import json
-from back.errors import InvalidClientEmail
+from errors import InvalidClientEmail
 
 load_dotenv()
 
