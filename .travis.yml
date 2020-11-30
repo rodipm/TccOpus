@@ -35,7 +35,7 @@ deploy:
   - provider: heroku
     app: tcc-opus-back
     api_key:
-      secure: ajtH38IxdQoEMdO3h/RbHpAOs2Oyaxp6TyCqYTwl3fXVvPziEsMcNGjWjzV8csPskc/VdeLr3wInGcNPmNSLYLQv2ds7gISj00K0ppYJa5J7FDxtBICwXIq3tH88en9vBJXpPfTUEaSnZE+E5dLzbhq2NTEHFvue4UyDYN9FeyXUtohyeIWExDokD6ircb9UaK2r/njVQccbLynmHScSYuE9SDAX1Y/klRX5N7HzpxnER5r/bzQPOPoPDiS3kTX9J6Xckt8zTb/W81vylQjssta19hJ0tErNWkxlVzzm1L/j5zlF7KWd4hjFi0gjOWNJbGqNFxzAJ72L+CEYpF4LXU91d22GcoxvYX6el5i0JUhnQPevttMvptTdYNI77DUFCmL8RkZb5XeFpbDGxOLtLzDu+5ZFGnPUADUjhTke/z6pTeTiAjosolxq0jIB6/0rkgeVQb1VCa7pbU/xj/59cvbYp0OWRbYE/eTnTJLtSOfF1uOUXxT1eCu7QNZQZ93gM+LFplxCjsUoRVgVxLOWUuOQF2oIsQXRlLF4ji7nh2rY124ywcrmDpgjxWlEdtnmwUmuNx3FRXzdgPtoR11KAuX/YQvuQdj5UmbBSGKT/76W/oLpuCV50VgzZKx5XSyK0B6qDqjo9hwcaMqMno4xox6Jy+AL8C/jAmKyucDqRM4=
+      secure: $HEROKU_TOKEN
     on:
       branch: master
 
