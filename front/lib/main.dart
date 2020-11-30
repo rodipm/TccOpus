@@ -15,8 +15,8 @@ Future main() async {
 }
 
 class MyApp extends StatefulWidget {
-  // final url = "https://tcc-opus-back.herokuapp.com/";
-  final url = "http://localhost:5000/";
+  final url = "https://tcc-opus-back.herokuapp.com/";
+  // final url = "http://localhost:5000/";
 
   @override
   _MyAppState createState() => _MyAppState();
