@@ -127,15 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                                   child: GestureDetector(
                                     onTap: () =>
                                         {_launchURL("https://pcs.usp.br/")},
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/pcs.jpg'),
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                    ),
+                                    child: Image.asset("pcs.jpg"),
                                   ),
                                 ),
                               ),
