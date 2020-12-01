@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                                       _launchURL(
                                           "https://www.opus-software.com.br/")
                                     },
-                                    child: Image.asset("opus.png"),
+                                    child: Image.asset("assets/opus.png"),
                                   ),
                                 ),
                               ),
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                                   child: GestureDetector(
                                     onTap: () =>
                                         {_launchURL("https://pcs.usp.br/")},
-                                    child: Image.asset("pcs.jpg"),
+                                    child: Image.asset('assets/pcs.jpg'),
                                   ),
                                 ),
                               ),
@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("infos_cadastro.gif"),
+                            child: Image.asset("assets/infos_cadastro.gif"),
                           ),
                         ),
                       ],
@@ -227,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("infos_criar_projeto.gif"),
+                            child: Image.asset("assets/infos_criar_projeto.gif"),
                           ),
                         ),
                       ],
@@ -254,7 +254,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("infos_elementos_visuais.gif"),
+                            child: Image.asset("assets/infos_elementos_visuais.gif"),
                           ),
                         ),
                       ],
@@ -281,7 +281,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("infos_elementos_config.gif"),
+                            child: Image.asset("assets/infos_elementos_config.gif"),
                           ),
                         ),
                       ],
@@ -308,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("infos_gera_codigo.gif"),
+                            child: Image.asset("assets/infos_gera_codigo.gif"),
                           ),
                         ),
                       ],
