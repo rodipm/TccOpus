@@ -1110,6 +1110,10 @@ def generate_and_eval_kalei(codes):
         if new_result != "None":
             result.append(new_result)
 
+    # Verifica existência do diretorio e o cria se necessário
+    if not os.path.exists('projetos_gerados'):
+        os.makedirs('projetos_gerados')
+
     nome_arquivo = str(uuid.uuid1())
     with open(os.path.join("projetos_gerados", nome_arquivo) + ".ll", 'w') as output_file:
         output_file.write(str(kalei.codegen.module))

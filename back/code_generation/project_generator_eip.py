@@ -187,6 +187,10 @@ def create_project(artifact_id, group_id, routes, dependencies):
 
     artifact_id_sep_path = artifact_id.split(".")
 
+    # Verifica existência do diretorio e o cria se necessário
+    if not os.path.exists('projetos_gerados'):
+        os.makedirs('projetos_gerados')
+
     # Gera o arquivo
     nome_arquivo = str(uuid.uuid1())
     with zipfile.ZipFile(os.path.join("projetos_gerados", nome_arquivo) + ".zip", 'w', zipfile.ZIP_DEFLATED) as zipf:
