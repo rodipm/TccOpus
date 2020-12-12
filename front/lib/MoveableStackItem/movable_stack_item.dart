@@ -17,7 +17,7 @@ class MoveableStackItem extends StatefulWidget {
   Offset position;
   final bool selected;
 
-  final int id;
+  int id;
 
   set setPosition(Offset pos) {
     position = pos;
@@ -75,6 +75,24 @@ class MoveableStackItem extends StatefulWidget {
   static int incrementIdCounter() {
     MoveableStackItem.idCounter++;
     return idCounter;
+  }
+
+  static int decrementIdCounter() {
+    if (MoveableStackItem.idCounter >= 0)
+      MoveableStackItem.idCounter--;
+    return idCounter;
+  }
+
+  static int setIdCounter(int newIdCounter) {
+    if (MoveableStackItem.idCounter >= 0)
+      MoveableStackItem.idCounter = newIdCounter;
+    else
+      MoveableStackItem.idCounter = 0;
+    return idCounter;
+  }
+
+  void setID(int id) {
+    this.id = id;
   }
 
   @override

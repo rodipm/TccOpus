@@ -3,6 +3,7 @@ import 'package:front/EipWidgets/import_widgets.dart';
 // Import das classes representantes dos elementos KALEI (KaleiWidgets)
 import 'package:front/KaleiWidgets/import_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class LeftSidePane extends StatefulWidget {
   final Function insertNewItem;
@@ -68,17 +69,13 @@ class _LeftSidePaneState extends State<LeftSidePane> {
               Container(
                 // color: Colors.black.withAlpha(50),
                 child: Container(
-                  height: 50,
+                  height: MediaQuery.of(context).size.height*0.8,
                   width: 400,
                   child: Center(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            "No project selected...",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ]),
+                    child: AutoSizeText(
+                      "Selecione um projeto...",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
                   ),
                 ),
               ),
@@ -113,7 +110,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         children: [
                           Text(
                             "Messaging System",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ]),
                   ),
@@ -145,7 +142,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         children: [
                           Text(
                             "Message Routing",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ]),
                   ),
@@ -197,7 +194,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         children: [
                           Text(
                             "Expression",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ]),
                   ),
@@ -229,7 +226,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         children: [
                           Text(
                             "Conditional",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ]),
                   ),
@@ -261,7 +258,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                         children: [
                           Text(
                             "Def",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ]),
                   ),

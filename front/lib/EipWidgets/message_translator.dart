@@ -93,11 +93,12 @@ class MessageTranslator {
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: componentWidget,
-          onDraggableCanceled: (velocity, offset) {
-            insertNewItem(this, offset);
-          },
-          child: componentWidget),
+        feedback: componentWidget,
+        onDraggableCanceled: (velocity, offset) {
+          insertNewItem(this, offset);
+        },
+        child: Tooltip(message: this.type, child: componentWidget),
+      ),
     );
   }
 }

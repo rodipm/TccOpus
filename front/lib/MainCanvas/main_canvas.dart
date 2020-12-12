@@ -73,6 +73,8 @@ class _MainCanvasState extends State<MainCanvas> {
   };
 
   bool isProjectCreated = false;
+
+  String headerText = "Editor Visual";
   //***************************//
   //  CREATE/OPEN/SAVE PROJECT //
   //***************************//
@@ -127,9 +129,8 @@ class _MainCanvasState extends State<MainCanvas> {
       var responseDecoded = json.decode(response.body);
       print(responseDecoded);
 
-      updateProjectInfo(
-          responseDecoded["client"], responseDecoded["project_name"],
-          responseDecoded["type"]);
+      updateProjectInfo(responseDecoded["client"],
+          responseDecoded["project_name"], responseDecoded["type"]);
 
       var canvasState = responseDecoded["canvas_state"];
 
@@ -167,7 +168,7 @@ class _MainCanvasState extends State<MainCanvas> {
             itemClass.updateConfigs,
             itemClass.buildEditPane,
             position);
-
+        _newItem.setID(int.parse(itemId));
         print("OPEN PROJECT NEW ITEM");
         print(itemClass.componentConfigs);
         print(_newItem.componentConfigs);
@@ -334,8 +335,11 @@ class _MainCanvasState extends State<MainCanvas> {
         itemsPositions[id]["connectsTo"].remove(itemId);
       }
     });
+
     updateCanvasStacks();
     updateCanvasChild();
+    // MoveableStackItem.decrementIdCounter();
+    MoveableStackItem.setIdCounter(this.items.keys.last);
   }
 
   // Atualiza a posição do item na tela
@@ -520,7 +524,9 @@ class _MainCanvasState extends State<MainCanvas> {
           "editingItem": null
         });
       updateCanvasChild();
-
+      MoveableStackItem.setIdCounter(this.items.keys.length-1);
+      print("ITEMS ITEMS");
+      print(this.items);
       print("undoStack");
       print(inspect(this.undoStack));
       print("redoStack");
@@ -599,13 +605,23 @@ class _MainCanvasState extends State<MainCanvas> {
       for (var responseData in decodedResponse.keys) {
         if (responseData != "fileName") {
           if (responseData == "routes") {
-            resultWidgets.add(Text(responseData, style: TextStyle(color: Colors.blue),),);
-            resultWidgets.add(Text(decodedResponse[responseData].join(";\n") + "\n"));
-          }
-          else
-          {
-            resultWidgets.add(Text(responseData, style: TextStyle(color: Colors.blue),),);
-            resultWidgets.add(Text(decodedResponse[responseData].join("\n") + "\n"));
+            resultWidgets.add(
+              Text(
+                responseData,
+                style: TextStyle(color: Colors.blue),
+              ),
+            );
+            resultWidgets
+                .add(Text(decodedResponse[responseData].join(";\n") + "\n"));
+          } else {
+            resultWidgets.add(
+              Text(
+                responseData,
+                style: TextStyle(color: Colors.blue),
+              ),
+            );
+            resultWidgets
+                .add(Text(decodedResponse[responseData].join("\n") + "\n"));
           }
         }
       }
@@ -630,7 +646,8 @@ class _MainCanvasState extends State<MainCanvas> {
                         var fileName = json.decode(response.body)["fileName"];
                         print(fileName);
                         html.window.open(
-                            widget.url + "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
+                            widget.url +
+                                "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
                             "");
                       },
                     )
@@ -665,13 +682,13 @@ class _MainCanvasState extends State<MainCanvas> {
   Widget build(BuildContext context) {
     // Painel de edição ocupa 15% da tela
     this.leftSidePaneSize = MediaQuery.of(context).size.width * 0.15;
-    this.editCanvasPaneHeight = MediaQuery.of(context).size.height * 0.05;
+    this.editCanvasPaneHeight = MediaQuery.of(context).size.height * 0.06;
     this.headerHeight = MediaQuery.of(context).size.height * 0.1;
     this.canvasPaneHeight = MediaQuery.of(context).size.height -
         this.editCanvasPaneHeight -
         this.headerHeight;
-    
 
+    
     // Remover o painel de edição de itens quando não houver item selecionado
     if (this.editingItem == null) {
       this.mainCanvasSize = MediaQuery.of(context).size.width * 0.85;
@@ -687,10 +704,7 @@ class _MainCanvasState extends State<MainCanvas> {
         width: this.leftSidePaneSize,
         color: Colors.grey.shade800,
         child: LeftSidePane(
-          this.insertNewItem,
-          this.projectInfo,
-          () => this.isProjectCreated
-        ),
+            this.insertNewItem, this.projectInfo, () => this.isProjectCreated),
       ),
       Container(
         width: this.mainCanvasSize,
@@ -716,77 +730,82 @@ class _MainCanvasState extends State<MainCanvas> {
         ),
       );
 
+    if (this.isProjectCreated) {
+      this.headerText = "Editor Visual - " + this.projectInfo["type"] + " - " + this.projectInfo["project_name"];
+    }
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.grey.shade800,
+      body: SingleChildScrollView(
         child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    height: this.headerHeight,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.width * 0.02, 10, 0, 0),
-                      child: Text(
-                        "Editor Visual",
-                        style: TextStyle(
-                            fontSize: 45,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        textAlign: TextAlign.left,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.02),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          color: Color(0xff01A0C7)),
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            IconButton(
-                              icon: Icon(Icons.logout),
-                              color: Colors.white,
-                              onPressed: () => widget.logoutHandler(),
-                              tooltip: "Logout",
-                            ),
-                          ],
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.grey.shade800,
+          child: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: this.headerHeight,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            MediaQuery.of(context).size.width * 0.02, 10, 0, 0),
+                        child: Text(
+                          this.headerText,
+                          style: TextStyle(
+                              fontSize: 45,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                          textAlign: TextAlign.left,
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              EditCanvasPane(
-                  this.displayCreateNewProjectPane,
-                  this.displayOpenProjectPane,
-                  this.saveProject,
-                  this.editCanvasPaneHeight,
-                  this.generateCode,
-                  this.undoCanvas,
-                  this.redoCanvas,
-                  () => this.isProjectCreated),
-              Container(
-                height: MediaQuery.of(context).size.height -
-                    this.headerHeight -
-                    this.editCanvasPaneHeight,
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  children: scaffoldRowChildren,
+                    Container(
+                      margin: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.02),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: Color(0xff01A0C7)),
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(Icons.logout),
+                                color: Colors.white,
+                                onPressed: () => widget.logoutHandler(),
+                                tooltip: "Logout",
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                EditCanvasPane(
+                    this.displayCreateNewProjectPane,
+                    this.displayOpenProjectPane,
+                    this.saveProject,
+                    this.editCanvasPaneHeight,
+                    this.generateCode,
+                    this.undoCanvas,
+                    this.redoCanvas,
+                    () => this.isProjectCreated),
+                Container(
+                  height: MediaQuery.of(context).size.height -
+                      this.headerHeight -
+                      this.editCanvasPaneHeight,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: scaffoldRowChildren,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

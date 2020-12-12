@@ -5,7 +5,8 @@ class MessageEndpoint {
   final String type = "MessageEndpoint";
   final String subType = "MessagingSystem";
 
-  final String documentacao = "https://people.apache.org/~dkulp/camel/message-endpoint.html";
+  final String documentacao =
+      "https://people.apache.org/~dkulp/camel/message-endpoint.html";
   final double width;
   final double height;
 
@@ -168,11 +169,12 @@ class MessageEndpoint {
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: componentWidget,
-          onDraggableCanceled: (velocity, offset) {
-            insertNewItem(this, offset);
-          },
-          child: componentWidget),
+        feedback: componentWidget,
+        onDraggableCanceled: (velocity, offset) {
+          insertNewItem(this, offset);
+        },
+        child: Tooltip(message: this.type, child: componentWidget),
+      ),
     );
   }
 }

@@ -616,7 +616,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 "Entrar",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -703,7 +703,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 "Cadastrar",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

@@ -28,8 +28,8 @@ def check_logged_session(request):
     print("client_email")
     print(client_email)
 
-    # TEMP
-    return True
+    # # TEMP
+    # return True
     
     if client_email in session:
         return True

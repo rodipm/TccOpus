@@ -5,7 +5,8 @@ class MessageFilter {
   final String type = "MessageFilter";
   final String subType = "MessageRouting";
 
-  final String documentacao = "https://people.apache.org/~dkulp/camel/message-filter.html";
+  final String documentacao =
+      "https://people.apache.org/~dkulp/camel/message-filter.html";
 
   final double width;
   final double height;
@@ -113,11 +114,12 @@ class MessageFilter {
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: componentWidget,
-          onDraggableCanceled: (velocity, offset) {
-            insertNewItem(this, offset);
-          },
-          child: componentWidget),
+        feedback: componentWidget,
+        onDraggableCanceled: (velocity, offset) {
+          insertNewItem(this, offset);
+        },
+        child: Tooltip(message: this.type, child: componentWidget),
+      ),
     );
   }
 }

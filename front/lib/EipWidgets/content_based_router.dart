@@ -7,7 +7,19 @@ class ContentBasedRouter {
   final String type = "ContentBasedRouter";
   final String subType = "MessageRouting";
 
-  final List<String> autocompletions = ['header("")', 'body("")', 'isEqualTo("")', 'isGreaterThan("")', 'isLessThan("")', 'startsWith("")', 'endsWith("")', 'in()', 'not()', 'and(,)', 'or(,)'];
+  final List<String> autocompletions = [
+    'header("")',
+    'body("")',
+    'isEqualTo("")',
+    'isGreaterThan("")',
+    'isLessThan("")',
+    'startsWith("")',
+    'endsWith("")',
+    'in()',
+    'not()',
+    'and(,)',
+    'or(,)'
+  ];
   final String documentacao =
       "https://people.apache.org/~dkulp/camel/content-based-router.html";
 
@@ -61,39 +73,45 @@ class ContentBasedRouter {
         configControllers["contentBasedRouterControllers"][config][i].text =
             selectedItem.componentConfigs[config];
 
-editItems.add(
-            TypeAheadField(
-              textFieldConfiguration: TextFieldConfiguration(
-                  autofocus: false,
-                  decoration: InputDecoration(labelText: config + " [$i]"),
-                  controller: configControllers["contentBasedRouterControllers"]
-                      [config][i]),
-              suggestionsCallback: (pattern) {
-                if (pattern.contains(".") == true) {
-                  pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
-                  print("new pattern:");
-                  print(pattern);
-                }
-                this.patt = pattern;
-                return this.autocompletions
-                    .where((element) => element.contains(pattern));
-              },
-              itemBuilder: (context, suggestion) {
-                return ListTile(title: Text(suggestion));
-              },
-              onSuggestionSelected: (suggestion) {
-                configControllers["contentBasedRouterControllers"]
-                      [config][i].text = configControllers["contentBasedRouterControllers"]
-                      [config][i].text
-                    .substring(
-                        0, configControllers["contentBasedRouterControllers"]
-                      [config][i].text.lastIndexOf(this.patt));
-               
-                return configControllers["contentBasedRouterControllers"]
-                      [config][i].text += suggestion;
-              },
-            ),
-          );
+        editItems.add(
+          TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+                autofocus: false,
+                decoration: InputDecoration(labelText: config + " [$i]"),
+                controller: configControllers["contentBasedRouterControllers"]
+                    [config][i]),
+            suggestionsCallback: (pattern) {
+              if (pattern.contains(".") == true) {
+                pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
+                print("new pattern:");
+                print(pattern);
+              }
+              this.patt = pattern;
+              return this
+                  .autocompletions
+                  .where((element) => element.contains(pattern));
+            },
+            itemBuilder: (context, suggestion) {
+              return ListTile(title: Text(suggestion));
+            },
+            onSuggestionSelected: (suggestion) {
+              configControllers["contentBasedRouterControllers"][config][i]
+                  .text = configControllers["contentBasedRouterControllers"]
+                      [config][i]
+                  .text
+                  .substring(
+                      0,
+                      configControllers["contentBasedRouterControllers"][config]
+                              [i]
+                          .text
+                          .lastIndexOf(this.patt));
+
+              return configControllers["contentBasedRouterControllers"][config]
+                      [i]
+                  .text += suggestion;
+            },
+          ),
+        );
 
         // editItems.add(
         //   TextFormField(
@@ -111,39 +129,45 @@ editItems.add(
         configControllers["contentBasedRouterControllers"][config][i[0]].text =
             i[1];
 
-          editItems.add(
-            TypeAheadField(
-              textFieldConfiguration: TextFieldConfiguration(
-                  autofocus: false,
-                  decoration: InputDecoration(labelText: config + " [$i]"),
-                  controller: configControllers["contentBasedRouterControllers"]
-                      [config][i[0]]),
-              suggestionsCallback: (pattern) {
-                if (pattern.contains(".") == true) {
-                  pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
-                  print("new pattern:");
-                  print(pattern);
-                }
-                this.patt = pattern;
-                return this.autocompletions
-                    .where((element) => element.contains(pattern));
-              },
-              itemBuilder: (context, suggestion) {
-                return ListTile(title: Text(suggestion));
-              },
-              onSuggestionSelected: (suggestion) {
-                configControllers["contentBasedRouterControllers"]
-                      [config][i[0]].text = configControllers["contentBasedRouterControllers"]
-                      [config][i[0]].text
-                    .substring(
-                        0, configControllers["contentBasedRouterControllers"]
-                      [config][i[0]].text.lastIndexOf(this.patt));
-               
-                return configControllers["contentBasedRouterControllers"]
-                      [config][i[0]].text += suggestion;
-              },
-            ),
-          );
+        editItems.add(
+          TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+                autofocus: false,
+                decoration: InputDecoration(labelText: config + " [$i]"),
+                controller: configControllers["contentBasedRouterControllers"]
+                    [config][i[0]]),
+            suggestionsCallback: (pattern) {
+              if (pattern.contains(".") == true) {
+                pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
+                print("new pattern:");
+                print(pattern);
+              }
+              this.patt = pattern;
+              return this
+                  .autocompletions
+                  .where((element) => element.contains(pattern));
+            },
+            itemBuilder: (context, suggestion) {
+              return ListTile(title: Text(suggestion));
+            },
+            onSuggestionSelected: (suggestion) {
+              configControllers["contentBasedRouterControllers"][config][i[0]]
+                  .text = configControllers["contentBasedRouterControllers"]
+                      [config][i[0]]
+                  .text
+                  .substring(
+                      0,
+                      configControllers["contentBasedRouterControllers"][config]
+                              [i[0]]
+                          .text
+                          .lastIndexOf(this.patt));
+
+              return configControllers["contentBasedRouterControllers"][config]
+                      [i[0]]
+                  .text += suggestion;
+            },
+          ),
+        );
         // editItems.add(
         //   TextFormField(
         //     decoration: InputDecoration(labelText: config + " [${i[0]}]"),
@@ -177,22 +201,28 @@ editItems.add(
                   print(pattern);
                 }
                 this.patt = pattern;
-                return this.autocompletions
+                return this
+                    .autocompletions
                     .where((element) => element.contains(pattern));
               },
               itemBuilder: (context, suggestion) {
                 return ListTile(title: Text(suggestion));
               },
               onSuggestionSelected: (suggestion) {
-                configControllers["contentBasedRouterControllers"]
-                      [config][i].text = configControllers["contentBasedRouterControllers"]
-                      [config][i].text
+                configControllers["contentBasedRouterControllers"][config][i]
+                    .text = configControllers["contentBasedRouterControllers"]
+                        [config][i]
+                    .text
                     .substring(
-                        0, configControllers["contentBasedRouterControllers"]
-                      [config][i].text.lastIndexOf(this.patt));
-               
+                        0,
+                        configControllers["contentBasedRouterControllers"]
+                                [config][i]
+                            .text
+                            .lastIndexOf(this.patt));
+
                 return configControllers["contentBasedRouterControllers"]
-                      [config][i].text += suggestion;
+                        [config][i]
+                    .text += suggestion;
               },
             ),
           );
@@ -279,11 +309,12 @@ editItems.add(
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: componentWidget,
-          onDraggableCanceled: (velocity, offset) {
-            insertNewItem(this, offset);
-          },
-          child: componentWidget),
+        feedback: componentWidget,
+        onDraggableCanceled: (velocity, offset) {
+          insertNewItem(this, offset);
+        },
+        child: Tooltip(message: this.type, child: componentWidget),
+      ),
     );
   }
 }

@@ -5,7 +5,8 @@ class Message {
   final String type = "Message";
   final String subType = "MessagingSystem";
 
-  final String documentacao = "https://people.apache.org/~dkulp/camel/message.html";
+  final String documentacao =
+      "https://people.apache.org/~dkulp/camel/message.html";
 
   final double width;
   final double height;
@@ -171,13 +172,13 @@ class Message {
 
   Widget icon(Function insertNewItem) {
     return SizedBox(
-      width: 100,
-      child: Draggable(
+        width: 100,
+        child: Draggable(
           feedback: componentWidget,
           onDraggableCanceled: (velocity, offset) {
             insertNewItem(this, offset);
           },
-          child: componentWidget),
-    );
+          child: Tooltip(message: this.type, child:componentWidget),
+        ));
   }
 }

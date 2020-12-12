@@ -1,4 +1,4 @@
-from back.app import app
+from app import app
 from flask import json
 
 # PROJECT

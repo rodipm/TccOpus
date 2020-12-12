@@ -1,5 +1,6 @@
 // Base widget for stackable movable item
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class EditCanvasPane extends StatefulWidget {
   final double editCanvasPaneHeight;
@@ -33,7 +34,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
     this.itemBlockWidth = MediaQuery.of(context).size.width / 3;
 
     return Container(
-      height: widget.editCanvasPaneHeight,
+      height: MediaQuery.of(context).size.height * 0.06,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(bottom: 15),
       child: Row(
@@ -55,22 +56,27 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                             ? Color(0xff01A0C7)
                             : Colors.grey),
                     child: Container(
-                      height: widget.editCanvasPaneHeight,
-                      width: this.itemBlockWidth / 4,
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: (MediaQuery.of(context).size.width / 3) / 4,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           IconButton(
                             icon: Icon(Icons.save),
+                            iconSize: 25,
                             color: Colors.white,
                             onPressed: widget.isProjectCreated() == true
                                 ? () => widget.displaySaveProjectPaneHandler()
                                 : null,
                             tooltip: "Salvar projeto",
                           ),
-                          Text(
+                          AutoSizeText(
                             "Salvar",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -84,8 +90,8 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         color: Color(0xff01A0C7)),
                     child: Container(
-                      height: widget.editCanvasPaneHeight,
-                      width: this.itemBlockWidth / 4,
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: (MediaQuery.of(context).size.width / 3) / 4,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -96,9 +102,12 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                                 widget.displayCreateNewProjectPaneHandler(),
                             tooltip: "Novo Projeto",
                           ),
-                          Text(
+                          AutoSizeText(
                             "Novo",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -112,7 +121,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         color: Color(0xff01A0C7)),
                     child: Container(
-                      height: widget.editCanvasPaneHeight,
+                      height: MediaQuery.of(context).size.height * 0.06,
                       width: this.itemBlockWidth / 4,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -124,9 +133,12 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                                 widget.displayOpenProjectPaneHandler(),
                             tooltip: "Abrir Projeto",
                           ),
-                          Text(
+                          AutoSizeText(
                             "Abrir",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -163,7 +175,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                       ),
                       padding: EdgeInsets.only(right: 3),
                       child: Container(
-                        height: widget.editCanvasPaneHeight,
+                        height: MediaQuery.of(context).size.height * 0.06,
                         width: this.itemBlockWidth / 8,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +211,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                             : Colors.grey,
                       ),
                       child: Container(
-                        height: widget.editCanvasPaneHeight,
+                        height: MediaQuery.of(context).size.height * 0.06,
                         width: this.itemBlockWidth / 8,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -236,7 +248,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                           : Colors.grey,
                     ),
                     child: Container(
-                      height: widget.editCanvasPaneHeight,
+                      height: MediaQuery.of(context).size.height * 0.06,
                       width: MediaQuery.of(context).size.width * 0.15 -
                           MediaQuery.of(context).size.width * 0.02,
                       child: Row(
@@ -246,9 +258,12 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                             Icons.done,
                             color: Colors.white,
                           ),
-                          Text(
+                          AutoSizeText(
                             "Gerar Código",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
