@@ -1,13 +1,15 @@
 from .eip_component import EipComponent
 from copy import deepcopy
 
+
 class MessageTranslator(EipComponent):
     def parse(self, generate_code, items_info, current_node_number, current_node, generated_code, visited_nodes, dependencies):
         new_visited_nodes = deepcopy(visited_nodes)
         new_dependencies = deepcopy(dependencies)
 
         new_generated_code = ".process(new Processor() { \n" + \
-            current_node['process'] + "\n})"
+            current_node['process'][0] + current_node['process'][1] + \
+            current_node['process'][2] + "\n})"
 
         for child_node_number in current_node['connectsTo']:
             rec_code, deps = generate_code(

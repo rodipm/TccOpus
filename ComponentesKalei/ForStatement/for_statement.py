@@ -24,7 +24,6 @@ class ForStatement(KaleiComponent):
             items_info, after_for, generated_code, new_visited_nodes, new_dependencies)
 
         if rec_code != "":
-            print("rec_code", rec_code)
             rec_code = ":\n" + rec_code
 
         return (new_generated_code + rec_code, "")

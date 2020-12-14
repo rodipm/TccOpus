@@ -20,4 +20,3 @@ class DefStatement(KaleiComponent):
                 items_info, child_node_number, generated_code, new_visited_nodes, new_dependencies)
 
         return (new_generated_code + rec_code, deps)
-

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessageFilter {
   final String type = "MessageFilter";
   final String subType = "MessageRouting";
+
+  final String documentacao =
+      "https://people.apache.org/~dkulp/camel/message-filter.html";
 
   final double width;
   final double height;
@@ -13,7 +17,8 @@ class MessageFilter {
   };
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
-    Map<String, dynamic> _compConfigs = Map<String, dynamic>.from(componentConfigs);
+    Map<String, dynamic> _compConfigs =
+        Map<String, dynamic>.from(componentConfigs);
     _compConfigs["choices"] = jsonConfig["choices"];
 
     return _compConfigs;
@@ -67,7 +72,29 @@ class MessageFilter {
         ),
       );
     }
+    editItems.add(
+      Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: RaisedButton(
+          onPressed: _launchURL,
+          child: new Text('Documentação'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Color(0xff01A0C7),
+        ),
+      ),
+    );
     return editItems;
+  }
+
+  _launchURL() async {
+    var url = this.documentacao;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   MessageFilter(this.width, this.height) {
@@ -87,11 +114,12 @@ class MessageFilter {
     return SizedBox(
       width: 100,
       child: Draggable(
-          feedback: componentWidget,
-          onDraggableCanceled: (velocity, offset) {
-            insertNewItem(this, offset);
-          },
-          child: componentWidget),
+        feedback: componentWidget,
+        onDraggableCanceled: (velocity, offset) {
+          insertNewItem(this, offset);
+        },
+        child: Tooltip(message: this.type, child: componentWidget),
+      ),
     );
   }
 }

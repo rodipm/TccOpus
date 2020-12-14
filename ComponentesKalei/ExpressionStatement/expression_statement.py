@@ -19,5 +19,7 @@ class ExpressionStatement(KaleiComponent):
                 items_info, child_node_number, generated_code, new_visited_nodes, new_dependencies)
 
         if rec_code != "":
+            print("aarec_code", rec_code)
+
             rec_code = ":\n" + rec_code
         return (new_generated_code + rec_code, deps)

@@ -1,5 +1,13 @@
 .space-dev-config.json
-back/projetos_gerados
 __pycache__
-back/venv/
 .env
+
+back/projetos_gerados
+back/venv/
+back/__pycache__
+back/.pytest_cache
+
+front/.env
+back/.env
+front/android
+front/ios

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Message {
   final String type = "Message";
   final String subType = "MessagingSystem";
+
+  final String documentacao =
+      "https://people.apache.org/~dkulp/camel/message.html";
 
   final double width;
   final double height;
@@ -129,21 +133,28 @@ class Message {
     }
 
     editItems.add(
-  RaisedButton(
-        onPressed: _launchURL,
-        child: new Text('Documentação'),
+      Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: RaisedButton(
+          onPressed: _launchURL,
+          child: new Text('Documentação'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Color(0xff01A0C7),
+        ),
       ),
     );
-
     return editItems;
   }
 
   _launchURL() async {
-  const url = 'https://flutter.io';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+    var url = this.documentacao;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Message(this.width, this.height) {
@@ -161,13 +172,13 @@ class Message {
 
   Widget icon(Function insertNewItem) {
     return SizedBox(
-      width: 100,
-      child: Draggable(
+        width: 100,
+        child: Draggable(
           feedback: componentWidget,
           onDraggableCanceled: (velocity, offset) {
             insertNewItem(this, offset);
           },
-          child: componentWidget),
-    );
+          child: Tooltip(message: this.type, child:componentWidget),
+        ));
   }
 }

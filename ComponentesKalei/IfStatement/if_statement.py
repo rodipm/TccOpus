@@ -16,7 +16,6 @@ class IfStatement(KaleiComponent):
         print(then_line, "then_line")
         print(else_line, "else_line")
 
-
         then_code = ""
         else_code = ""
 
@@ -27,8 +26,6 @@ class IfStatement(KaleiComponent):
                 then_code = new_code
             else:
                 else_code = new_code
-        
-
 
         new_generated_code = f"if ({condition})\n{then_code}\n{else_code}\n"
 

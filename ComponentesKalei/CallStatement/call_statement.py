@@ -23,4 +23,3 @@ class CallStatement(KaleiComponent):
             rec_code = ":\n" + rec_code
 
         return (new_generated_code + rec_code, deps)
-

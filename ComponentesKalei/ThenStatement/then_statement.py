@@ -12,5 +12,4 @@ class ThenStatement(KaleiComponent):
 
         new_generated_code = f"then\n{exp_code}\n"
 
-        return (new_generated_code,"")
-
+        return (new_generated_code, "")
