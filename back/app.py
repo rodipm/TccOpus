@@ -20,6 +20,7 @@ app.secret_key = str(uuid4())
 CORS(app)
 
 session = {}
+user_generated_files = {}
 
 def check_logged_session(request):
     print("check_logged_session")
@@ -35,6 +36,22 @@ def check_logged_session(request):
         return True
     else:
         return False
+
+def add_user_generated_file(request, file_name):
+    client_email = request.json['client_email']
+
+    if client_email not in user_generated_files:
+        user_generated_files[client_email] = []
+
+    user_generated_files[client_email].append(file_name)
+
+def remove_user_generated_files(request):
+    client_email = request.json['client_email']
+
+    for f in user_generated_files[client_email]:
+        os.remove(os.path.join("projetos_gerados", f))
+
+    user_generated_files.pop(client_email, None)
 
 @app.route('/')
 def index():
@@ -75,6 +92,7 @@ def generate_code():
             routes, dependencies = create_routes(items_info)
             print(routes, dependencies)
             zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
+            add_user_generated_file(request, zip_project + ".zip")
             return json.dumps({"routes": routes, "fileName": zip_project}), 200
         else:
             print({"error": parsed[1], "fileName": ""})
@@ -84,6 +102,7 @@ def generate_code():
     elif project_type == "KALEI":
         codes, _ = create_kalei(items_info)
         result, file_name = generate_and_eval_kalei(codes)
+        add_user_generated_file(request, file_name + ".ll")
         return json.dumps({"code": codes, "result": result, "fileName": file_name}), 200
 
 @app.route('/download_project', methods=['GET'])
@@ -184,6 +203,8 @@ def logout():
         session.pop(email, None)
         print("LOGOUT")
         print(session)
+        
+    remove_user_generated_files(request)
     return json.dumps({"logged": False, "email": email}), 200
 
 
