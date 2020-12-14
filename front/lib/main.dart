@@ -26,6 +26,7 @@ class _MyAppState extends State<MyApp> {
   Widget homeWidget;
   String email;
   bool isLogged = false;
+  bool isCheckingEmail = false;
 
   bool isLoggedHandler(var logInfo) {
     setState(() {
@@ -48,36 +49,41 @@ class _MyAppState extends State<MyApp> {
   logOut() async {
     print("logout");
     String email = getLocalStorage();
-
+    this.isCheckingEmail = true;
     if (email != null) {
-      var response = await http.post(widget.url + "logout",
+      setState(() {
+        this.isLogged = false;
+      });
+      var _ = await http.post(widget.url + "logout",
           body: json.encode({"client_email": email}),
           headers: {'Content-type': 'application/json'});
 
-      bool resLogged = json.decode(response.body)['logged'];
-      setState(() {
-        this.isLogged = resLogged;
-      });
+      // bool resLogged = json.decode(response.body)['logged'];
     }
+    this.isCheckingEmail = false;
   }
 
   isClientLogged() async {
     String email = getLocalStorage();
 
-    print("isClientLogged");
-    print("email:");
-    print(email);
-    if (email != null) {
-      var response = await http.post(widget.url + "islogged",
-          body: json.encode({"client_email": email}),
-          headers: {'Content-type': 'application/json'});
+    if (this.isCheckingEmail == false) {
+      this.isCheckingEmail = true;
+      print("isClientLogged");
+      print("email:");
+      print(email);
+      if (email != null) {
+        var response = await http.post(widget.url + "islogged",
+            body: json.encode({"client_email": email}),
+            headers: {'Content-type': 'application/json'});
 
-      bool resLogged = json.decode(response.body)['logged'];
-      print(resLogged);
-      if (resLogged != this.isLogged) {
-        setState(() {
-          this.isLogged = resLogged;
-        });
+        bool resLogged = json.decode(response.body)['logged'];
+        this.isCheckingEmail = false;
+        print(resLogged);
+        if (resLogged != this.isLogged) {
+          setState(() {
+            this.isLogged = resLogged;
+          });
+        }
       }
     }
   }
