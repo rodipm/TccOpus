@@ -200,11 +200,11 @@ def signup():
 def logout():
     email = request.json['client_email']
     if email in session:
+        remove_user_generated_files(request)
         session.pop(email, None)
         print("LOGOUT")
         print(session)
         
-    remove_user_generated_files(request)
     return json.dumps({"logged": False, "email": email}), 200
 
 
