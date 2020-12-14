@@ -207,5 +207,5 @@ def parse(items_info):
                 parser.route()
             except Exception as ex:
                 print(ex.args[0])
-                return False
-    return True
+                return False, ex.args[0]
+    return True, None

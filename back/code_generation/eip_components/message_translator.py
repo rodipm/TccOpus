@@ -7,7 +7,8 @@ class MessageTranslator(EipComponent):
         new_dependencies = deepcopy(dependencies)
 
         new_generated_code = ".process(new Processor() { \n" + \
-            current_node['process'] + "\n})"
+            current_node['process'][0] + current_node['process'][1] + \
+            current_node['process'][2] + "\n})"
 
         for child_node_number in current_node['connectsTo']:
             rec_code, deps = generate_code(

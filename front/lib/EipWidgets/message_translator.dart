@@ -13,8 +13,11 @@ class MessageTranslator {
 
   Widget componentWidget;
   Map<String, dynamic> componentConfigs = {
-    "process":
-        "public void process(Exchange exchange) {\n\tMessage in = exchange.getIn();\n\tin.setBody();\n}"
+    "process": [
+      "public void process(Exchange exchange) {\nMessage in = exchange.getIn();\n",
+      "//in.setBody(" ");\n",
+      "\n}"
+    ],
   };
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
@@ -31,7 +34,7 @@ class MessageTranslator {
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
     return {
-      config: configControllers["messageTranslatorControllers"][config].text
+      config: [selectedItem.componentConfigs[config][0], configControllers["messageTranslatorControllers"][config].text, selectedItem.componentConfigs[config][2]],
     };
   }
 
@@ -41,14 +44,38 @@ class MessageTranslator {
         .addAll({config: TextEditingController()});
 
     configControllers["messageTranslatorControllers"][config].text =
-        selectedItem.componentConfigs[config];
+        selectedItem.componentConfigs[config][1];
 
+    editItems.add(
+      Text(
+        selectedItem.componentConfigs[config][0],
+        style: TextStyle(
+          color: Colors.grey,
+        ),
+      ),
+    );
     editItems.add(
       TextFormField(
         autofocus: true,
-        maxLines: 10,
-        // keyboardType: TextInputType.multiline,
+        maxLines: null,
+        textInputAction: TextInputAction.newline,
+        keyboardType: TextInputType.multiline,
         controller: configControllers["messageTranslatorControllers"][config],
+      ),
+    );
+    editItems.add(
+      Container(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              selectedItem.componentConfigs[config][2],
+              textAlign: TextAlign.left,
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
     editItems.add(

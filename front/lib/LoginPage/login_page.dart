@@ -349,7 +349,7 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
                               color: Colors.lightBlue),
-                          child: Text(
+                          child: SelectableText(
                             "mvn clean package;\nmvn exec:java -Dexec.mainClass=com.opus.LaunchApp",
                             style: TextStyle(
                               fontSize: 35.0,

@@ -67,17 +67,19 @@ def generate_code():
     if project_type == "EIP":
         routes = ""
         dependencies = ""
+        parsed = parse(items_info)
         # Parse
-        if (parse(items_info)):
+        if (parsed[0]):
             print("Parser OK")
             # Generate Code
             routes, dependencies = create_routes(items_info)
             print(routes, dependencies)
+            zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
+            return json.dumps({"routes": routes, "fileName": zip_project}), 200
         else:
-            routes = {}
+            print({"error": parsed[1], "fileName": ""})
+            return json.dumps({"error": parsed[1], "fileName": ""}), 200
 
-        zip_project = create_project("com.opus", "projetoAutomatico", routes, dependencies)
-        return json.dumps({"routes": routes, "fileName": zip_project}), 200
 
     elif project_type == "KALEI":
         codes, _ = create_kalei(items_info)

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:front/EipWidgets/import_widgets.dart';
 import 'package:front/KaleiWidgets/import_widgets.dart';
 import 'dart:convert';
@@ -524,7 +525,7 @@ class _MainCanvasState extends State<MainCanvas> {
           "editingItem": null
         });
       updateCanvasChild();
-      MoveableStackItem.setIdCounter(this.items.keys.length-1);
+      MoveableStackItem.setIdCounter(this.items.keys.length - 1);
       print("ITEMS ITEMS");
       print(this.items);
       print("undoStack");
@@ -601,27 +602,37 @@ class _MainCanvasState extends State<MainCanvas> {
           headers: {'Content-type': 'application/json'});
 
       var decodedResponse = json.decode(response.body);
+      print(decodedResponse);
       var resultWidgets = [];
       for (var responseData in decodedResponse.keys) {
         if (responseData != "fileName") {
           if (responseData == "routes") {
             resultWidgets.add(
-              Text(
+              SelectableText(
                 responseData,
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(color: Colors.blue, fontSize: 20),
               ),
             );
-            resultWidgets
-                .add(Text(decodedResponse[responseData].join(";\n") + "\n"));
+            resultWidgets.add(SelectableText(
+                decodedResponse[responseData].join(";\n") + "\n"));
+          } else if (responseData == "error") {
+            resultWidgets.add(
+              SelectableText(
+                responseData,
+                style: TextStyle(color: Colors.blue, fontSize: 20),
+              ),
+            );
+            resultWidgets.add(SelectableText(
+                decodedResponse[responseData] + "\n"));
           } else {
             resultWidgets.add(
-              Text(
+              SelectableText(
                 responseData,
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(color: Colors.blue, fontSize: 20),
               ),
             );
-            resultWidgets
-                .add(Text(decodedResponse[responseData].join("\n") + "\n"));
+            resultWidgets.add(SelectableText(
+                decodedResponse[responseData].join("\n") + "\n"));
           }
         }
       }
@@ -635,23 +646,62 @@ class _MainCanvasState extends State<MainCanvas> {
             content: Column(
               children: [
                 ...resultWidgets,
-                Row(
-                  children: <Widget>[
-                    Text("Download Project"),
-                    IconButton(
-                      icon: Icon(Icons.file_download),
-                      onPressed: () {
-                        // Efetua o download do arquivo do projeto identificado
-                        // na resposta do request feito com os dados do diagrama
-                        var fileName = json.decode(response.body)["fileName"];
-                        print(fileName);
-                        html.window.open(
-                            widget.url +
-                                "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
-                            "");
-                      },
-                    )
-                  ],
+                Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          // Efetua o download do arquivo do projeto identificado
+                          // na resposta do request feito com os dados do diagrama
+                          var fileName = json.decode(response.body)["fileName"];
+                          print(fileName);
+                          html.window.open(
+                              widget.url +
+                                  "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
+                              "");
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(top: 100),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              color: Color(0xff01A0C7)),
+                          child: Container(
+                            height: 50,
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Icon(Icons.file_download),
+                                  onPressed: () {
+                                    // Efetua o download do arquivo do projeto identificado
+                                    // na resposta do request feito com os dados do diagrama
+                                    var fileName =
+                                        json.decode(response.body)["fileName"];
+                                    print(fileName);
+                                    html.window.open(
+                                        widget.url +
+                                            "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
+                                        "");
+                                  },
+                                ),
+                                AutoSizeText(
+                                  "Download Project",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -688,7 +738,6 @@ class _MainCanvasState extends State<MainCanvas> {
         this.editCanvasPaneHeight -
         this.headerHeight;
 
-    
     // Remover o painel de edição de itens quando não houver item selecionado
     if (this.editingItem == null) {
       this.mainCanvasSize = MediaQuery.of(context).size.width * 0.85;
@@ -731,7 +780,10 @@ class _MainCanvasState extends State<MainCanvas> {
       );
 
     if (this.isProjectCreated) {
-      this.headerText = "Editor Visual - " + this.projectInfo["type"] + " - " + this.projectInfo["project_name"];
+      this.headerText = "Editor Visual - " +
+          this.projectInfo["type"] +
+          " - " +
+          this.projectInfo["project_name"];
     }
     return Scaffold(
       body: SingleChildScrollView(
