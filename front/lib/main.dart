@@ -17,7 +17,7 @@ Future main() async {
 class MyApp extends StatefulWidget {
   final url = "https://tcc-opus-back.herokuapp.com/";
   // final url = "http://localhost:5000/";
-  
+
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   logOut() async {
-    print("logout");
+    //print("logout");
     String email = getLocalStorage();
     this.isCheckingEmail = true;
     if (email != null) {
@@ -69,9 +69,9 @@ class _MyAppState extends State<MyApp> {
 
     if (this.isCheckingEmail == false) {
       this.isCheckingEmail = true;
-      print("isClientLogged");
-      print("email:");
-      print(email);
+      //print("isClientLogged");
+      //print("email:");
+      //print(email);
       if (email != null) {
         var response = await http.post(widget.url + "islogged",
             body: json.encode({"client_email": email}),
@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
 
         bool resLogged = json.decode(response.body)['logged'];
         this.isCheckingEmail = false;
-        print(resLogged);
+        //print(resLogged);
         if (resLogged != this.isLogged) {
           setState(() {
             this.isLogged = resLogged;

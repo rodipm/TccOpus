@@ -10,6 +10,8 @@ class ContentBasedRouter {
   final List<String> autocompletions = [
     'header("")',
     'body("")',
+    'bodyAs(String.class)',
+    'contains("")',
     'isEqualTo("")',
     'isGreaterThan("")',
     'isLessThan("")',
@@ -83,8 +85,8 @@ class ContentBasedRouter {
             suggestionsCallback: (pattern) {
               if (pattern.contains(".") == true) {
                 pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
-                print("new pattern:");
-                print(pattern);
+                //print("new pattern:");
+                //print(pattern);
               }
               this.patt = pattern;
               return this
@@ -113,13 +115,6 @@ class ContentBasedRouter {
           ),
         );
 
-        // editItems.add(
-        //   TextFormField(
-        //     decoration: InputDecoration(labelText: config + " [$i]"),
-        //     controller: configControllers["contentBasedRouterControllers"]
-        //         [config][i],
-        //   ),
-        // );
       }
     } else {
       configControllers["contentBasedRouterControllers"].addAll({config: {}});
@@ -139,8 +134,8 @@ class ContentBasedRouter {
             suggestionsCallback: (pattern) {
               if (pattern.contains(".") == true) {
                 pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
-                print("new pattern:");
-                print(pattern);
+                //print("new pattern:");
+                //print(pattern);
               }
               this.patt = pattern;
               return this
@@ -168,13 +163,6 @@ class ContentBasedRouter {
             },
           ),
         );
-        // editItems.add(
-        //   TextFormField(
-        //     decoration: InputDecoration(labelText: config + " [${i[0]}]"),
-        //     controller: configControllers["contentBasedRouterControllers"]
-        //         [config][i[0]],
-        //   ),
-        // );
       }
 
       for (int i in itemsPositions[selectedItemID]["connectsTo"]) {
@@ -197,8 +185,8 @@ class ContentBasedRouter {
               suggestionsCallback: (pattern) {
                 if (pattern.contains(".") == true) {
                   pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
-                  print("new pattern:");
-                  print(pattern);
+                  //print("new pattern:");
+                  //print(pattern);
                 }
                 this.patt = pattern;
                 return this
@@ -226,47 +214,9 @@ class ContentBasedRouter {
               },
             ),
           );
-          // editItems.add(
-          //   TextFormField(
-          //     decoration: InputDecoration(labelText: config + " [$i]"),
-          //     controller: configControllers["contentBasedRouterControllers"]
-          //         [config][i],
-          //   ),
-          // );
         }
       }
     }
-
-    // editItems.add(
-    //   TypeAheadField(
-    //     textFieldConfiguration: TextFieldConfiguration(
-    //         autofocus: false,
-    //          decoration: InputDecoration(labelText: config + " [$i]"),
-    //           controller: configControllers["contentBasedRouterControllers"]
-    //               [config][i],
-    //     suggestionsCallback: (pattern) {
-    //       if (pattern.contains(".") == true) {
-    //         pattern = pattern.substring(pattern.lastIndexOf(".") + 1);
-    //         print("new pattern:");
-    //         print(pattern);
-    //       }
-    //       this.patt = pattern;
-    //       return this.autocompletions
-    //           .where((element) => element.contains(pattern));
-    //     },
-    //     itemBuilder: (context, suggestion) {
-    //       return ListTile(title: Text(suggestion));
-    //     },
-    //     onSuggestionSelected: (suggestion) {
-    //       this._typeAheadController.text = this
-    //           ._typeAheadController
-    //           .text
-    //           .substring(0, this._typeAheadController.text.lastIndexOf(this.patt));
-    //       this._typeAheadController.text += suggestion;
-    //     },
-    //   ),
-    // );
-
     editItems.add(
       Container(
         margin: EdgeInsets.symmetric(vertical: 10),

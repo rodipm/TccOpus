@@ -22,10 +22,10 @@ class PrintStatement {
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
-    print("UPDATE CONFIGS");
-    print(selectedItem);
-    print(config);
-    print(configControllers);
+    //print("UPDATE CONFIGS");
+    //print(selectedItem);
+    //print(config);
+    //print(configControllers);
     return {
       "print_items": configControllers["printStatementControllers"]["print_items"].text,
     };

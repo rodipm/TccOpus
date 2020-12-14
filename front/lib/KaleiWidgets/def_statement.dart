@@ -23,10 +23,10 @@ class DefStatement {
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
-    print("UPDATE CONFIGS");
-    print(selectedItem);
-    print(config);
-    print(configControllers);
+    //print("UPDATE CONFIGS");
+    //print(selectedItem);
+    //print(config);
+    //print(configControllers);
     return {
       "name": configControllers["DefStatementControllers"]["name"].text,
       "arguments":

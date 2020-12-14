@@ -23,10 +23,10 @@ class AssignStatement {
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
-    print("UPDATE CONFIGS");
-    print(selectedItem);
-    print(config);
-    print(configControllers);
+    //print("UPDATE CONFIGS");
+    //print(selectedItem);
+    //print(config);
+    //print(configControllers);
     return {
       "var_name": configControllers["messageTranslatorControllers"]["var_name"].text,
       "expression": configControllers["messageTranslatorControllers"]["expression"].text

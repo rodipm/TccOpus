@@ -23,10 +23,10 @@ class CallStatement {
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
-    print("UPDATE CONFIGS");
-    print(selectedItem);
-    print(config);
-    print(configControllers);
+    //print("UPDATE CONFIGS");
+    //print(selectedItem);
+    //print(config);
+    //print(configControllers);
     return {
       "name": configControllers["CallStatementControllers"]["name"].text,
       "arguments":

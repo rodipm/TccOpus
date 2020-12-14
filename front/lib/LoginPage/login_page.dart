@@ -25,8 +25,8 @@ class _LoginPageState extends State<LoginPage> {
   String errorString;
 
   void login(String email, String pass) async {
-    print(email);
-    print(pass);
+    //print(email);
+    //print(pass);
     var response = await http.post(widget.url + "login",
         body: json.encode({"client_email": email, "pass": pass}),
         headers: {'Content-type': 'application/json'});
@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void addClient(String email, String pass) async {
-    print("addClient $email, $pass");
+    //print("addClient $email, $pass");
 
     var response = await http.post(widget.url + "signup",
         body: json.encode({"client_email": email, "pass": pass}),

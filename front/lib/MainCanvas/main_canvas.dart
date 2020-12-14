@@ -81,7 +81,7 @@ class _MainCanvasState extends State<MainCanvas> {
   //***************************//
 
   void displayCreateNewProjectPane() {
-    print("displayCreateNewProjectPane");
+    //print("displayCreateNewProjectPane");
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -116,7 +116,7 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   void openProject(String clientEmail, String projectName) async {
-    print("displayOpenProjectPane");
+    //print("displayOpenProjectPane");
     try {
       var response = await http.post(widget.url + "open_project",
           body: json.encode({
@@ -126,9 +126,9 @@ class _MainCanvasState extends State<MainCanvas> {
           headers: {'Content-type': 'application/json'});
       resetCanvasState();
 
-      print("RESPONSE");
+      //print("RESPONSE");
       var responseDecoded = json.decode(response.body);
-      print(responseDecoded);
+      //print(responseDecoded);
 
       updateProjectInfo(responseDecoded["client"],
           responseDecoded["project_name"], responseDecoded["type"]);
@@ -139,8 +139,8 @@ class _MainCanvasState extends State<MainCanvas> {
 
       for (String itemId in canvasState["items"].keys) {
         var currItem = canvasState["items"][itemId];
-        print("CUR ITEM:");
-        print(currItem);
+        //print("CUR ITEM:");
+        //print(currItem);
 
         String itemType = currItem["type"];
 
@@ -170,10 +170,10 @@ class _MainCanvasState extends State<MainCanvas> {
             itemClass.buildEditPane,
             position);
         _newItem.setID(int.parse(itemId));
-        print("OPEN PROJECT NEW ITEM");
-        print(itemClass.componentConfigs);
-        print(_newItem.componentConfigs);
-        print(_newItem.componentConfigControllers);
+        //print("OPEN PROJECT NEW ITEM");
+        //print(itemClass.componentConfigs);
+        //print(_newItem.componentConfigs);
+        //print(_newItem.componentConfigControllers);
         var consTo = Set<int>();
         for (String id in canvasState["itemsPositions"][itemId]["connectsTo"])
           consTo.add(int.parse(id));
@@ -203,7 +203,7 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   void displaySaveProjectPane() {
-    print("displaySaveProjectPane");
+    //print("displaySaveProjectPane");
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -215,8 +215,8 @@ class _MainCanvasState extends State<MainCanvas> {
   }
 
   void updateProjectInfo(client, projectName, projectType) {
-    print("update project info");
-    print(projectType);
+    //print("update project info");
+    //print(projectType);
 
     setState(() {
       this.projectInfo = {
@@ -325,7 +325,7 @@ class _MainCanvasState extends State<MainCanvas> {
   void deleteItem(int itemId) {
     setState(() {
       this.items.remove(itemId);
-      print(this.items);
+      //print(this.items);
       this.itemsPositions.remove(itemId);
       if (this.idsToConnect.contains(itemId)) this.idsToConnect = [];
       if (this.editingItem != null && this.editingItem.id == itemId)
@@ -346,8 +346,8 @@ class _MainCanvasState extends State<MainCanvas> {
   // Atualiza a posição do item na tela
   void updateItemPosition(
       int id, double xPosition, double yPosition, bool doUpdateCanvasStack) {
-    print("updateItemPosition");
-    print(id);
+    //print("updateItemPosition");
+    //print(id);
     setState(() {
       this.itemsPositions.update(
             id,
@@ -361,7 +361,7 @@ class _MainCanvasState extends State<MainCanvas> {
           );
     });
     if (doUpdateCanvasStack) {
-      print("onPanEnd");
+      //print("onPanEnd");
       updateCanvasStacks();
     }
     updateCanvasChild();
@@ -372,7 +372,7 @@ class _MainCanvasState extends State<MainCanvas> {
       Map<String, dynamic> _newcomponentConfigControllers) {
     setState(() {
       MoveableStackItem oldItem = items[id];
-      print(oldItem.componentConfigs);
+      //print(oldItem.componentConfigs);
       items[id] = MoveableStackItem.update(
         oldItem: oldItem,
         newcomponentConfigs: Map<String, dynamic>.from(_newcomponentConfigs),
@@ -468,10 +468,10 @@ class _MainCanvasState extends State<MainCanvas> {
 
     this.redoStack = [];
 
-    print("undoStack");
-    print(inspect(this.undoStack));
-    print("redoStack");
-    print(inspect(this.redoStack));
+    //print("undoStack");
+    //print(inspect(this.undoStack));
+    //print("redoStack");
+    //print(inspect(this.redoStack));
   }
 
   void resetCanvasState() {
@@ -497,9 +497,8 @@ class _MainCanvasState extends State<MainCanvas> {
       this.idsToConnect = List.from(canvasState["idsToConnect"]);
       this.editingItem = canvasState["editingItem"];
       for (int itemId in canvasState["items"].keys) {
-        print(canvasState["items"][itemId].position);
-        print(Offset(itemsPositions[itemId]["xPosition"],
-            itemsPositions[itemId]["yPosition"]));
+        //print(canvasState["items"][itemId].position);
+        //print(Offset(itemsPositions[itemId]["xPosition"],itemsPositions[itemId]["yPosition"]));
 
         this.items[itemId] = MoveableStackItem.update(
           oldItem: this.items[itemId],
@@ -526,12 +525,12 @@ class _MainCanvasState extends State<MainCanvas> {
         });
       updateCanvasChild();
       MoveableStackItem.setIdCounter(this.items.keys.length - 1);
-      print("ITEMS ITEMS");
-      print(this.items);
-      print("undoStack");
-      print(inspect(this.undoStack));
-      print("redoStack");
-      print(inspect(this.redoStack));
+      //print("ITEMS ITEMS");
+      //print(this.items);
+      //print("undoStack");
+      //print(inspect(this.undoStack));
+      //print("redoStack");
+      //print(inspect(this.redoStack));
     }
   }
 
@@ -542,10 +541,10 @@ class _MainCanvasState extends State<MainCanvas> {
       updateCanvasState(prevCanvasState);
       updateCanvasChild();
 
-      print("undoStack");
-      print(inspect(this.undoStack));
-      print("redoStack");
-      print(inspect(this.redoStack));
+      //print("undoStack");
+      //print(inspect(this.undoStack));
+      //print("redoStack");
+      //print(inspect(this.redoStack));
     }
   }
 
@@ -602,7 +601,7 @@ class _MainCanvasState extends State<MainCanvas> {
           headers: {'Content-type': 'application/json'});
 
       var decodedResponse = json.decode(response.body);
-      print(decodedResponse);
+      //print(decodedResponse);
       var resultWidgets = [];
       for (var responseData in decodedResponse.keys) {
         if (responseData != "fileName") {
@@ -656,7 +655,7 @@ class _MainCanvasState extends State<MainCanvas> {
                           // Efetua o download do arquivo do projeto identificado
                           // na resposta do request feito com os dados do diagrama
                           var fileName = json.decode(response.body)["fileName"];
-                          print(fileName);
+                          //print(fileName);
                           html.window.open(
                               widget.url +
                                   "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
@@ -681,7 +680,7 @@ class _MainCanvasState extends State<MainCanvas> {
                                     // na resposta do request feito com os dados do diagrama
                                     var fileName =
                                         json.decode(response.body)["fileName"];
-                                    print(fileName);
+                                    //print(fileName);
                                     html.window.open(
                                         widget.url +
                                             "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",

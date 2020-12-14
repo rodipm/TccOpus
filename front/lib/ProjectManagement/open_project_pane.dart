@@ -37,7 +37,7 @@ class _OpenProjectPaneState extends State<OpenProjectPane> {
               iconSize: 24,
               elevation: 16,
               onChanged: (String newValue) {
-                print("changed");
+                //print("changed");
                 setState(() {
                   chosenProject = newValue;
                 });

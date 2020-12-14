@@ -22,10 +22,10 @@ class IfStatement {
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
-    print("UPDATE CONFIGS");
-    print(selectedItem);
-    print(config);
-    print(configControllers);
+    //print("UPDATE CONFIGS");
+    //print(selectedItem);
+    //print(config);
+    //print(configControllers);
     return {
       "condition": configControllers["ifStatementControllers"]["condition"].text,
     };

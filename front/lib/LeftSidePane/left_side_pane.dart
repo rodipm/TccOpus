@@ -39,9 +39,9 @@ class _LeftSidePaneState extends State<LeftSidePane> {
       }
       for (String _key in importedWidgets.keys) {
         var visualItem = importedWidgets[_key]();
-        print("SUBTYPE SUBTYPE");
-        print(widget.projectInfo["type"]);
-        print(visualItem.subType);
+        //print("SUBTYPE SUBTYPE");
+        //print(widget.projectInfo["type"]);
+        //print(visualItem.subType);
         visualItems[visualItem.subType]
             .add(visualItem.icon(widget.insertNewItem));
       }

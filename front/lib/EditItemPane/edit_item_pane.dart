@@ -32,8 +32,8 @@ class _EditItemPaneState extends State<EditItemPane> {
 
   @override
   Widget build(BuildContext context) {
-    print("WIDGET SELECTEDITEM COMPONENTCONFIGS");
-    print(widget.selectedItem.componentConfigs);
+    //print("WIDGET SELECTEDITEM COMPONENTCONFIGS");
+    //print(widget.selectedItem.componentConfigs);
     this.editItems = [];
     this.componentConfigControllers =
         Map<String, dynamic>.from(widget.selectedItem.componentConfigControllers);
