@@ -227,7 +227,8 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("assets/infos_criar_projeto.gif"),
+                            child:
+                                Image.asset("assets/infos_criar_projeto.gif"),
                           ),
                         ),
                       ],
@@ -254,7 +255,8 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("assets/infos_elementos_visuais.gif"),
+                            child: Image.asset(
+                                "assets/infos_elementos_visuais.gif"),
                           ),
                         ),
                       ],
@@ -281,7 +283,8 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Container(
                             // width: MediaQuery.of(context).size.width * 0.15,
-                            child: Image.asset("assets/infos_elementos_config.gif"),
+                            child: Image.asset(
+                                "assets/infos_elementos_config.gif"),
                           ),
                         ),
                       ],
@@ -520,6 +523,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  var _focus_login_email = FocusNode();
+  var _focus_login_pw = FocusNode();
+  var _focus_login = FocusNode();
+  var _focus_register_email = FocusNode();
+  var _focus_register_pw = FocusNode();
+  var _focus_register = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     var mainColumnWidgets = [
@@ -547,82 +557,96 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width * 0.2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 70),
-                        child: Text(
-                          "Login",
-                          style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: TextField(
-                          controller: loginEmail,
-                          obscureText: false,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey.shade700,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Email",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
+                  child: Form(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 70),
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                            textAlign: TextAlign.left,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: TextField(
-                          controller: loginPass,
-                          obscureText: true,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey.shade700,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Senha",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.1,
-                          child: Material(
-                            elevation: 5.0,
-                            borderRadius: BorderRadius.circular(30.0),
-                            color: Color(0xff01A0C7),
-                            child: MaterialButton(
-                              minWidth: MediaQuery.of(context).size.width,
-                              padding:
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: TextFormField(
+                            focusNode: _focus_login_email,
+                            textInputAction: TextInputAction.next,
+                            onFieldSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_focus_login_pw),
+                            controller: loginEmail,
+                            obscureText: false,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey.shade700,
+                              contentPadding:
                                   EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              onPressed: () {
-                                this.login(loginEmail.text, loginPass.text);
-                              },
-                              child: Text(
-                                "Entrar",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              hintText: "Email",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(32.0),
                               ),
                             ),
                           ),
                         ),
-                      )
-                    ],
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: TextFormField(
+                            focusNode: _focus_login_pw,
+                            textInputAction: TextInputAction.next,
+                            onFieldSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_focus_login),
+                            controller: loginPass,
+                            obscureText: true,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey.shade700,
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                              hintText: "Senha",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(32.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 15),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            child: Material(
+                              elevation: 5.0,
+                              borderRadius: BorderRadius.circular(30.0),
+                              color: Color(0xff01A0C7),
+                              child: MaterialButton(
+                                focusNode: _focus_login,
+                                minWidth: MediaQuery.of(context).size.width,
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                onPressed: () {
+                                  this.login(loginEmail.text, loginPass.text);
+                                },
+                                child: Text(
+                                  "Entrar",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 VerticalDivider(
@@ -631,85 +655,99 @@ class _LoginPageState extends State<LoginPage> {
                   indent: 45,
                   endIndent: 45,
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 70),
-                        child: Text(
-                          "Cadastro",
-                          style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: TextField(
-                          controller: cadastroEmail,
-                          obscureText: false,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey.shade700,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Email",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
+                Form(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 70),
+                          child: Text(
+                            "Cadastro",
+                            style: TextStyle(
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                            textAlign: TextAlign.left,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: TextField(
-                          controller: cadastroPass,
-                          obscureText: true,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey.shade700,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Senha",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.1,
-                          child: Material(
-                            elevation: 5.0,
-                            borderRadius: BorderRadius.circular(30.0),
-                            color: Color(0xff01A0C7),
-                            child: MaterialButton(
-                              minWidth: MediaQuery.of(context).size.width,
-                              padding:
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: TextFormField(
+                            focusNode: _focus_register_email,
+                            textInputAction: TextInputAction.next,
+                            onFieldSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_focus_register_pw),
+                            controller: cadastroEmail,
+                            obscureText: false,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey.shade700,
+                              contentPadding:
                                   EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              onPressed: () {
-                                this.addClient(
-                                    cadastroEmail.text, cadastroPass.text);
-                              },
-                              child: Text(
-                                "Cadastrar",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              hintText: "Email",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(32.0),
                               ),
                             ),
                           ),
                         ),
-                      )
-                    ],
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: TextFormField(
+                            focusNode: _focus_register_pw,
+                            textInputAction: TextInputAction.next,
+                            onFieldSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_focus_register),
+                            controller: cadastroPass,
+                            obscureText: true,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey.shade700,
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                              hintText: "Senha",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(32.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 15),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            child: Material(
+                              elevation: 5.0,
+                              borderRadius: BorderRadius.circular(30.0),
+                              color: Color(0xff01A0C7),
+                              child: MaterialButton(
+                                focusNode: _focus_register,
+                                minWidth: MediaQuery.of(context).size.width,
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                onPressed: () {
+                                  this.addClient(
+                                      cadastroEmail.text, cadastroPass.text);
+                                },
+                                child: Text(
+                                  "Cadastrar",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
