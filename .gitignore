@@ -6,8 +6,7 @@ back/projetos_gerados
 back/venv/
 back/__pycache__
 back/.pytest_cache
-
-front/.env
 back/.env
+
 front/android
 front/ios
