@@ -3,6 +3,7 @@ from flask_cors import CORS
 from copy import deepcopy
 import json
 import os
+from dotenv import load_dotenv
 from code_generation.code_generator_eip import create_routes
 from code_generation.code_generator_kalei import create_kalei
 from code_generation.parser import parse
@@ -13,16 +14,25 @@ from user_storage.user_storage import clientLogin, addClient, createTables
 from uuid import uuid4
 from datetime import timedelta
 from errors import InvalidClientEmail
+import redis
 
 app = Flask(__name__)
 app.secret_key = str(uuid4())
 
+load_dotenv()
+
 CORS(app)
 
-session = {}
-user_generated_files = {}
+r = redis.Redis(host=os.environ['REDIS_HOST'],
+                port=os.environ['REDIS_PORT'], password=os.environ['REDIS_PASSWORD'])
+
+# session = {}
+# user_generated_files = {}
+r.set('session', json.dumps({}))
+r.set('user_generated_files', json.dumps({}))
 
 def check_logged_session(request):
+    session = json.loads(r.get('session'))
     print("check_logged_session")
     print(session)
     client_email = request.json['client_email']
@@ -40,18 +50,24 @@ def check_logged_session(request):
 def add_user_generated_file(request, file_name):
     client_email = request.json['client_email']
 
+    user_generated_files = json.loads(r.get('user_generated_files'))
     if client_email not in user_generated_files:
         user_generated_files[client_email] = []
 
     user_generated_files[client_email].append(file_name)
+    r.set('user_generated_files', json.dumps(user_generated_files))
 
 def remove_user_generated_files(request):
     client_email = request.json['client_email']
 
-    for f in user_generated_files[client_email]:
-        os.remove(os.path.join("projetos_gerados", f))
+    user_generated_files = json.loads(r.get('user_generated_files'))
+
+    if client_email in user_generated_files:
+        for f in user_generated_files[client_email]:
+            os.remove(os.path.join("projetos_gerados", f))
 
     user_generated_files.pop(client_email, None)
+    r.set('user_generated_files', json.dumps(user_generated_files))
 
 @app.route('/')
 def index():
@@ -176,8 +192,11 @@ def login():
     password = request.json['pass']
     logged = clientLogin(email, password)
     
+    session = json.loads(r.get('session'))
+
     if logged:
         session[email] = email
+        r.set('session', json.dumps(session))
         print("LOGIN")
         print(session)
         return json.dumps({"logged": True, "email": email}), 200
@@ -190,8 +209,10 @@ def signup():
     password = request.json['pass']
     signedup = addClient(email, password)
 
+    session = json.loads(r.get('session'))
     if signedup:
         session[email] = email
+        r.set('session', json.dumps(session))
         return json.dumps({"signedup": True, "email": email}), 200
     else:
         return json.dumps({"signedup": False}), 200
@@ -199,9 +220,11 @@ def signup():
 @app.route('/logout', methods=['POST'])
 def logout():
     email = request.json['client_email']
+    session = json.loads(r.get('session'))
     if email in session:
         remove_user_generated_files(request)
         session.pop(email, None)
+        r.set('session', json.dumps(session))
         print("LOGOUT")
         print(session)
         
@@ -212,6 +235,7 @@ def logout():
 def islogged():
     print("IS_LOGGED?")
     email = request.json['client_email']
+    session = json.loads(r.get('session'))
     print(email)
     print(session)
     if email in session:
