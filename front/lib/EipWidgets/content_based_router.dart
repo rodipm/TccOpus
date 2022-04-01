@@ -28,11 +28,11 @@ class ContentBasedRouter {
   final double width;
   final double height;
 
-  String patt;
+  String? patt;
 
   final TextEditingController _typeAheadController = TextEditingController();
 
-  Widget componentWidget;
+  Widget? componentWidget;
   Map<String, dynamic> componentConfigs = {
     "choices": null,
   };
@@ -72,9 +72,12 @@ class ContentBasedRouter {
       for (int i in itemsPositions[selectedItemID]["connectsTo"]) {
         configControllers["contentBasedRouterControllers"][config]
             .addAll({i: TextEditingController()});
-        configControllers["contentBasedRouterControllers"][config][i].text =
-            selectedItem.componentConfigs[config];
 
+        if (selectedItem.componentConfigs[config] != null)
+          configControllers["contentBasedRouterControllers"][config][i].text =
+              selectedItem.componentConfigs[config];
+        else
+          configControllers["contentBasedRouterControllers"][config][i].text = "";
         editItems.add(
           TypeAheadField(
             textFieldConfiguration: TextFieldConfiguration(
@@ -93,10 +96,10 @@ class ContentBasedRouter {
                   .autocompletions
                   .where((element) => element.contains(pattern));
             },
-            itemBuilder: (context, suggestion) {
+            itemBuilder: (context, dynamic suggestion) {
               return ListTile(title: Text(suggestion));
             },
-            onSuggestionSelected: (suggestion) {
+            onSuggestionSelected: (dynamic suggestion) {
               configControllers["contentBasedRouterControllers"][config][i]
                   .text = configControllers["contentBasedRouterControllers"]
                       [config][i]
@@ -142,10 +145,10 @@ class ContentBasedRouter {
                   .autocompletions
                   .where((element) => element.contains(pattern));
             },
-            itemBuilder: (context, suggestion) {
+            itemBuilder: (context, dynamic suggestion) {
               return ListTile(title: Text(suggestion));
             },
-            onSuggestionSelected: (suggestion) {
+            onSuggestionSelected: (dynamic suggestion) {
               configControllers["contentBasedRouterControllers"][config][i[0]]
                   .text = configControllers["contentBasedRouterControllers"]
                       [config][i[0]]
@@ -193,10 +196,10 @@ class ContentBasedRouter {
                     .autocompletions
                     .where((element) => element.contains(pattern));
               },
-              itemBuilder: (context, suggestion) {
+              itemBuilder: (context, dynamic suggestion) {
                 return ListTile(title: Text(suggestion));
               },
-              onSuggestionSelected: (suggestion) {
+              onSuggestionSelected: (dynamic suggestion) {
                 configControllers["contentBasedRouterControllers"][config][i]
                     .text = configControllers["contentBasedRouterControllers"]
                         [config][i]
@@ -259,7 +262,7 @@ class ContentBasedRouter {
     return SizedBox(
       width: 100,
       child: Draggable(
-        feedback: componentWidget,
+        feedback: componentWidget!,
         onDraggableCanceled: (velocity, offset) {
           insertNewItem(this, offset);
         },

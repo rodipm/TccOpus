@@ -18,7 +18,7 @@ import 'dart:html' as html;
 
 class MainCanvas extends StatefulWidget {
   final url;
-  final String clientEmail;
+  final String? clientEmail;
   final Function logoutHandler;
   MainCanvas(this.url, this.clientEmail, this.logoutHandler);
   @override
@@ -38,10 +38,10 @@ class _MainCanvasState extends State<MainCanvas> {
 
   // Utilizado durante o processo de ligação entre elementos
   // Contém os ids dos componentes a serem conectados
-  List<int> idsToConnect = List();
+  List<int> idsToConnect = <int>[];
 
   // Item atual sendo configurado ou editado
-  MoveableStackItem editingItem;
+  MoveableStackItem? editingItem;
 
   // Elemenos EIP e Linhas no canvas
   List<Widget> canvasChild = [];
@@ -53,18 +53,18 @@ class _MainCanvasState extends State<MainCanvas> {
   List<Map<String, dynamic>> redoStack = [];
 
   // Utilizado para mostrar e esconder o painel de edição de items da parte direita
-  Widget editingItemPaneWidget;
+  Widget? editingItemPaneWidget;
 
   // Tamanhos do widget principal contendo
   // o painel de seleção de elementos
   // canvas
   // painel de edição
-  double mainCanvasSize;
-  double leftSidePaneSize;
-  double editPaneSize;
-  double editCanvasPaneHeight;
-  double canvasPaneHeight;
-  double headerHeight;
+  double? mainCanvasSize;
+  double? leftSidePaneSize;
+  double? editPaneSize;
+  double? editCanvasPaneHeight;
+  double? canvasPaneHeight;
+  double? headerHeight;
 
   // Project info
   Map<String, dynamic> projectInfo = {
@@ -118,7 +118,7 @@ class _MainCanvasState extends State<MainCanvas> {
   void openProject(String clientEmail, String projectName) async {
     //print("displayOpenProjectPane");
     try {
-      var response = await http.post(widget.url + "open_project",
+      var response = await http.post(Uri.parse(widget.url + "open_project"),
           body: json.encode({
             "client_email": clientEmail,
             "project_name": projectName,
@@ -142,7 +142,7 @@ class _MainCanvasState extends State<MainCanvas> {
         //print("CUR ITEM:");
         //print(currItem);
 
-        String itemType = currItem["type"];
+        String? itemType = currItem["type"];
 
         Offset position = Offset(
             double.parse(canvasState["itemsPositions"][itemId]["xPosition"]),
@@ -151,11 +151,11 @@ class _MainCanvasState extends State<MainCanvas> {
         var itemClass;
 
         if (this.projectInfo["type"] == "EIP")
-          itemClass = eipWidgets[itemType]();
+          itemClass = eipWidgets[itemType!]();
         else if (this.projectInfo["type"] == "KALEI")
-          itemClass = kaleiWidgets[itemType]();
+          itemClass = kaleiWidgets[itemType!]();
 
-        Map<String, dynamic> parsedComponentConfigs =
+        Map<String, dynamic>? parsedComponentConfigs =
             itemClass.parseComponentConfigsFromJson(currItem);
 
         MoveableStackItem _newItem = MoveableStackItem(
@@ -239,16 +239,16 @@ class _MainCanvasState extends State<MainCanvas> {
     for (var itemPositionKey in this.itemsPositions.keys) {
       Map<String, dynamic> parsedPositionItems = {};
       for (var itemPositionItemKey
-          in this.itemsPositions[itemPositionKey].keys) {
+          in this.itemsPositions[itemPositionKey]!.keys) {
         if (itemPositionItemKey != "connectsTo")
           parsedPositionItems.addAll({
             itemPositionItemKey: this
-                .itemsPositions[itemPositionKey][itemPositionItemKey]
+                .itemsPositions[itemPositionKey]![itemPositionItemKey]
                 .toString()
           });
         else {
-          var parsedConnectsTo = new List();
-          for (var connectsToItem in this.itemsPositions[itemPositionKey]
+          var parsedConnectsTo = <String>[];
+          for (var connectsToItem in this.itemsPositions[itemPositionKey]!
               [itemPositionItemKey]) {
             parsedConnectsTo.add(connectsToItem.toString());
           }
@@ -269,7 +269,7 @@ class _MainCanvasState extends State<MainCanvas> {
     };
 
     try {
-      await http.post(widget.url + "save_project",
+      await http.post(Uri.parse(widget.url + "save_project"),
           body: json.encode(projectData),
           headers: {'Content-type': 'application/json'});
       displaySaveProjectPane();
@@ -287,8 +287,8 @@ class _MainCanvasState extends State<MainCanvas> {
     setState(() {
       // Correção da coordenada x da posição do elemento
       // baseado no tamanho do painel de seleção esquerdo
-      Offset correctedPosition = Offset(position.dx - leftSidePaneSize,
-          position.dy - editCanvasPaneHeight - headerHeight);
+      Offset correctedPosition = Offset(position.dx - leftSidePaneSize!,
+          position.dy - editCanvasPaneHeight! - headerHeight!);
 
       // Novo item a ser adicionado no canvas
       MoveableStackItem _newItem = MoveableStackItem(
@@ -328,12 +328,12 @@ class _MainCanvasState extends State<MainCanvas> {
       //print(this.items);
       this.itemsPositions.remove(itemId);
       if (this.idsToConnect.contains(itemId)) this.idsToConnect = [];
-      if (this.editingItem != null && this.editingItem.id == itemId)
+      if (this.editingItem != null && this.editingItem!.id == itemId)
         this.editingItem = null;
 
       // Remover todas as conexoes para este id
       for (int id in itemsPositions.keys) {
-        itemsPositions[id]["connectsTo"].remove(itemId);
+        itemsPositions[id]!["connectsTo"].remove(itemId);
       }
     });
 
@@ -371,7 +371,7 @@ class _MainCanvasState extends State<MainCanvas> {
   void updateItemDetails(int id, Map<String, dynamic> _newcomponentConfigs,
       Map<String, dynamic> _newcomponentConfigControllers) {
     setState(() {
-      MoveableStackItem oldItem = items[id];
+      MoveableStackItem oldItem = items[id]!;
       //print(oldItem.componentConfigs);
       items[id] = MoveableStackItem.update(
         oldItem: oldItem,
@@ -400,10 +400,10 @@ class _MainCanvasState extends State<MainCanvas> {
   // Ativa e desativa a borda de indicação
   // de item selecionado
   void toggleItemSelectedBorder(int id) {
-    MoveableStackItem oldItem = items[id];
+    MoveableStackItem? oldItem = items[id];
     setState(() {
       items[id] = MoveableStackItem.update(
-        oldItem: oldItem,
+        oldItem: oldItem!,
         isSelected: !oldItem.selected,
       );
     });
@@ -430,15 +430,15 @@ class _MainCanvasState extends State<MainCanvas> {
           for (int id in itemsPositions.keys)
             newItemsPositions.addAll({
               id: {
-                "xPosition": itemsPositions[id]["xPosition"],
-                "yPosition": itemsPositions[id]["yPosition"],
-                "width": itemsPositions[id]["width"],
-                "height": itemsPositions[id]["height"],
-                "connectsTo": Set.from(itemsPositions[id]["connectsTo"])
+                "xPosition": itemsPositions[id]!["xPosition"],
+                "yPosition": itemsPositions[id]!["yPosition"],
+                "width": itemsPositions[id]!["width"],
+                "height": itemsPositions[id]!["height"],
+                "connectsTo": Set.from(itemsPositions[id]!["connectsTo"])
               }
             });
 
-          newItemsPositions[idsToConnect[0]]["connectsTo"].add(idsToConnect[1]);
+          newItemsPositions[idsToConnect[0]]!["connectsTo"].add(idsToConnect[1]);
           itemsPositions = Map.from(newItemsPositions);
           updateCanvasStacks();
           updateCanvasChild();
@@ -478,7 +478,7 @@ class _MainCanvasState extends State<MainCanvas> {
     setState(() {
       this.items = Map();
       this.itemsPositions = Map();
-      this.idsToConnect = List();
+      this.idsToConnect = <int>[];
       this.editingItem = null;
       this.editingItemPaneWidget = null;
       this.undoStack = [];
@@ -501,10 +501,10 @@ class _MainCanvasState extends State<MainCanvas> {
         //print(Offset(itemsPositions[itemId]["xPosition"],itemsPositions[itemId]["yPosition"]));
 
         this.items[itemId] = MoveableStackItem.update(
-          oldItem: this.items[itemId],
-          isSelected: this.items[itemId].selected,
-          newPosition: Offset(itemsPositions[itemId]["xPosition"],
-              itemsPositions[itemId]["yPosition"]),
+          oldItem: this.items[itemId]!,
+          isSelected: this.items[itemId]!.selected,
+          newPosition: Offset(itemsPositions[itemId]!["xPosition"],
+              itemsPositions[itemId]!["yPosition"]),
         );
       }
     });
@@ -520,7 +520,7 @@ class _MainCanvasState extends State<MainCanvas> {
         updateCanvasState({
           "items": Map(),
           "itemsPositions": Map(),
-          "idsToConnect": List(),
+          "idsToConnect": <int>[],
           "editingItem": null
         });
       updateCanvasChild();
@@ -565,16 +565,16 @@ class _MainCanvasState extends State<MainCanvas> {
     for (var itemPositionKey in this.itemsPositions.keys) {
       Map<String, dynamic> parsedPositionItems = {};
       for (var itemPositionItemKey
-          in this.itemsPositions[itemPositionKey].keys) {
+          in this.itemsPositions[itemPositionKey]!.keys) {
         if (itemPositionItemKey != "connectsTo")
           parsedPositionItems.addAll({
             itemPositionItemKey: this
-                .itemsPositions[itemPositionKey][itemPositionItemKey]
+                .itemsPositions[itemPositionKey]![itemPositionItemKey]
                 .toString()
           });
         else {
-          var parsedConnectsTo = new List();
-          for (var connectsToItem in this.itemsPositions[itemPositionKey]
+          var parsedConnectsTo = <String>[];
+          for (var connectsToItem in this.itemsPositions[itemPositionKey]!
               [itemPositionItemKey]) {
             parsedConnectsTo.add(connectsToItem.toString());
           }
@@ -596,7 +596,7 @@ class _MainCanvasState extends State<MainCanvas> {
 
     // Efetua o POST request para o back_end
     try {
-      var response = await http.post(widget.url + "generate_code",
+      var response = await http.post(Uri.parse(widget.url + "generate_code"),
           body: json.encode(diagramPayload),
           headers: {'Content-type': 'application/json'});
 
@@ -614,6 +614,14 @@ class _MainCanvasState extends State<MainCanvas> {
             );
             resultWidgets.add(SelectableText(
                 decodedResponse[responseData].join(";\n") + "\n"));
+           
+          //  var fileName = json.decode(response.body)["fileName"];
+          //               //print(fileName);
+          //   html.window.open(widget.url +
+          //           "download_project?fileName=$fileName&type=${this.projectInfo["type"]}",
+          //       "");
+                            
+                
           } else if (responseData == "error") {
             resultWidgets.add(
               SelectableText(
@@ -734,8 +742,8 @@ class _MainCanvasState extends State<MainCanvas> {
     this.editCanvasPaneHeight = MediaQuery.of(context).size.height * 0.06;
     this.headerHeight = MediaQuery.of(context).size.height * 0.1;
     this.canvasPaneHeight = MediaQuery.of(context).size.height -
-        this.editCanvasPaneHeight -
-        this.headerHeight;
+        this.editCanvasPaneHeight! -
+        this.headerHeight!;
 
     // Remover o painel de edição de itens quando não houver item selecionado
     if (this.editingItem == null) {
@@ -848,8 +856,8 @@ class _MainCanvasState extends State<MainCanvas> {
                     () => this.isProjectCreated),
                 Container(
                   height: MediaQuery.of(context).size.height -
-                      this.headerHeight -
-                      this.editCanvasPaneHeight,
+                      this.headerHeight! -
+                      this.editCanvasPaneHeight!,
                   width: MediaQuery.of(context).size.width,
                   child: Row(
                     children: scaffoldRowChildren,

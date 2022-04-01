@@ -21,10 +21,14 @@ class _LeftSidePaneState extends State<LeftSidePane> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> visualItems;
-    Map<String, dynamic> importedWidgets;
-    Function itemsMenu;
+    Map<String, List<Widget>>? visualItems;
+    Map<String, dynamic>? importedWidgets;
+    Function? itemsMenu;
 
+    print("+++++++++++++++++");
+    print("+++++++++++++++++");
+    print("+++++++++++++++++");
+    print(widget.isProjectCreated());
     if (widget.isProjectCreated() == false)
       itemsMenu = _noProjectMenu;
     else {
@@ -37,23 +41,36 @@ class _LeftSidePaneState extends State<LeftSidePane> {
         importedWidgets = kaleiWidgets;
         itemsMenu = _kaleiItemsMenu;
       }
-      for (String _key in importedWidgets.keys) {
+      print("_________________________________");
+      print("_________________________________");
+      print("_________________________________");
+      print("_________________________________");
+      print(importedWidgets);
+      for (String _key in importedWidgets!.keys) {
+        print(_key);
         var visualItem = importedWidgets[_key]();
         //print("SUBTYPE SUBTYPE");
         //print(widget.projectInfo["type"]);
         //print(visualItem.subType);
-        visualItems[visualItem.subType]
+        visualItems![visualItem.subType]!
             .add(visualItem.icon(widget.insertNewItem));
       }
     }
-    return Column(
-      children: <Widget>[
-        itemsMenu(visualItems),
-      ],
-    );
+
+
+    if (visualItems != null)
+      return Column(
+        children: <Widget>[
+          itemsMenu!(visualItems),
+        ],
+      );
+    else
+      return Column(
+        children: <Widget>[],
+      );
   }
 
-  Widget _noProjectMenu(Map<String, dynamic> items) {
+  Widget _noProjectMenu(Map<String, List<Widget>> items) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -86,7 +103,7 @@ class _LeftSidePaneState extends State<LeftSidePane> {
     );
   }
 
-  Widget _eipItemsMenu(Map<String, dynamic> eipItems) {
+  Widget _eipItemsMenu(Map<String, List<Widget>> eipItems) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -122,11 +139,11 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   height: 200,
                   // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
-                    itemCount: eipItems["MessagingSystem"].length,
+                    itemCount: eipItems["MessagingSystem"]?.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
-                      return eipItems["MessagingSystem"][index];
+                      return eipItems["MessagingSystem"]![index];
                     },
                   ),
                 ),
@@ -154,11 +171,11 @@ class _LeftSidePaneState extends State<LeftSidePane> {
                   height: 100,
                   // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: GridView.builder(
-                    itemCount: eipItems["MessageRouting"].length,
+                    itemCount: eipItems["MessageRouting"]?.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, crossAxisSpacing: 30),
                     itemBuilder: (context, index) {
-                      return eipItems["MessageRouting"][index];
+                      return eipItems["MessageRouting"]![index];
                     },
                   ),
                 ),

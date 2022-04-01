@@ -10,7 +10,7 @@ class MessageEndpoint {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  Widget? componentWidget;
   Map<String, dynamic> componentConfigs = {
     "protocol": [
       {
@@ -39,7 +39,7 @@ class MessageEndpoint {
   };
 
   Map<String, dynamic> updateConfigs(selectedItem, config, configControllers) {
-    var protocolOptions = List();
+    var protocolOptions = <String>[];
 
     if (configControllers["editItemsValues"][config] != null) {
       for (var protocolOption in selectedItem.componentConfigs[config][0]
@@ -59,7 +59,7 @@ class MessageEndpoint {
 
   List<Widget> buildEditPane(selectedItem, selectedItemID, itemsPositions,
       config, configControllers, editItems, baseWidget) {
-    String _chosenValue;
+    String? _chosenValue;
 
     if (selectedItem.componentConfigs[config][1] != null)
       _chosenValue = selectedItem.componentConfigs[config][1];
@@ -82,7 +82,7 @@ class MessageEndpoint {
             icon: Icon(Icons.arrow_downward),
             iconSize: 24,
             elevation: 16,
-            onChanged: (String newValue) {
+            onChanged: (String? newValue) {
               baseWidget.setState(() {
                 configControllers["editItemsValues"][config] = newValue;
               });
@@ -107,7 +107,7 @@ class MessageEndpoint {
         configControllers["messageControllers"]
             .addAll({protocolOption: TextEditingController()});
 
-        String controllerTextValue = "";
+        String? controllerTextValue = "";
         if (protocolOptionIndex <
             selectedItem.componentConfigs[config][2].length) {
           controllerTextValue =
@@ -169,7 +169,7 @@ class MessageEndpoint {
     return SizedBox(
       width: 100,
       child: Draggable(
-        feedback: componentWidget,
+        feedback: componentWidget!,
         onDraggableCanceled: (velocity, offset) {
           insertNewItem(this, offset);
         },

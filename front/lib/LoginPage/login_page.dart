@@ -22,12 +22,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController cadastroEmail = TextEditingController();
   final TextEditingController cadastroPass = TextEditingController();
 
-  String errorString;
+  String? errorString;
 
   void login(String email, String pass) async {
     //print(email);
     //print(pass);
-    var response = await http.post(widget.url + "login",
+    var response = await http.post(Uri.parse(widget.url + "login"),
         body: json.encode({"client_email": email, "pass": pass}),
         headers: {'Content-type': 'application/json'});
 
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
   void addClient(String email, String pass) async {
     //print("addClient $email, $pass");
 
-    var response = await http.post(widget.url + "signup",
+    var response = await http.post(Uri.parse(widget.url + "signup"),
         body: json.encode({"client_email": email, "pass": pass}),
         headers: {'Content-type': 'application/json'});
 
@@ -771,7 +771,7 @@ class _LoginPageState extends State<LoginPage> {
               height: MediaQuery.of(context).size.height * 0.07,
               width: MediaQuery.of(context).size.width * 0.45,
               child: Text(
-                this.errorString,
+                this.errorString!,
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

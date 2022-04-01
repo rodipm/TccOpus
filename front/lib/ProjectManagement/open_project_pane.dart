@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class OpenProjectPane extends StatefulWidget {
-  final String clientEmail;
+  final String? clientEmail;
   final List<String> projectNames;
   final Function openProjectHandler;
-  final double canvasPaneHeight;
-  final double mainCanvasSize;
+  final double? canvasPaneHeight;
+  final double? mainCanvasSize;
 
   OpenProjectPane(this.clientEmail, this.projectNames, this.openProjectHandler,
       this.canvasPaneHeight, this.mainCanvasSize);
@@ -15,7 +15,7 @@ class OpenProjectPane extends StatefulWidget {
 }
 
 class _OpenProjectPaneState extends State<OpenProjectPane> {
-  String chosenProject = "";
+  String? chosenProject = "";
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +26,8 @@ class _OpenProjectPaneState extends State<OpenProjectPane> {
     return AlertDialog(
       title: Text("Abrir Projeto"),
       content: Container(
-        height: 0.5 * widget.canvasPaneHeight,
-        width: 0.3 * widget.mainCanvasSize,
+        height: 0.5 * widget.canvasPaneHeight!,
+        width: 0.3 * widget.mainCanvasSize!,
         child: Column(
           children: [
             Text("Nome do Projeto"),
@@ -36,7 +36,7 @@ class _OpenProjectPaneState extends State<OpenProjectPane> {
               icon: Icon(Icons.arrow_downward),
               iconSize: 24,
               elevation: 16,
-              onChanged: (String newValue) {
+              onChanged: (String? newValue) {
                 //print("changed");
                 setState(() {
                   chosenProject = newValue;

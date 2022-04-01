@@ -37,16 +37,16 @@ class LinesPainter extends CustomPainter {
       itemsPositions.forEach(
         (id, value) {
           Offset _start = Offset(
-              this.itemsPositions[id]["xPosition"] +
-                  this.itemsPositions[id]["width"],
-              this.itemsPositions[id]["yPosition"] +
-                  this.itemsPositions[id]["height"] / 2);
+              this.itemsPositions[id]!["xPosition"] +
+                  this.itemsPositions[id]!["width"],
+              this.itemsPositions[id]!["yPosition"] +
+                  this.itemsPositions[id]!["height"] / 2);
 
           for (int connId in value["connectsTo"]) {
             Offset _end = Offset(
-                this.itemsPositions[connId]["xPosition"],
-                this.itemsPositions[connId]["yPosition"] +
-                    this.itemsPositions[connId]["height"] / 2);
+                this.itemsPositions[connId]!["xPosition"],
+                this.itemsPositions[connId]!["yPosition"] +
+                    this.itemsPositions[connId]!["height"] / 2);
             if (_start == null || _end == null) return;
             // Desenho da linha e seta
             canvas.drawLine(

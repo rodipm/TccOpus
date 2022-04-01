@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class MoveableStackItem extends StatefulWidget {
   static int idCounter = -1;
 
-  final String type;
-  final Widget componentWidgets;
-  final Map<String, dynamic> componentConfigs;
+  final String? type;
+  final Widget? componentWidgets;
+  final Map<String, dynamic>? componentConfigs;
   final Map<String, dynamic> componentConfigControllers;
-  final Function updateConfigs;
-  final Function buildEditPane;
+  final Function? updateConfigs;
+  final Function? buildEditPane;
 
   final Function clickHandler;
   final Function updatePositionHandler;
@@ -42,11 +42,11 @@ class MoveableStackItem extends StatefulWidget {
         selected = false;
 
   MoveableStackItem.update(
-      {MoveableStackItem oldItem,
-      bool isSelected,
-      Offset newPosition,
-      Map<String, dynamic> newcomponentConfigs,
-      Map<String, dynamic> newcomponentConfigControllers})
+      {required MoveableStackItem oldItem,
+      bool? isSelected,
+      Offset? newPosition,
+      Map<String, dynamic>? newcomponentConfigs,
+      Map<String, dynamic>? newcomponentConfigControllers})
       : type = oldItem.type,
         componentWidgets = oldItem.componentWidgets,
         clickHandler = oldItem.clickHandler,
@@ -68,7 +68,7 @@ class MoveableStackItem extends StatefulWidget {
     return {
       "id": this.id,
       "type": this.type,
-      ...this.componentConfigs,
+      ...this.componentConfigs!,
     };
   }
 
@@ -100,9 +100,9 @@ class MoveableStackItem extends StatefulWidget {
 }
 
 class _MoveableStackItemState extends State<MoveableStackItem> {
-  double xPosition;
-  double yPosition;
-  bool selected;
+  double? xPosition;
+  double? yPosition;
+  bool? selected;
 
   _MoveableStackItemState() {
     // MoveableStackItem.incrementIdCounter();
@@ -148,7 +148,7 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
             child: Stack(
               alignment: Alignment.topRight,
               children: [
-                widget.componentWidgets,
+                widget.componentWidgets!,
                 Text(
                   widget.id.toString(),
                   style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20),

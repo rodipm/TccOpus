@@ -1,6 +1,6 @@
 import 'package:universal_html/html.dart';
 
-String getLocalStorage() {
+String? getLocalStorage() {
   var loc = window.localStorage['editorvisual_login_info'];
   return loc;
 }

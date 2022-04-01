@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class CreateNewProjectPane extends StatefulWidget {
   final Function updateProjectInfoHandler;
-  final double canvasPaneHeight;
-  final double mainCanvasSize;
-  final String clientEmail;
+  final double? canvasPaneHeight;
+  final double? mainCanvasSize;
+  final String? clientEmail;
 
   CreateNewProjectPane(this.updateProjectInfoHandler, this.canvasPaneHeight,
       this.mainCanvasSize, this.clientEmail);
@@ -15,15 +15,15 @@ class CreateNewProjectPane extends StatefulWidget {
 
 class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
   final projectNameController = TextEditingController();
-  String projectType = "EIP";
+  String? projectType = "EIP";
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("Criar Projeto"),
       content: Container(
-        height: 0.5 * widget.canvasPaneHeight,
-        width: 0.3 * widget.mainCanvasSize,
+        height: 0.5 * widget.canvasPaneHeight!,
+        width: 0.3 * widget.mainCanvasSize!,
         child: Column(
           children: [
             Text("Nome do Projeto"),
@@ -39,7 +39,7 @@ class _CreateNewProjectPaneState extends State<CreateNewProjectPane> {
                 height: 2,
                 color: Color(0xff01A0C7),
               ),
-              onChanged: (String newValue) {
+              onChanged: (String? newValue) {
                 setState(() {
                   projectType = newValue;
                 });

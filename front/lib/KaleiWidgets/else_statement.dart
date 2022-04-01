@@ -7,7 +7,7 @@ class ElseStatement {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  late Widget componentWidget;
   Map<String, dynamic> componentConfigs = {};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {

@@ -15,8 +15,8 @@ Future main() async {
 }
 
 class MyApp extends StatefulWidget {
-  final url = "https://tcc-opus-back.herokuapp.com/";
-  // final url = "http://localhost:5000/";
+  // final url = "https://tcc-opus-back.herokuapp.com/";
+  final url = "http://localhost:5000/";
 
 
   @override
@@ -24,38 +24,38 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Widget homeWidget;
-  String email;
-  bool isLogged = false;
+  Widget? homeWidget;
+  String? email;
+  bool? isLogged = false;
   bool isCheckingEmail = false;
 
-  bool isLoggedHandler(var logInfo) {
+  bool? isLoggedHandler(var logInfo) {
     setState(() {
       this.isLogged = logInfo['logged'];
       this.email = logInfo['email'];
-      setLocalStorage(this.email);
+      setLocalStorage(this.email!);
     });
     return this.isLogged;
   }
 
-  bool isSignedUpHandler(var signupInfo) {
+  bool? isSignedUpHandler(var signupInfo) {
     setState(() {
       this.isLogged = signupInfo['signedup'];
       this.email = signupInfo['email'];
-      setLocalStorage(this.email);
+      setLocalStorage(this.email!);
     });
     return this.isLogged;
   }
 
   logOut() async {
     //print("logout");
-    String email = getLocalStorage();
+    String? email = getLocalStorage();
     this.isCheckingEmail = true;
     if (email != null) {
       setState(() {
         this.isLogged = false;
       });
-      var _ = await http.post(widget.url + "logout",
+      var _ = await http.post(Uri.parse(widget.url + "logout") ,
           body: json.encode({"client_email": email}),
           headers: {'Content-type': 'application/json'});
 
@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   isClientLogged() async {
-    String email = getLocalStorage();
+    String? email = getLocalStorage();
 
     if (this.isCheckingEmail == false) {
       this.isCheckingEmail = true;
@@ -73,11 +73,11 @@ class _MyAppState extends State<MyApp> {
       //print("email:");
       //print(email);
       if (email != null) {
-        var response = await http.post(widget.url + "islogged",
+        var response = await http.post(Uri.parse(widget.url + "islogged"),
             body: json.encode({"client_email": email}),
             headers: {'Content-type': 'application/json'});
 
-        bool resLogged = json.decode(response.body)['logged'];
+        bool? resLogged = json.decode(response.body)['logged'];
         this.isCheckingEmail = false;
         //print(resLogged);
         if (resLogged != this.isLogged) {
@@ -93,11 +93,13 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     this.isClientLogged();
 
-    if (this.isLogged)
-      this.homeWidget = MainCanvas(widget.url, this.email, this.logOut);
-    else
-      this.homeWidget =
-          LoginPage(isLoggedHandler, isSignedUpHandler, widget.url);
+    this.homeWidget = MainCanvas(widget.url, this.email, this.logOut);
+
+    // if (this.isLogged!)
+    //   this.homeWidget = MainCanvas(widget.url, this.email, this.logOut);
+    // else
+    //   this.homeWidget =
+    //       LoginPage(isLoggedHandler, isSignedUpHandler, widget.url);
 
     return MaterialApp(
       title: 'Editor Visual',

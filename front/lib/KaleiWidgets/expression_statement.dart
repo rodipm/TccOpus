@@ -7,7 +7,7 @@ class ExpressionStatement {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  late Widget componentWidget;
   Map<String, dynamic> componentConfigs = {"expression": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {

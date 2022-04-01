@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class SaveProjectPane extends StatefulWidget {
   final Function updateProjectInfoHandler;
-  final double canvasPaneHeight;
-  final double mainCanvasSize;
+  final double? canvasPaneHeight;
+  final double? mainCanvasSize;
 
   SaveProjectPane(this.updateProjectInfoHandler, this.canvasPaneHeight,
       this.mainCanvasSize);

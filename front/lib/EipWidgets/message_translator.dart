@@ -11,7 +11,7 @@ class MessageTranslator {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  Widget? componentWidget;
   Map<String, dynamic> componentConfigs = {
     "process": [
       "public void process(Exchange exchange) {\nMessage in = exchange.getIn();\n",
@@ -120,7 +120,7 @@ class MessageTranslator {
     return SizedBox(
       width: 100,
       child: Draggable(
-        feedback: componentWidget,
+        feedback: componentWidget!,
         onDraggableCanceled: (velocity, offset) {
           insertNewItem(this, offset);
         },

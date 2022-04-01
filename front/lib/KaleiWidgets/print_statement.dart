@@ -7,7 +7,7 @@ class PrintStatement {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  late Widget componentWidget;
   Map<String, dynamic> componentConfigs = {"print_items": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {

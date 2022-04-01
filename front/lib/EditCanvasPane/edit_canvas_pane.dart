@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class EditCanvasPane extends StatefulWidget {
-  final double editCanvasPaneHeight;
+  final double? editCanvasPaneHeight;
   final Function displayCreateNewProjectPaneHandler;
   final Function displayOpenProjectPaneHandler;
   final Function displaySaveProjectPaneHandler;
@@ -27,7 +27,7 @@ class EditCanvasPane extends StatefulWidget {
 }
 
 class _EditCanvasPaneState extends State<EditCanvasPane> {
-  double itemBlockWidth;
+  double? itemBlockWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                         color: Color(0xff01A0C7)),
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.06,
-                      width: this.itemBlockWidth / 4,
+                      width: this.itemBlockWidth! / 4,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -176,7 +176,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                       padding: EdgeInsets.only(right: 3),
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.06,
-                        width: this.itemBlockWidth / 8,
+                        width: this.itemBlockWidth! / 8,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -212,7 +212,7 @@ class _EditCanvasPaneState extends State<EditCanvasPane> {
                       ),
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.06,
-                        width: this.itemBlockWidth / 8,
+                        width: this.itemBlockWidth! / 8,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[

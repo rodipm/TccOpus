@@ -7,7 +7,7 @@ class ForStatement {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  late Widget componentWidget;
   Map<String, dynamic> componentConfigs = {"init_exp": "", "condition_exp": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {

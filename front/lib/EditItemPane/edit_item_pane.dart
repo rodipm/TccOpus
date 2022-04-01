@@ -3,7 +3,7 @@ import 'package:front/MoveableStackItem/movable_stack_item.dart';
 import 'package:flutter/material.dart';
 
 class EditItemPane extends StatefulWidget {
-  final MoveableStackItem selectedItem;
+  final MoveableStackItem? selectedItem;
   final int selectedItemID;
   final Function updateItemDetails;
   final Function deleteItem;
@@ -16,14 +16,14 @@ class EditItemPane extends StatefulWidget {
 }
 
 class _EditItemPaneState extends State<EditItemPane> {
-  List<Widget> editItems = [];
+  List<Widget>? editItems = [];
 
-  Map<String, dynamic> componentConfigControllers;
+  Map<String, dynamic>? componentConfigControllers;
 
-  Map<String, dynamic> updateComponentConfigs() {
-    Map<String, dynamic> newComponentConfigs;
-    for (String componentConfig in widget.selectedItem.componentConfigs.keys) {
-      newComponentConfigs = widget.selectedItem.updateConfigs(
+  Map<String, dynamic>? updateComponentConfigs() {
+    Map<String, dynamic>? newComponentConfigs;
+    for (String componentConfig in widget.selectedItem!.componentConfigs!.keys) {
+      newComponentConfigs = widget.selectedItem!.updateConfigs!(
           widget.selectedItem, componentConfig, componentConfigControllers);
     }
 
@@ -36,10 +36,10 @@ class _EditItemPaneState extends State<EditItemPane> {
     //print(widget.selectedItem.componentConfigs);
     this.editItems = [];
     this.componentConfigControllers =
-        Map<String, dynamic>.from(widget.selectedItem.componentConfigControllers);
+        Map<String, dynamic>.from(widget.selectedItem!.componentConfigControllers);
 
-    for (String componentConfig in widget.selectedItem.componentConfigs.keys) {
-      editItems = widget.selectedItem.buildEditPane(
+    for (String componentConfig in widget.selectedItem!.componentConfigs!.keys) {
+      editItems = widget.selectedItem!.buildEditPane!(
           widget.selectedItem,
           widget.selectedItemID,
           widget.itemsPositions,
@@ -58,21 +58,21 @@ class _EditItemPaneState extends State<EditItemPane> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(top: 15, bottom: 25),
-              child: Text(widget.selectedItem.type,
+              child: Text(widget.selectedItem!.type!,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center),
             ),
-            ...editItems,
+            ...editItems!,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.save),
                   onPressed: () => widget.updateItemDetails(
-                    widget.selectedItem.id,
+                    widget.selectedItem!.id,
                     this.updateComponentConfigs(),
                     this.componentConfigControllers,
                   ),
@@ -80,7 +80,7 @@ class _EditItemPaneState extends State<EditItemPane> {
                 IconButton(
                   icon: Icon(Icons.delete, color: Colors.red,),
                   onPressed: () => widget.deleteItem(
-                    widget.selectedItem.id,
+                    widget.selectedItem!.id,
                   ),
                 )
               ],

@@ -11,7 +11,7 @@ class MessageFilter {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  Widget? componentWidget;
   Map<String, dynamic> componentConfigs = {
     "choices": null,
   };
@@ -48,8 +48,8 @@ class MessageFilter {
     if (itemsPositions[selectedItemID]["connectsTo"].length == 1) {
       configControllers["messageFilterControllers"].addAll({config: {}});
 
-      int connectsToID;
-      String textValue = "";
+      int? connectsToID;
+      String? textValue = "";
       if (selectedItem.componentConfigs[config] == null) {
         connectsToID = itemsPositions[selectedItemID]["connectsTo"].toList()[0];
         textValue = "";
@@ -114,7 +114,7 @@ class MessageFilter {
     return SizedBox(
       width: 100,
       child: Draggable(
-        feedback: componentWidget,
+        feedback: componentWidget!,
         onDraggableCanceled: (velocity, offset) {
           insertNewItem(this, offset);
         },

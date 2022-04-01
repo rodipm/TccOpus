@@ -7,7 +7,7 @@ class IfStatement {
   final double width;
   final double height;
 
-  Widget componentWidget;
+  late Widget componentWidget;
   Map<String, dynamic> componentConfigs = {"condition": ""};
 
   Map<String, dynamic> parseComponentConfigsFromJson(dynamic jsonConfig) {
